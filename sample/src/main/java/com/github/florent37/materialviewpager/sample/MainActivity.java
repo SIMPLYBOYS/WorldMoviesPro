@@ -89,7 +89,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
 
     private boolean mActionBarShown = true;
 
-    private String HOST_NAME = "http://ec2-52-192-246-11.ap-northeast-1.compute.amazonaws.com/";
+    private String HOST_NAME = Config.HOST_NAME;
 
     //    private DrawerLayout mDrawer;
     private DrawerLayout mDrawerLayout;
