@@ -378,12 +378,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         sp.registerOnSharedPreferenceChangeListener(this);
 
-        /*ActionBar ab = getSupportActionBar();
-
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
-        }*/
-
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -1006,9 +1000,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
             });
         }
 
-//        setupAccountBoxToggle();
+        setupAccountBoxToggle();
 
-//        populateAccountList(friendslist);
+        populateAccountList(friendslist);
     }
 
     private void populateAccountList(List<User> friendList) {
@@ -1337,7 +1331,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
         mSyncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
 
-//        startLoginProcess();
+        startLoginProcess();
     }
 
     @Override
