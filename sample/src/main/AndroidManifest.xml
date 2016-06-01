@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+package="com.github.florent37.materialviewpager.sample">
+
+<supports-screens android:resizeable="true"
+    android:smallScreens="true"
+    android:normalScreens="true"
+    android:largeScreens="true"
+    android:xlargeScreens="true"
+    android:anyDensity="true" />
+
+<!--<uses-feature
+    android:name="android.hardware.camera"
+    android:required="true" />
+<uses-feature
+    android:name="android.hardware.camera.autofocus"
+    android:required="false" />-->
+
+<!-- required for setIsSyncable -->
+<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
+<uses-permission
+    android:name="android.permission.READ_EXTERNAL_STORAGE"
+    android:maxSdkVersion="18" />
+
+<permission
+    android:name="com.github.florent37.materialviewpager.sample.permission.WRITE_SCHEDULE"
+    android:description="@string/permission_write"
+    android:label="@string/permission_write"
+    android:protectionLevel="normal" />
+
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
+<uses-permission android:name="android.permission.VIBRATE" />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+<uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+<uses-permission android:name="android.permission.READ_SYNC_STATS" />
+<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+<!-- [START gcm_permission] -->
+<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+<!-- [END gcm_permission] -->
+
+
+<application
+    android:name=".app.AppApplication"
+    android:allowBackup="false"
+    android:hardwareAccelerated="true"
+    android:icon="@drawable/ic_launcher"
+    android:label="@string/app_name"
+    android:supportsRtl="true"
+    android:theme="@style/AppTheme" >
+    <activity
+        android:name=".MainActivity"
+        android:label="@string/app_name"
+        android:screenOrientation="portrait"
+        android:configChanges="orientation">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+            <category android:name="android.intent.category.BROWSABLE" />
+        </intent-filter>
+    </activity>
+
+    <!--<activity
+        android:name=".videolibrary.VideoLibraryActivity"
+        android:theme="@style/Theme.IOSched.VideoLibrary"
+        android:label="@string/title_video_library"
+        android:parentActivityName=".MainActivity"
+        android:exported="false">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
+    </activity>-->
+
+    <!--<activity
+        android:name=".videolibrary.VideoLibraryFilteredActivity"
+        android:theme="@style/Theme.IOSched.VideoLibrary"
+        android:label="@string/title_video_library"
+        android:parentActivityName=".videolibrary.VideoLibraryActivity"
+        android:exported="false">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".videolibrary.VideoLibraryActivity" />
+    </activity>-->
+
+    <activity
+        android:name=".about.AboutActivity"
+        android:label="@string/description_about"
+        android:parentActivityName=".MainActivity"
+        android:theme="@style/AppTheme"
+        android:exported="false">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
+    </activity>
+
+    <activity
+        android:name=".imdb.MovieDetail"
+        android:label="@string/description_detail">
+    </activity>
+
+    <activity
+        android:name=".imdb.AlbumActivity"
+        android:label="@string/description_album">
+    </activity>
+
+    <activity
+        android:name=".imdb.SlideActivity"
+        android:label="">
+    </activity>
+
+    <activity
+        android:name=".detail.DetailActivity"
+        android:label="@string/description_detail">
+    </activity>
+
+    <activity
+        android:name=".imdb.ImdbActivity"
+        android:label="@string/description_imdb"
+        android:parentActivityName=".MainActivity"
+        android:theme="@style/AppTheme"
+        android:exported="false">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
+    </activity>
+
+    <activity
+        android:name=".live.LiveActivity"
+        android:label="@string/description_live"
+        android:parentActivityName=".MainActivity"
+        android:theme="@style/AppTheme"
+        android:exported="false">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
+    </activity>
+
+    <activity
+        android:name=".welcome.WelcomeActivity"
+        android:theme="@style/Theme.IOSched.Welcome"
+        android:exported="false" />
+
+    <activity android:name="com.facebook.FacebookActivity"
+        android:configChanges=
+            "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+        android:theme="@android:style/Theme.Translucent.NoTitleBar"
+        android:label="@string/app_name" />
+
+    <service
+        android:name=".sync.SyncService"
+        android:exported="true"
+        tools:ignore="ExportedService">
+        <intent-filter>
+            <action android:name="android.content.SyncAdapter" />
+        </intent-filter>
+
+        <meta-data
+            android:name="android.content.SyncAdapter"
+            android:resource="@xml/syncadapter" />
+    </service>
+
+    <!-- [START gcm_receiver] -->
+    <receiver
+        android:name="com.google.android.gms.gcm.GcmReceiver"
+        android:exported="true"
+        android:permission="com.google.android.c2dm.permission.SEND" >
+        <intent-filter>
+            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+            <category android:name="com.github.florent37.materialviewpager.sample" />
+        </intent-filter>
+    </receiver>
+    <!-- [END gcm_receiver] -->
+    <!-- [START gcm_listener] -->
+    <service
+        android:name=".service.MyGcmListenerService"
+        android:exported="false" >
+        <intent-filter>
+            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+        </intent-filter>
+    </service>
+    <!-- [END gcm_listener] -->
+    <!-- [START instanceId_listener] -->
+    <service
+        android:name=".service.MyInstanceIDListenerService"
+        android:exported="false">
+        <intent-filter>
+            <action android:name="com.google.android.gms.iid.InstanceID"/>
+        </intent-filter>
+    </service>
+    <!-- [END instanceId_listener] -->
+
+    <!-- An IntentService responsible for bootstrapping the app with the necessary
+       data such as session, speakers, etc. This data is used prior to the app's
+       first sync to the backend server. -->
+    <service
+        android:name=".service.DataBootstrapService"
+        android:exported="false" />
+
+    <provider
+        android:name=".provider.ScheduleProvider"
+        android:authorities="com.github.florent37.materialviewpager.sample"
+        android:exported="true"
+        android:label="@string/app_name"
+        android:syncable="true"
+        android:writePermission="com.github.florent37.materialviewpager.sample.permission.WRITE_SCHEDULE" />
+
+    <meta-data
+        android:name="io.fabric.ApiKey"
+        android:value="29cbd600bb8183011201895a931db91e93f2d614" />
+    <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+         App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+    <meta-data
+        android:name="com.google.android.gms.version"
+        android:value="@integer/google_play_services_version" />
+    <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+</application>
+
+</manifest>

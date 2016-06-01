@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-identity/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="5289e799a43a64c4137d109bf992e10a2f952aa3">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-identity-9.0.0_0751edaa54c00f58a25c3c4da65fc44a142ee0ae/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.github.florent37/carpaccio/1.0.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="d509b0aadf75710289b69a781bc1133eb303775d">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.github.florent37-carpaccio-1.0.1_1c0229dabec21ba5bde8dfd9c6c6ee4a93089973/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-database-connection/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ef5c5c2afbd174d55cf1cfcac7d0346cbc4c1322">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-database-connection-9.0.0_cf91fca07a6824e7c0cf509a8d835196e1b98a9e/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.joooonho/selectableroundedimageview/1.0.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="1b915694304bc4a4003b7e7b65577b4f0b514b06">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.joooonho-selectableroundedimageview-1.0.1_a1341d3469ad7e82c6a2cfcfd3a89c7f232c1f40/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-panorama/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="67a7d712de3e7d025f4efdcec1da183f764bdbab">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-panorama-9.0.0_f45fc1f3aeacc19d64c29d0c7701fa2751a8228b/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-auth/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="70ddab48594608953b20164b82f1f890a9a8174a">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-auth-9.0.0_2f6f4a2d189882514ef82277bca1ef84fdaf4a82/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/support-v13/22.2.0/jars/libs/internal_impl-22.2.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="79a5b6d9fbab3b5fb4c6f86a1ed7a17722fd937b">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-22.2.0_b209b05b71869bf338705b734741a6351400505f/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/23.3.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="23be6993826b8fd88bbc8d14928bb3b8960d3d4e">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-animated-vector-drawable-23.3.0_bdf893e01881b4541c837b01a19a7e1c3514308f/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-auth-base/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="7a23185c9b1c100e7d1a32275017e4712e31c796">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-auth-base-9.0.0_9efc1e5d28c9125d94f71c2649afb06a33043442/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.github.lecho/hellocharts-library/1.5.8/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="56c6a22c42588628903e9dda5d8f3aa1c1b4372f">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.github.lecho-hellocharts-library-1.5.8_d83085de2d08269c7f759e4873227afae2c0f666/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-database/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="32a5a566ae197603d0bed3e6d1d275f6a771564e">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-database-9.0.0_3826e6b9ecb63c58be0c7704c9772e2ec95b94db/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.crashlytics.sdk.android/beta/1.1.3/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="b7a78990c10481f43cb4909f535ef4f11e60f1ab">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.crashlytics.sdk.android-beta-1.1.3_20970496fa96a2098035f32217b1b16388039485/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-safetynet/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="c11cf7a7a6e5adf8fa564303a11dbc351fc11b7c">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-safetynet-9.0.0_69c803fe967d231632d88e0ace12acee1de7e8bc/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/me.zhanghai.android.materialprogressbar/library/1.1.5/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="4a9f97c742d058ca55948643c06f447895a9af76">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/me.zhanghai.android.materialprogressbar-library-1.1.5_abc81fb9f4e74abcbe10cbdff84ad40cf78ec89f/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.github.aakira/expandable-layout/1.4.2/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="b8ba0b9f0aa49a9180676e72ad6767473b15f74a">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.github.aakira-expandable-layout-1.4.2_0efa7c77ab0dac91b4d98d9378d827287a8ca3f3/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="6be580aa00ef2f834488e75cab1bc5eaf9301c0c">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_d5579391b7415cfada6a98c34dc5842a8f6e882d/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="a819aae4f0c711e50b4fd633922a3c1a176cb51e">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-maps-9.0.0_c52019e3cd0b26b47323a999dbc18d77ac35b306/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-auth/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="7da84426d876216ed4cdddd85e739be5ecabdd04">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-auth-9.0.0_7973f1a6748a4eac6d4840ec4e9b87c6dc62210a/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-plus/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="817b9101192f2fd6dc0fd8cd522d8f4a1a75fcdc">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-plus-9.0.0_071d1fef0153d4bb7d21c1c3d494920c1bfc5df6/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/caches/modules-2/files-2.1/com.squareup.picasso/picasso/2.5.2/7446d06ec8d4f7ffcc53f1da37c95f200dcb9387/picasso-2.5.2.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/picasso-2.5.2_8f990d52a547c884c87b77516b70baaa2779a457/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.7.0/9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4/glide-3.7.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/glide-3.7.0_f35050f0002a4c7d95d472b2f98960b1d9295e03/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-crash/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="7e467a973b749c6390a5991c9a8edbde96fc10c9">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-crash-9.0.0_3668b7812b404d82642aa58992f138f294a0f67e/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/caches/modules-2/files-2.1/com.google.guava/guava/18.0/cce0823396aa693798f8882e64213b1772032b09/guava-18.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="cce0823396aa693798f8882e64213b1772032b09">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/guava-18.0_dddb59aee6e3e4e4447e4077ced20fc190047980/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.mikepenz/fontawesome-typeface/4.4.0.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="e8ad61c604470ee6933c21ae0aefcf9ee03c3911">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.mikepenz-fontawesome-typeface-4.4.0.1_3290d8ce037a9b90854fe08f22101fc8a9caf346/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-wallet/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="d7002ed92a3c46c6a89a786877ecf7978a4f0459">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-wallet-9.0.0_ea756b532e90c941944edcc5ea8aab08776f135e/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-nearby/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="0facc6fc326f2406f4bb9b02f442994c5ce6a403">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-nearby-9.0.0_072e7d787d3677259cbe1c9f41b817089baecfa9/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/cardview-v7/23.4.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="d9ecde39b460470e655de6e47c05573d2d5a8bfb">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-cardview-v7-23.4.0_61d8ef2c69e81da29f67c81257296ab83a182b60/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-auth-module/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="24536a7b97926a9c155c88425da6875adeb11b51">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-auth-module-9.0.0_1de775e590098bbe89909f54e6f3bbc69036f775/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/support-v4/23.4.0/jars/libs/internal_impl-23.4.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ea3c07504d2c8f4b13aa17c45c1b68ed9c1c3674">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-23.4.0_41daac627d9fd77f6bb4e7d0a4d99c2e60b5a23e/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/caches/modules-2/files-2.1/com.parse.bolts/bolts-tasks/1.4.0/d85884acf6810a3bbbecb587f239005cbc846dc4/bolts-tasks-1.4.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="d85884acf6810a3bbbecb587f239005cbc846dc4">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/bolts-tasks-1.4.0_b440d7922e6cabf272103541d34dcbeefd91f751/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.mikepenz/materialdrawer/5.2.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="72829a4d2304ce24ed002cb29e8121a2d5c87613">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.mikepenz-materialdrawer-5.2.1_983b12b098bbd90d89c13c63c071580e08709166/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/design/23.3.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="f0001e71cea6ae432a00021c6f727f5ef0f3d27e">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-design-23.3.0_938917d690e5f42424caec6de03e23a62df5f72b/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-config/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ebfde1a055aea400df77584a68aa60609f618bed">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-config-9.0.0_e1fbb5d8201772fc855f380a0e48f1c3e63af857/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/caches/modules-2/files-2.1/com.flaviofaria/kenburnsview/1.0.7/ce4e8bba9e026dd29f8110b2f6bb1fc4ecbdd9b1/kenburnsview-1.0.7.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ce4e8bba9e026dd29f8110b2f6bb1fc4ecbdd9b1">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/kenburnsview-1.0.7_606b4b1a674718f546e0869e99ae698a5ce14f3e/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.crashlytics.sdk.android/answers/1.2.2/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="c364019628ff5b32e4930334e9db4680829f7115">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.crashlytics.sdk.android-answers-1.2.2_004f197b4516243f2e1c59e07616601b99e5bb21/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/caches/modules-2/files-2.1/com.parse.bolts/bolts-applinks/1.4.0/8ad21bf21784dacce5f2043afb97218cc377e835/bolts-applinks-1.4.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="8ad21bf21784dacce5f2043afb97218cc377e835">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/bolts-applinks-1.4.0_e2f2089b2eb6422395196d5ba9652c4595fbccec/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="b8bedab61b3b5238cd9a07d3b04449d7fecdbc3b">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-analytics-9.0.0_5ae1836988bd29491a1a860f1925bd44535929aa/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="91ea9c9429515a9693837a5b0e01d9d159ade69a">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_83a444abf8f989af0a3d81ee11495d9a9ca8444e/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.crashlytics.sdk.android/crashlytics/2.4.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="fd39f74f23c7bd9aeafe58c6d988a7329c3e2790">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.crashlytics.sdk.android-crashlytics-2.4.0_30f401101d93a58a7a7c00d58f7f492527b15bb1/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.mikepenz/iconics-core/2.5.11/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="98a135c7935e62ac041acc1fcb148973bde828d5">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.mikepenz-iconics-core-2.5.11_b83eedc29b9e781a52f889680f96e0f713ff4112/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/23.4.0/support-annotations-23.4.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ffbe55fdb2bb456b1485831706a9eac3300bb6b8">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-23.4.0_018a5c6091165534c6a18c0849c5e45307f23786/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-vision/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="f4e85eafa876cd7d7641244867dac3f88d71e866">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-vision-9.0.0_259ff40fde59ff74aa0bc33aa2edfe507cd5dac1/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics-impl/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="373cd65725af2781d100ddc193c7d3f14464a774">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-analytics-impl-9.0.0_23ad145437619edeb9ec41788e345e94cde56721/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-gcm/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="4caf75b2cfb7ec6e80a57d0ee64fc102ad3578b8">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-gcm-9.0.0_9c542363febc228f19508eb1c3a68e13e168a6c4/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-cast/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="e595f98f8c525201dccd119f43ad1ddacd4c48d6">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-cast-9.0.0_077daef00d4903f71b8bf3a5548209ea4384e75b/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-iid/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="379d1834afa3c08f43be23a23b103053537b65b5">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-iid-9.0.0_291f0a7c16b13cba3246549121ecf7036befca99/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="cc178928721f3222b3b06bdfbd9497378ccb9792">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-basement-9.0.0_454d816e4493d359656090b3bc88eb604b892ef2/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-storage/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="733964f04c339e425439545b1d172c23b53f8c13">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-storage-9.0.0_301160af574851f1f5bdfd93e2f2cda56d794426/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.crashlytics.sdk.android/crashlytics-core/2.3.3/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="3013d965c748748ec9c7d0d42102e9abd1c9ed91">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.crashlytics.sdk.android-crashlytics-core-2.3.3_91d1cb24c850ad8134c04c6b1b050c4f27ae516d/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/support-v13/22.2.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="9aa93835393824b436f366120c9ba8a0260ce75d">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-v13-22.2.0_2f54098c12735010f33e6c5a5e34985d63f09af7/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.3.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="debf30ce0a7560396b6235edef77e447006454c2">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-recyclerview-v7-23.3.0_3d095f6cc065230b290a696dee436fcf5a9abe61/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="59cca9b91688dc2467754d36793b3d23bebd21a9">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-location-9.0.0_746d82605198bad3178fd41d5b95a8f7870bfd47/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-appinvite/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="d96f9f3ef66494d1231304cafd28c962dda80dea">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-appinvite-9.0.0_f42e91832a174e364da4e52f5e58a61f6e52d664/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/palette-v7/22.2.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="060b30a619b8d3ba053e1d7dc08b3fdf0dd81530">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-palette-v7-22.2.0_6e9c94b603b34002600c2187fb2ad9a823b9d9f1/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-iid/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ea4b54dcbfe5ac05efb0a314105f07258118d3a7">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-iid-9.0.0_eaec000e4e47b3789bdfd8ce307d0c1b19a1218e/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/support-v4/23.4.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="67bd36ee9340ec7c254108936ad16b24bed160cc">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-v4-23.4.0_b6e31728d4bed03f23357ed9cf826fe80316d429/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-messaging/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="005786793d72c6deacbbbfd38177ed58e1aa6653">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-messaging-9.0.0_d26e4f2100b5cdf3ff7ce729cd1394f78d3cb6a1/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/third_party/svg-android/libs/svg-android-2.0.7-20150515.214425-1.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="6d63d23b0eee491c984e942cfe4903e735d45711">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/2/svg-android-2.0.7-20150515.214425-1_2e7fe93f2acc0efdc9829e1aaba238cdca8f3567/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-fitness/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="2f7bd8cc7519d5231aa8d2ae8e905d3f602bd491">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-fitness-9.0.0_e748f5e31311f0c5fb039eb3439174face89bdad/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="4431efe5d0f67fab36a698dde725946b33a6bf4a">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-appindexing-9.0.0_4089314e5072b87d55051599abd2205525f1ad05/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.github.chrisbanes/PhotoView/1.2.6/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="e39dd45427d2ba136c82ed1946f80dd3dff16695">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.github.chrisbanes-PhotoView-1.2.6_8cd7f944a13214b88b9edd1b53938dd457f05f2f/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-tasks/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="1941832901fc4e7a93300b53762e9f65d7650b99">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-tasks-9.0.0_057dea5eaba43d87802a70a1fe57208577a09cd9/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.github.florent37/materialimageloading/1.0.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="1d1721d9db29c14df4fc57b78d2ace9709ab7b30">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.github.florent37-materialimageloading-1.0.1_2941a1cda23966c4b803cf9558978814f24a116a/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/de.hdodenhof/circleimageview/1.3.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ac6948cce36f694f3eb3d73a135e298dc4b3527a">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/de.hdodenhof-circleimageview-1.3.0_330cf725d27b78b5ca193f1dd3422ee36aaf3d05/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/third_party/basic-http-client/libs/basic-http-client-android-0.88.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="62aa3f0df0148b934c29a8085d01e9839955e06e">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/2/basic-http-client-android-0.88_6ba34d903820dca53ea3d923d4faf70cdbbed4c7/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/caches/modules-2/files-2.1/de.greenrobot/eventbus/2.4.0/ddd166d01b3158d1c00576d29f7ed15c030df719/eventbus-2.4.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ddd166d01b3158d1c00576d29f7ed15c030df719">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/eventbus-2.4.0_4259ca4ec3e5023a929142ef04546100c90a2ea5/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-tagmanager/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="8126914f5bc372a33e27ea90f02412c32468ce8a">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-tagmanager-9.0.0_c09b333e00082705d0d0a5ea7b9f40c4f1166efb/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/caches/modules-2/files-2.1/com.google.code.gson/gson/2.4/695b63d702f505b9b916e02272e3b6381bade7f/gson-2.4.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="0695b63d702f505b9b916e02272e3b6381bade7f">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/gson-2.4_2434290b7522a6875fb5f357e648cb4347000d6a/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-ads/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="2cb29455028e92e024bbad0d41c6ec772f2433d1">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-ads-9.0.0_5de33b6803ae1a56fb8b5b992b2094ba36f7fdf8/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/third_party/youtube/libs/YouTubeAndroidPlayerApi.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="3c4f96ff493456651cc7bdb0b47e10eb25545a16">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/2/YouTubeAndroidPlayerApi_bd288808004af100db5d2314b359f655e8a7c439/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-tagmanager-api/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="69472e334350cafbf442776da05c9a04955252fb">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-tagmanager-api-9.0.0_39b7b1fa97347668ead715f4eed7add0bd9edb6a/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/jp.wasabeef/blurry/0.0.3/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="3b11bc156338624ec19c54acf36ccd7775fc622a">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/jp.wasabeef-blurry-0.0.3_bd6a62f25328e4b18a0edcb85dbed217abc8d348/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support.test.espresso/espresso-idling-resource/2.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="7cc4b00df8357dabd613998c9229ace9bba26ee2">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support.test.espresso-espresso-idling-resource-2.0_6fd81813d2b7a585f4d27e5d6d59866df69eee84/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.mikepenz/google-material-typeface/2.2.0.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="861dd8b4d38117b27f7e95c9fd555f69fe668138">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.mikepenz-google-material-typeface-2.2.0.1_e4107af667bc67e95c94368ffaa4708b49864398/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-analytics-impl/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="0dc8ab07eeceda5e99b305c8069765056b6e5c9d">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-analytics-impl-9.0.0_8b48ed8d7558466abdbd554bdcebcce6230da799/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.3.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="1b8e03daaa43fb0a4cd57e378167c2fd70454c1e">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-appcompat-v7-23.3.0_94d119dec4a531e5187f81702ab256425f14d40e/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.mcxiaoke.volley/library-aar/1.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="e40b9a81989bd4a846018551c280f8c4d837bf2e">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.mcxiaoke.volley-library-aar-1.0.0_86971ae21a329bb2277978bc8f354745869d03b5/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="4f7e1ce5942093c77105c86ef11b782f75aff0c3">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.github.afollestad.material-dialogs-core-0.8.5.8_a5e1f2368fa679a5baada537d194ab2b6dedf1bc/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.github.ksoichiro/android-observablescrollview/1.6.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="d125b199a427e5cc8d4234f7d8673c9a27ef6336">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.github.ksoichiro-android-observablescrollview-1.6.0_a8c3a5795b92698a68bc94a136b48b5c15f9b9c4/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="6f65c144283b31b4b9a70e6e7aa4c4a1c897d4b8">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-base-9.0.0_17068de5c97072cf2b8f8e97f90482f6ff5c640b/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-auth-common/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="5f0f6913a208a126269aaa68004ed0329a832c5b">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-auth-common-9.0.0_17629c0348a8ef73135c82121fe850a0a9b25229/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.mikepenz/fastadapter/1.4.4/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ef0ff196faa70b4ed0667f6f78beace9fef1f047">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.mikepenz-fastadapter-1.4.4_bd209cb85a4fab4959b5ce1080404f13515489af/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-drive/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="294d49a66cc1238d9f7fd352136a45622fa98c0f">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-drive-9.0.0_340acae94c36ee26af1945e8d08ebc1c16791955/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-common/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="42df48c7305b08b14fa0e84561091b0c24d70d26">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-common-9.0.0_8bed3030d11aca67d5e081d5d186699b18c142f1/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/mediarouter-v7/23.0.0/jars/libs/internal_impl-23.0.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="03d38bb042efe3e5ce27ba66b729a9523c36d8fe">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-23.0.0_0897a6d6735154dfdb0aa85d5f4cce841e07114e/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-wearable/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="184428c29b2a4b220cd44284d515db5d8cb5fc76">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-wearable-9.0.0_0ad81f39b172215e7bd2a67f0ea0f0fc1e5decc2/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/io.fabric.sdk.android/fabric/1.3.4/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="f7dc6b43d7c7f3d94e98531aef88269f9ed2a37b">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/io.fabric.sdk.android-fabric-1.3.4_3c495eb5896e21babe6d3f7d242002e3b0aaeb1b/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/23.3.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="a0b5d60246cd9d4f3f2443611b3b4c25265840b5">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-vector-drawable-23.3.0_3bbeaf5a474b803b0c5cc3f208106309658d04c1/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.mikepenz/materialize/0.8.8/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="197c431b8fc427f77e02997e299bd6b9bef58ede">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.mikepenz-materialize-0.8.8_bfd1f6d6bda2b7f095790dc9c9055c580f9c233f/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.mikepenz/aboutlibraries/5.5.8/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="f7f9c9cbd20292dc4162a4366d73ca432c34a6c9">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.mikepenz-aboutlibraries-5.5.8_9c9ec032a1e87eacb82929a95fc92174ac5b302b/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/customtabs/23.4.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="2d1eaa9e0b98f8fc4c2b989d9b30d4f1480648ac">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-customtabs-23.4.0_9cdc47427eabf3b0259d13682fce0769af0d7d12/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.jpardogo.materialtabstrip/library/1.1.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="611c7708cd3df0d7ae99105d4df5af8eb25c4b32">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.jpardogo.materialtabstrip-library-1.1.0_872312e1a1ffe7157a1ae0e00ce674f15b64e184/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.lsjwzh/materialloadingprogressbar/0.5.8-RELEASE/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="02a43b4e0f1fc04fd60a3de8f6d5015d93703b3e">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.lsjwzh-materialloadingprogressbar-0.5.8-RELEASE_5ba24f9b705e42c770ddf1f30c5112f36db72ad9/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-analytics/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="4ef8ab5fee042023018249474bc93bd4b2b9c17e">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-analytics-9.0.0_641a8c2cce2037304173005f4a218e2802104c73/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/multidex/1.0.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="78ea232052df889856dcb7b7b542707c89bb3bfb">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-multidex-1.0.1_06196bd7882f18533dd3679d5f158674a9b74096/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/caches/modules-2/files-2.1/com.nineoldandroids/library/2.4.0/e9b63380f3a242dbdbf103a2355ad7e43bad17cb/library-2.4.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/library-2.4.0_f55d879e588a3a02f885764d2a3f1e927ea73347/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-ads-lite/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="79e4b41db41d4dbbf364c7bd6aaeee5b876c9d8b">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-ads-lite-9.0.0_c8baf42e7b9e4d5450e7bcb4c9fcce21ffacd06a/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.android.gms/play-services-games/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="2c5bc0ebbe69c9fab587c2216b36ec44ab8f0704">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-games-9.0.0_d248147983010c5a55c70ab9804c67330c44339f/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.android.support/mediarouter-v7/23.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="d358b3dd49a7c67844622dcbc9cf4339e13952ce">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-mediarouter-v7-23.0.0_f7ca4211b92f0cf5ee4385b5f3b7d01d8a38589d/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.12.1/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="26645b518694e20a97fc19a6a3c3933c0cc41bc1">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.facebook.android-facebook-android-sdk-4.12.1_a486ca8c3f30c230df8de027ef14793ae8bfeac6/classes.dex" />
+    </item>
+    <item
+        jar="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/exploded-aar/com.google.firebase/firebase-storage-common/9.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="ed16ff19f0a9515604a0f08104ca0317b82e29e3">
+        <dex dex="/home/aaron/OpenSourceProjects/WorldMoviePro/sample/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-storage-common-9.0.0_1cb62af6ccf06a2d48b160902f3504554a241b69/classes.dex" />
+    </item>
+
+</items>

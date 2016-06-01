@@ -1,0 +1,183 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+
+    <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        <item name="android:windowTranslucentStatus" tools:targetApi="19">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:popupMenuStyle">@style/myPopupMenuStyle</item>
+        <item name="android:listPopupWindowStyle">@style/PopupListStyle</item>
+
+        <!-- Material Theme -->
+        <item name="colorPrimary">@color/io15_blue_grey_100</item>
+        <item name="colorPrimaryDark">@color/material_grey_800</item>
+        <item name="colorAccent">@color/io15_grey</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <!-- <item name="android:actionOverflowMenuStyle" tools:targetApi="21">@style/myMenuStyle</item>
+         <item name="android:statusBarColor" tools:targetApi="21">@color/transparent_black</item>
+         <item name="android:navigationBarColor" tools:targetApi="21">@color/navigationBarColor</item>
+         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>-->
+        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
+        <item name="android:textAppearanceSmallPopupMenu">@style/TextAppearance.AppCompat.Widget.PopupMenu.Small</item>
+    </style>
+
+    <style name="myPopupMenuStyle" parent="@style/Widget.AppCompat.Light.PopupMenu">
+    </style>
+
+    <style name="HeaderBar">
+        <item name="android:background">?colorPrimary</item>
+        <item name="android:elevation">@dimen/headerbar_elevation</item>
+    </style>
+
+    <style name="TextAppearance.SessionTitle" parent="TextAppearance.Body2">
+        <item name="android:textColor">@color/video_title</item>
+    </style>
+
+    <style name="TextAppearance.Body2" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:textSize">14sp</item> <!-- bug in AppCompat, can remove this when it's fixed -->
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
+    </style>
+
+    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="ActionBarThemeOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/text_on_primary</item>
+        <item name="android:textColorSecondary">@color/subtitle_on_primary</item>
+    </style>
+
+    <style name="PopupListStyle" parent="@style/Widget.AppCompat.Light.ListPopupWindow">
+        <item name="android:popupBackground">#FFFFFF</item>
+    </style>
+
+    <style name="TextAppearance.LargePopupMenu" parent="TextAppearance.AppCompat.Widget.PopupMenu.Large">
+        <item name="android:textColor">@color/body_text_1</item>
+    </style>
+
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/drawerArrowColor</item>
+    </style>
+
+    <style name="expandedappbar">
+        <item name="android:textColor">#00000000</item>
+    </style>
+
+    <style name="Widget.MaterialSheetFab.Note" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/note_spacing</item>
+        <item name="android:foreground">?selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="contentPadding">@dimen/note_content_spacing</item>
+        <item name="cardBackgroundColor">@color/material_grey_50</item>
+        <item name="cardCornerRadius">@dimen/note_corner_radius</item>
+    </style>
+
+    <style name="Widget.CardContent" parent="android:Widget">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">24dp</item>
+        <item name="android:paddingBottom">24dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="MoreButton">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Button</item>
+        <item name="android:textColor">@color/more_button_text</item>
+        <item name="android:textSize">@dimen/app_text_size_small</item>
+        <item name="android:background">@drawable/more_button_background</item>
+    </style>
+
+    <style name="WelcomeTitle">
+        <item name="android:textAppearance">@style/TextAppearance.Title</item>
+        <item name="android:textColor">@color/flat_button_text</item>
+        <item name="android:textSize">@dimen/welcome_title_size</item>
+    </style>
+
+    <style name="TextAppearance.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Body1Text">
+        <item name="android:textAppearance">@style/TextAppearance.Body1</item>
+        <item name="android:lineSpacingMultiplier">@dimen/body_1_spacing</item>
+    </style>
+
+    <style name="WelcomeAccounts">
+        <item name="android:paddingTop">@dimen/padding_normal</item>
+        <item name="android:paddingBottom">@dimen/spacing_normal</item>
+    </style>
+
+    <style name="TextAppearance.Body1" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">14sp</item> <!-- bug in AppCompat, can remove this when it's fixed -->
+        <item name="android:textColor">?android:textColorSecondary</item>
+    </style>
+
+    <style name="Theme.IOSched.Welcome" parent="Theme.IOSched">
+        <item name="android:windowBackground">@color/background</item>
+    </style>
+
+    <style name="Theme.IOSched" parent="Theme.IOSched.Base" />
+
+    <style name="Theme.IOSched.Base" parent="Theme">
+        <item name="actionBarIconColor">#fff</item>
+        <item name="actionBarInsetStart">@dimen/keyline_2</item>
+        <item name="homeAsUpIndicator">@drawable/ic_up</item>
+        <item name="spinnerBarInsetStart">@dimen/keyline_2_minus_16dp</item>
+        <item name="popupItemBackground">?android:selectableItemBackground</item>
+        <item name="photoItemForeground">?android:selectableItemBackground</item>
+        <item name="photoItemForegroundBorderless">?android:selectableItemBackground</item>
+
+        <item name="colorPrimary">@color/theme_primary</item>
+        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
+        <item name="colorAccent">@color/theme_primary</item>
+
+        <item name="android:textColorLink">@color/flat_button_text</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
+
+        <item name="android:popupMenuStyle">@style/Widget.IOSched.PopupMenu</item>
+        <item name="android:listPopupWindowStyle">@style/Widget.IOSched.PopupMenu</item>
+        <item name="android:dropDownListViewStyle">@style/Widget.IOSched.ListView.DropDown</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
+
+        <item name="imageItemBackground">?android:selectableItemBackground</item>
+        <item name="android:borderlessButtonStyle">@style/Widget.AppCompat.Button.Borderless</item>
+    </style>
+
+    <style name="Theme" parent="FrameworkRoot.Theme">
+        <!-- Only needed for pre-L -->
+        <item name="android:editTextBackground">@drawable/edit_text</item>
+        <item name="android:editTextStyle">@style/Widget.IOSched.EditText</item>
+    </style>
+
+    <style name="Widget.IOSched.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/edit_text</item>
+    </style>
+
+    <style name="FrameworkRoot.Theme" parent="Theme.AppCompat.Light.NoActionBar" />
+
+    <style name="Widget.IOSched.ListView.DropDown" parent="Widget.AppCompat.Light.ListView.DropDown">
+        <item name="android:listSelector">?popupItemBackground</item>
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
+    </style>
+
+    <style name="Widget.IOSched.PopupMenu" parent="Widget.AppCompat.Light.PopupMenu">
+        <item name="android:dropDownSelector">?popupItemBackground</item>
+    </style>
+
+</resources>
+

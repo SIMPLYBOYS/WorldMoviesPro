@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:minHeight="?attr/listPreferredItemHeight"
+    android:background="?attr/selectableItemBackground">
+            <uk.co.senab.photoview.PhotoView
+                android:id="@+id/picture"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:src="@drawable/placeholder"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:visibility="visible" />
+
+            <ProgressBar
+                android:id="@android:id/progress"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center" />
+</FrameLayout>
+

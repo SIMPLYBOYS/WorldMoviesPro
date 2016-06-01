@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "445633336078",
+    "project_id": "worldmoviespro"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445633336078:android:a23d01de03a4afd2",
+        "android_client_info": {
+          "package_name": "com.github.florent37.materialviewpager.sample"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBG5Wq2r5L-RGVBdJaORJT0-Qn8tGSqmS0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

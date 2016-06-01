@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#f5f5f5</color>
+    <!-- App main palette for io15 version. -->
+    <color name="io15_dark_grey">#FF455A64</color>
+    <color name="io15_grey">#FF607D8B</color>
+    <color name="io15_light_grey">#FF90A4AE</color>
+    <color name="io15_aqua_dark">#FF4DD0E1</color>
+    <color name="io15_aqua_light">#FF80DEEA</color>
+    <color name="io15_blue_grey_100">#ffcfd8dc</color>
+    <color name="io15_white">#FFFFFFFF</color>
+    <color name="card">#fff</color>
+    <color name="cyan_a700_plus">#ff006574</color>
+    <color name="grey_background">#f5f5f5</color>
+    <color name="transparent_black">#80000000</color>
+    <color name="theme_primary">@color/app_primary_accent</color>
+    <color name="theme_primary_dark">#00BCD4</color>
+    <color name="theme_primary_light">#7986cb</color>
+
+    <!-- App Primary View Colors (might be deprecated). -->
+    <color name="app_primary_accent">#FF26C6DA</color>
+    <color name="app_secondary_accent">#1A000000</color>
+    <color name="app_primary_text">#444444</color>
+    <color name="app_secondary_text">#444444</color>
+    <color name="app_white">#FFFEFEFE</color>
+    <color name="app_io_logo_tint">#FF26C6DA</color>
+    <color name="divider">#1f000000</color>
+
+    <!-- App Primary Text Colors (might be deprecated). -->
+    <color name="app_body_text_1">#de000000</color>
+    <color name="app_body_text_2">#8a000000</color>
+    <color name="app_body_text_disabled">#44000000</color>
+    <color name="app_body_text_1_inverse">#deffffff</color>
+    <color name="app_body_text_2_inverse">#8affffff</color>
+    <color name="flat_button_text">#ff008094</color>
+    <color name="text_on_primary">#ff004446</color>
+    <color name="subtitle_on_primary">#de004446</color>
+    <color name="unselected_tab_on_primary">#b3004446</color>
+
+    <!-- Colors used in the Social feature. -->
+    <color name="social_io15">@color/io15_dark_grey</color>
+    <color name="social_twitter_devs">@color/io15_grey</color>
+    <color name="social_gplus_devs">@color/io15_light_grey</color>
+    <color name="social_extended">@color/io15_aqua_dark</color>
+    <color name="social_request">@color/io15_aqua_light</color>
+    <color name="social_logo">@color/cyan_a700_plus</color>
+    <color name="social_logo_background">@color/io15_blue_grey_100</color>
+    <color name="social_text_color">@color/io15_white</color>
+
+    <!-- Session DetailActivity colors. -->
+    <color name="session_detail_tag_text_color">@color/flat_button_text</color>
+    <color name="section_header_views_color">@color/io15_dark_grey</color>
+    <color name="fab_not_in_schedule">#ffeeff21</color>
+    <color name="fab_in_schedule">@color/io15_white</color>
+    <color name="fab_press_ripple">#1a000000</color>
+    <color name="fab_icon_color">#99000000</color>
+
+    <color name="light_grey">#fff0f0f0</color>
+    <color name="lighter_gray">#ddd</color>
+
+    <color name="blue">#303F9F</color>
+
+    <color name="butter_bar_light">#eee0e0e0</color>
+
+    <!-- Might be deprecated. -->
+    <color name="default_session_color">@color/theme_primary</color>
+    <color name="no_track_branding_session_tile_overlay">#8333</color>
+    <color name="no_track_branding_session_color">#333</color>
+
+    <color name="accent_color">@color/blue</color>
+    <color name="colorPrimary">@color/blue</color>
+    <color name="colorPrimaryDark">@color/blue</color>
+    <color name="statusBarColor">#1A000000</color>
+    <color name="navigationBarColor">@android:color/black</color>
+    <color name="drawerArrowColor">@android:color/white</color>
+    <color name="body_text_1_inverse">@android:color/white</color>
+    <color name="body_text_2_inverse">@android:color/white</color>
+    <color name="navdrawer_selected_item_background">#1a000000</color>
+
+    <!-- video lib -->
+    <color name="video_title">#de07434d</color>
+    <color name="filter_text">@color/app_primary_text</color>
+    <color name="video_scrim_watched">#b3f1f1f1</color>
+
+    <!-- start deprecated -->
+    <color name="body_text_1">#de000000</color>
+    <color name="body_text_2">#8a000000</color>
+    <color name="body_text_3">#60000000</color>
+    <color name="body_text_disabled">#44000000</color>
+
+    <!-- end deprecated -->
+
+    <!-- IO15 session detail colors -->
+    <color name="session_livestreamed_color">@color/app_body_text_2</color>
+
+    <!-- Colors used in the Video Library or Explore list view -->
+    <color name="item_text_primary_color">#ff275B64</color>
+    <color name="item_text_secondar_color">#ff699B9E</color>
+    <color name="button_dark">#3B5B63</color>
+    <color name="light_content_scrim">#0d000000</color>
+
+    <color name="more_button_background">#ffcfd8dc</color>
+    <color name="more_button_text">@color/cyan_a700_plus</color>
+
+    <color name="tab_background">@color/theme_primary</color>
+    <color name="tab_selected_strip">@android:color/white</color>
+
+    <color name="primary">#607D8B</color>
+    <color name="primary_dark">#455A64</color>
+    <color name="primary_light">#CFD8DC</color>
+
+    <color name="theme_accent_1">@color/material_light_blue_700</color>
+    <color name="theme_accent_1_light">#8ad4fa</color>
+    <color name="theme_accent_2">#e91e63</color>
+
+    <color name="navdrawer_background">#ffffffff</color>
+    <color name="navdrawer_text_color">@color/body_text_1</color>
+    <color name="navdrawer_text_color_selected">@color/theme_accent_1</color>
+    <color name="navdrawer_icon_tint">#808080</color>
+    <color name="navdrawer_icon_tint_selected">@color/theme_accent_1</color>
+
+    <string-array name="movie_serial_bg">
+        <item>#24c6d5</item>
+        <item>#57dd86</item>
+        <item>#ad7dcf</item>
+        <item>#ff484d</item>
+        <item>#fcba59</item>
+        <item>#24c6d5</item>
+    </string-array>
+</resources>

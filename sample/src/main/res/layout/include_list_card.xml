@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/detail_imdb_trailer"/>
+
+    <include layout="@layout/detail_imdb_summery"/>
+
+    <include layout="@layout/detail_imdb_genre"/>
+
+    <include layout="@layout/detail_imdb_gallery"/>
+
+    <include layout="@layout/detail_imdb_chart"/>
+
+    <!--<include layout="@layout/detail_imdb_plot" />-->
+
+</LinearLayout>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/explore_io_card_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/padding_normal"
+    app:cardUseCompatPadding="true"
+    app:cardBackgroundColor="@color/card"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardMaxElevation="@dimen/cardMaxElevation"
+    app:cardPreventCornerOverlap="true"
+    app:cardElevation="@dimen/card_elevation">
+
+    <com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/explore_io_clickable_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:foreground="?android:selectableItemBackground">
+
+        <com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:aspectRatio="@dimen/aspect_16_9">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/parisguidetower"
+                android:scaleType="centerCrop"/>
+
+        </com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/message_card_root_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/padding_normal"
+            android:paddingStart="@dimen/padding_normal"
+            android:paddingLeft="0dp">
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/explore_io_keynote_card_padding_start"
+                android:layout_marginStart="@dimen/explore_io_keynote_card_padding_start"
+                android:layout_marginTop="@dimen/explore_io_keynote_card_padding_top"
+                android:layout_marginEnd="@dimen/explore_io_keynote_card_padding_end"
+                android:layout_marginRight="@dimen/explore_io_keynote_card_padding_end"
+                android:layout_marginBottom="@dimen/explore_io_keynote_card_desc_padding"
+                android:maxLines="2"
+                android:textColor="@color/body_text_1"
+                android:textSize="@dimen/text_size_xlarge"
+                tools:text="@string/placeholder_session_title" />
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/explore_io_keynote_card_padding_start"
+                android:layout_marginStart="@dimen/explore_io_keynote_card_padding_start"
+                android:layout_marginEnd="@dimen/explore_io_keynote_card_padding_end"
+                android:layout_marginRight="@dimen/explore_io_keynote_card_padding_end"
+                android:layout_marginBottom="20dp"
+                android:textAppearance="@style/TextAppearance.SessionTitle"
+                tools:text="@string/placeholder_session_subtitle" />
+
+            <com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView
+                android:layout_width="20dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginLeft="@dimen/explore_io_keynote_card_padding_start"
+                android:layout_marginStart="@dimen/explore_io_keynote_card_padding_start"
+                android:layout_marginEnd="@dimen/explore_io_keynote_card_padding_end"
+                android:layout_marginRight="@dimen/explore_io_keynote_card_padding_end"
+                app:aspectRatio="@dimen/aspect_4_3"
+                android:id="@+id/view">
+                <ImageView
+                    android:id="@+id/thumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/usa" />
+            </com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView>
+
+            <Button
+                android:id="@+id/buttonEnd"
+                android:minWidth="@dimen/explore_io_message_card_min_button_width"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:paddingLeft="@dimen/spacing_normal"
+                android:paddingStart="@dimen/spacing_normal"
+                android:paddingRight="@dimen/spacing_normal"
+                android:paddingEnd="@dimen/spacing_normal"
+                android:textAllCaps="true"
+                android:textSize="@dimen/text_size_medium"
+                android:fontFamily="@string/font_fontFamily_medium"
+                android:textColor="@color/flat_button_text"
+                tools:text="Button End"
+                android:text="End"
+                style="@style/MoreButton"
+                android:layout_below="@+id/description"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="false"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="4dp"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentStart="false" />
+
+
+        </RelativeLayout>
+
+    </com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout>
+</android.support.v7.widget.CardView>

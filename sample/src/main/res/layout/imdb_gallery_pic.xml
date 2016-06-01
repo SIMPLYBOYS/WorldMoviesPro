@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/explore_io_card_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardUseCompatPadding="true"
+    app:cardBackgroundColor="@color/card"
+    app:cardMaxElevation="@dimen/cardMaxElevation"
+    app:cardPreventCornerOverlap="true"
+    app:cardElevation="@dimen/card_elevation">
+
+    <com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/explore_io_clickable_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:foreground="?android:selectableItemBackground">
+        <com.github.florent37.materialviewpager.sample.ui.widget.ProportionalImageView
+            android:id="@+id/picture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/placeholder"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:adjustViewBounds="true"
+            android:visibility="visible" />
+
+        <ProgressBar
+            android:id="@android:id/progress"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center" />
+    </com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout>
+</android.support.v7.widget.CardView>
