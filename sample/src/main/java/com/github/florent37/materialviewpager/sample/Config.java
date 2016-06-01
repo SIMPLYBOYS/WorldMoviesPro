@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Config {
 
+    public static final String HOST_NAME = "http://ec2-52-192-246-11.ap-northeast-1.compute.amazonaws.com/";
+
     // Warning messages for dogfood build
     public static final String DOGFOOD_BUILD_WARNING_TITLE = "DOGFOOD BUILD";
 
