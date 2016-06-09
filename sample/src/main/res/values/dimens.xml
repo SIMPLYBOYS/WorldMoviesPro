@@ -121,7 +121,7 @@
     <!-- Deprecate these -->
     <dimen name="navdrawer_chosen_account_height">140dp</dimen>
     <dimen name="navdrawer_width">260dp</dimen>
-    <dimen name="navdrawer_profile_image_size">40dp</dimen>
+    <dimen name="navdrawer_profile_image_size">65dp</dimen>
     <dimen name="navdrawer_item_icon_size">24dp</dimen>
     <dimen name="navdrawer_item_icon_margin_end">32dp</dimen>
     <dimen name="navdrawer_logo_vertical_padding">16dp</dimen>
