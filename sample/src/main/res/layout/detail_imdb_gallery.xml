@@ -34,6 +34,7 @@
 <com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Widget.CardContent"
+    android:id="@+id/gallery_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
