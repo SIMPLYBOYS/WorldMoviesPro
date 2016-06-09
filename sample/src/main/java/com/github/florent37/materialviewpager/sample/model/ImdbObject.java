@@ -42,7 +42,7 @@ public class ImdbObject implements Serializable {
 
     public ImdbObject(String title, String top, String year, String description, String ratting,
                       String posterUrl, String slate, String summery, String plot, String genre,
-                      String votes, String runTime, String metaScore, String country, String trailerUrl, String galleryUrl) {
+                      String votes, String runTime, String metaScore, String delta, String country, String trailerUrl, String galleryUrl) {
         this.title = title;
         this.top = top;
         this.description = description;
@@ -129,7 +129,12 @@ public class ImdbObject implements Serializable {
 
     public String getMetaScore() {return metaScore;}
 
-    public String getDelta() {return delta;}
+    public int getDelta() {
+        if (delta.equals("0"))
+            return 0;
+        else
+            return Integer.parseInt(delta);
+    }
 
     public String getCountry() {
         return country;

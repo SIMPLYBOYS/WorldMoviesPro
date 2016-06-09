@@ -201,7 +201,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     // symbols for navdrawer items (indices must correspond to array below). This is
     // not a list of items that are necessarily *present* in the Nav Drawer; rather,
     // it's a list of all possible items.
-    protected static final int NAVDRAWER_ITEM_MY_SCHEDULE = 0;
+    protected static final int NAVDRAWER_ITEM_MY_FAVORITE = 0;
 
     protected static final int NAVDRAWER_ITEM_IO_LIVE = 1;
 
@@ -249,11 +249,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     // icons for navdrawer items (indices must correspond to above array)
     private static final int[] NAVDRAWER_ICON_RES_ID = new int[]{
-            R.drawable.ic_navview_my_schedule,  // My Schedule
+            R.drawable.ic_favorite,
             R.drawable.ic_navview_play_circle_fill, // I/O Live
-            R.drawable.ic_home_black_18dp,  // Explore
+            R.drawable.ic_trending_up,  // Explore
             R.drawable.ic_navview_map, // Map
-            R.drawable.ic_people_black_18dp, // Social
+            R.drawable.ic_speaker, // Social
             R.drawable.ic_navview_video_library, // Video Library
             R.drawable.facebook, // Sign in
             R.drawable.ic_navview_settings, // Settings.
@@ -261,7 +261,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             R.drawable.ic_theaters, //IMDB
             R.drawable.ic_navview_logout, //Sign out
             R.drawable.ic_navview_settings, // Debug
-
+            R.drawable.ic_navview_my_schedule // My Schedule
     };
 
     // delay to launch nav drawer item, to allow close animation to play
@@ -779,31 +779,27 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (AccountUtils.hasActiveAccount(this) || PrefUtils.getCurrentUser(this) != null) {
             // Only logged-in users can save sessions, so if there is no active account,
             // there is no My Schedule
-            mNavDrawerItems.add(NAVDRAWER_ITEM_MY_SCHEDULE);
-            mNavDrawerItems.add(NAVDRAWER_ITEM_SIGN_OUT);
+            mNavDrawerItems.add(NAVDRAWER_ITEM_MY_FAVORITE);
             // Explore is always shown.
             mNavDrawerItems.add(NAVDRAWER_ITEM_EXPLORE);
-
-            mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR);
-
             // Other items that are always in the nav drawer.
             mNavDrawerItems.add(NAVDRAWER_ITEM_IMDB);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SOCIAL);
             mNavDrawerItems.add(NAVDRAWER_ITEM_VIDEO_LIBRARY);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
+            mNavDrawerItems.add(NAVDRAWER_ITEM_SIGN_OUT);
             mNavDrawerItems.add(NAVDRAWER_ITEM_ABOUT);
         } else {
             // If no active account, show Sign In
             mNavDrawerItems.add(NAVDRAWER_ITEM_SIGN_IN);
-            mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR);
-
+            mNavDrawerItems.add(NAVDRAWER_ITEM_EXPLORE);
+            mNavDrawerItems.add(NAVDRAWER_ITEM_IMDB);
             // Other items that are always in the nav drawer.
             mNavDrawerItems.add(NAVDRAWER_ITEM_SOCIAL);
             mNavDrawerItems.add(NAVDRAWER_ITEM_VIDEO_LIBRARY);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
 //        mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
-            mNavDrawerItems.add(NAVDRAWER_ITEM_EXPLORE);
-            mNavDrawerItems.add(NAVDRAWER_ITEM_IMDB);
+
             mNavDrawerItems.add(NAVDRAWER_ITEM_ABOUT);
         }
         createNavDrawerItems();
@@ -930,7 +926,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("0426", "show user's profile");
+                Toast.makeText(getApplicationContext(), "Yes, the title is clickable", Toast.LENGTH_SHORT).show();
                 //TODO show user profile
             }
         });
@@ -1139,7 +1135,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private void goToNavDrawerItem(int item) {
         Log.d("0213", "goToNavDrawerItem: " + item);
         switch (item) {
-            case NAVDRAWER_ITEM_MY_SCHEDULE:
+            case NAVDRAWER_ITEM_MY_FAVORITE:
 //                createBackStack(new Intent(this, MyScheduleActivity.class));
 //                createBackStack(new Intent(this, VideoLibraryActivity.class));
                 break;
