@@ -53,6 +53,7 @@ import com.github.aakira.expandablelayout.ExpandableLayout;
 import com.github.aakira.expandablelayout.ExpandableLayoutListenerAdapter;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.github.aakira.expandablelayout.Utils;
+import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.ImdbGalleryRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
@@ -138,7 +139,7 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
     private LineChartData ratingPreviewData, positionPreviewData;
     private RequestQueue mQueue;
     public static final String REQUEST_TAG = "recordsRequest";
-    private String HOST_NAME = "http://ec2-52-192-246-11.ap-northeast-1.compute.amazonaws.com/";
+    private String HOST_NAME = Config.HOST_NAME;
 
     @Override
     public void onSupportActionModeStarted(ActionMode mode) {
@@ -301,8 +302,14 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
         //------- deserialize Gallery JSON object -------//
 
         picNum.setText(String.valueOf(list.size()));
-        myRecyclerView.setAdapter(imdbGalleryAdapter);
-        imdbGalleryAdapter.setOnItemClickListener(this);
+        if (jsonArray.size() > 1) {
+            myRecyclerView.setAdapter(imdbGalleryAdapter);
+            imdbGalleryAdapter.setOnItemClickListener(this);
+        } else {
+            View gallery = (LinearLayout) findViewById(R.id.gallery_container);
+            ViewGroup parent = (ViewGroup) gallery.getParent();
+            parent.removeView(gallery);
+        }
 
         //----------- record chart -----------//
         requestDataRefresh(imdbObject.getTitle());
@@ -377,11 +384,14 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
             Picasso.with(this).load(imdbObject.getSlate()).centerCrop().fit().into(backgroundImageView);
 
         Random random = new Random();
-        Log.d("0501", list.get(random.nextInt(list.size())).getUrl());
-        Picasso.with(this).load(list.get(random.nextInt(list.size())).getUrl()).centerCrop().fit().into(backgroundImageView2);
-        Picasso.with(this).load(list.get(random.nextInt(list.size())).getUrl()).centerCrop().fit().into(backgroundImageView3);
-        Picasso.with(this).load(list.get(random.nextInt(list.size())).getUrl()).centerCrop().fit().into(backgroundImageView4);
-        Picasso.with(this).load(list.get(random.nextInt(list.size())).getUrl()).centerCrop().fit().into(backgroundImageView5);
+
+        if (list.size() > 1) {
+            Log.d("0501", list.get(random.nextInt(list.size())).getUrl());
+            Picasso.with(this).load(list.get(random.nextInt(list.size())).getUrl()).centerCrop().fit().into(backgroundImageView2);
+            Picasso.with(this).load(list.get(random.nextInt(list.size())).getUrl()).centerCrop().fit().into(backgroundImageView3);
+            Picasso.with(this).load(list.get(random.nextInt(list.size())).getUrl()).centerCrop().fit().into(backgroundImageView4);
+            Picasso.with(this).load(list.get(random.nextInt(list.size())).getUrl()).centerCrop().fit().into(backgroundImageView5);
+        }
 
         Log.d("0406", "slate: " + imdbObject.getSlate() + (imdbObject.getSlate().equals("N/A")));
         builder = new MaterialDialog.Builder(MovieDetail.this)
@@ -549,7 +559,7 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
         View chart = (LinearLayout) findViewById(R.id.chart_layout);
         ViewGroup parent = (ViewGroup) chart.getParent();
         parent.removeView(chart);
-        Toast.makeText(this, "Remote Server not working!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Rating records not exisit for the movie!", Toast.LENGTH_LONG).show();
     }
 
     public static void transitionImageUrl(final ImageView imageView, final String urlImage, final int fadeDuration) {
