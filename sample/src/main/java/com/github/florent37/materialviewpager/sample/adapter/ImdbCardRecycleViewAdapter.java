@@ -99,7 +99,7 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
         private TextView rattingView;
         private TextView votesView;
         private TextView deltaView;
-        private ImageView posterView;
+        private ImageView posterView, arrowView;
         private ImdbCardRecycleViewAdapter mAdapter;
         private ImdbObject imdbObject;
 
@@ -113,7 +113,8 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
                 this.mAdapter = adapter;
                 titleView = (TextView) itemView.findViewById(R.id.title);
                 topView = (TextView) itemView.findViewById(R.id.top);
-                rattingView = (TextView)itemView.findViewById(R.id.rating);
+                rattingView = (TextView) itemView.findViewById(R.id.rating);
+                arrowView = (ImageView) itemView.findViewById(R.id.arrow);
                 yearView = (TextView)itemView.findViewById(R.id.year);
                 votesView = (TextView) itemView.findViewById(R.id.votes);
                 deltaView = (TextView) itemView.findViewById(R.id.delta);
@@ -142,7 +143,21 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
             yearView.setText(imdbObject.getYear());
             rattingView.setText(imdbObject.getRatting());
             votesView.setText(imdbObject.getVotes());
-            deltaView.setText(imdbObject.getDelta());
+            int delta = Math.abs(imdbObject.getDelta());
+            Log.d("0601: ", String.valueOf(delta));
+            if (delta != 0) {
+                deltaView.setText(String.valueOf(delta));
+                arrowView.setVisibility(View.VISIBLE);
+                if (imdbObject.getDelta() > 0)
+                    arrowView.setImageResource(R.drawable.ic_trending_up);
+                else
+                    arrowView.setImageResource(R.drawable.ic_trending_down);
+            } else if (delta == 0) {
+                deltaView.setText("");
+                arrowView.setVisibility(View.GONE);
+            }
+
+
             desciptionView.setText(imdbObject.getDescription());
             Picasso.with(posterView.getContext()).load(imdbObject.getPosterUrl()).placeholder(R.drawable.placeholder).centerCrop().fit()
                     .into(posterView, new Callback() {
