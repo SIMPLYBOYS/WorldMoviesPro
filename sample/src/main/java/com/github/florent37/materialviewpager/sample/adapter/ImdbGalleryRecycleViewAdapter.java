@@ -96,8 +96,10 @@ public class ImdbGalleryRecycleViewAdapter extends RecyclerView.Adapter<ImdbGall
         if (item!= null) {
             final String Url = item.getUrl();
             Log.d("0502", String.valueOf(position) + " Url:" + Url);
-            mProgressBar.setVisibility(View.VISIBLE);
-            itemHolder.bind(itemHolder, item, mProgressBar);
+            if (!Url.isEmpty()) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                itemHolder.bind(itemHolder, item, mProgressBar);
+            }
         }
     }
 
@@ -146,6 +148,7 @@ public class ImdbGalleryRecycleViewAdapter extends RecyclerView.Adapter<ImdbGall
                             }
                         });
             } else {
+
                 Picasso.with(pictureView.getContext()).load(item.getUrl()).placeholder(R.drawable.placeholder)
                         .fit()
                         .centerCrop()

@@ -168,7 +168,7 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
 
                         @Override
                         public void onError() {
-
+                            mProgressBar.setVisibility(View.GONE);
                         }
                     });
         }
