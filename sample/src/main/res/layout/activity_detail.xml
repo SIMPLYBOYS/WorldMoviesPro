@@ -5,7 +5,9 @@
     android:id="@+id/explore_io_card_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/card">
+    app:cardBackgroundColor="@color/card"
+    android:fitsSystemWindows="true">
+
     <com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"

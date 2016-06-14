@@ -15,6 +15,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:background="?android:selectableItemBackground"
     android:gravity="start|center_vertical"
@@ -37,5 +38,14 @@
         android:layout_gravity="start|center_vertical"
         android:textSize="14sp"
         />
+
+    <com.kyleduo.switchbutton.SwitchButton
+        android:id="@+id/sb_md"
+        style="@style/SwitchButtonStyleMD"
+        android:layout_width="wrap_content"
+        android:visibility="invisible"
+        android:layout_marginLeft="85dp"
+        android:layout_marginBottom="4dp"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

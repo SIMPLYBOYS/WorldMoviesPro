@@ -17,6 +17,7 @@
             android:layout_height="match_parent"
             app:foreground="@drawable/header_shadow">
 
+
             <com.github.florent37.materialviewpager.MaterialViewPager
                 android:id="@+id/materialViewPager"
                 android:layout_width="match_parent"

@@ -1,6 +1,4 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-
-
     <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
     </style>
 
@@ -8,21 +6,21 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-        <item name="android:windowTranslucentStatus" tools:targetApi="19">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="windowActionBar">false</item>
+        <item name="windowActionBar">true</item>
         <item name="android:popupMenuStyle">@style/myPopupMenuStyle</item>
         <item name="android:listPopupWindowStyle">@style/PopupListStyle</item>
-
         <!-- Material Theme -->
         <item name="colorPrimary">@color/io15_blue_grey_100</item>
         <item name="colorPrimaryDark">@color/material_grey_800</item>
         <item name="colorAccent">@color/io15_grey</item>
         <item name="android:windowBackground">@android:color/white</item>
-        <!-- <item name="android:actionOverflowMenuStyle" tools:targetApi="21">@style/myMenuStyle</item>
+         <item name="android:actionOverflowMenuStyle" tools:targetApi="21">@style/myMenuStyle</item>
          <item name="android:statusBarColor" tools:targetApi="21">@color/transparent_black</item>
          <item name="android:navigationBarColor" tools:targetApi="21">@color/navigationBarColor</item>
-         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>-->
+         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>
         <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/TextAppearance.AppCompat.Widget.PopupMenu.Small</item>
     </style>
@@ -30,10 +28,10 @@
     <style name="myPopupMenuStyle" parent="@style/Widget.AppCompat.Light.PopupMenu">
     </style>
 
-    <style name="HeaderBar">
-        <item name="android:background">?colorPrimary</item>
-        <item name="android:elevation">@dimen/headerbar_elevation</item>
-    </style>
+    <!--<style name="HeaderBar">-->
+        <!--<item name="android:background">?colorPrimary</item>-->
+        <!--<item name="android:elevation">@dimen/headerbar_elevation</item>-->
+    <!--</style>-->
 
     <style name="TextAppearance.SessionTitle" parent="TextAppearance.Body2">
         <item name="android:textColor">@color/video_title</item>
@@ -45,11 +43,15 @@
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
-    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textColor">#000</item>
+    </style>
 
-    <style name="ActionBarThemeOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:textColorPrimary">@color/text_on_primary</item>
-        <item name="android:textColorSecondary">@color/subtitle_on_primary</item>
+    <style name="ActionBarThemeOverlay" parent="">
+        <item name="android:textColorPrimary">#fff</item>
+        <item name="colorControlNormal">@color/material_red_50</item>
+        <item name="colorControlHighlight">#3fff</item>
     </style>
 
     <style name="PopupListStyle" parent="@style/Widget.AppCompat.Light.ListPopupWindow">
@@ -124,6 +126,9 @@
         <item name="android:windowBackground">@color/background</item>
     </style>
 
+    <!-- My Schedule -->
+    <style name="Theme.IOSched.MySchedule" parent="Theme.IOSched.WithNavDrawer" />
+
     <style name="Theme.IOSched" parent="Theme.IOSched.Base" />
 
     <style name="Theme.IOSched.Base" parent="Theme">
@@ -135,9 +140,9 @@
         <item name="photoItemForeground">?android:selectableItemBackground</item>
         <item name="photoItemForegroundBorderless">?android:selectableItemBackground</item>
 
-        <item name="colorPrimary">@color/theme_primary</item>
-        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="colorAccent">@color/theme_primary</item>
+        <item name="colorPrimary">@color/light_grey</item>
+        <item name="colorPrimaryDark">@color/light_grey</item>
+        <item name="colorAccent">@color/light_grey</item>
 
         <item name="android:textColorLink">@color/flat_button_text</item>
 
@@ -178,6 +183,51 @@
     <style name="Widget.IOSched.PopupMenu" parent="Widget.AppCompat.Light.PopupMenu">
         <item name="android:dropDownSelector">?popupItemBackground</item>
     </style>
+
+    <style name="StyleTitleText">
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textColor">#444444</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="SwitchButtonStyle">
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="SwitchButtonStyleMD" parent="SwitchButtonMD">
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="AppTheme.ActionBar.Transparent" parent="AppTheme">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBarOverlay">true</item>
+        <item name="colorPrimary">@android:color/transparent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="HomeAppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <!--<style name="ThemeOverlay.AppCompat.Dark.ActionBar" parent="Base.ThemeOverlay.AppCompat.Dark.ActionBar"/>-->
+
+    <style name="HomeAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
 
 </resources>
 

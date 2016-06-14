@@ -76,7 +76,7 @@
             app:aspectRatio="@dimen/aspect_16_9"
             android:id="@+id/picNumView">
             <ImageView
-                android:id="@+id/thumbnail"
+                android:id="@+id/media"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerInside"

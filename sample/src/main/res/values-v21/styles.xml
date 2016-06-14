@@ -9,7 +9,7 @@
 
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-        <item name="android:windowTranslucentStatus" tools:targetApi="19">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="windowActionBar">false</item>
         <item name="android:popupMenuStyle">@style/myPopupMenuStyle</item>
@@ -20,10 +20,10 @@
         <item name="colorPrimaryDark">@color/material_grey_800</item>
         <item name="colorAccent">@color/io15_grey</item>
         <item name="android:windowBackground">@android:color/white</item>
-        <item name="android:actionOverflowMenuStyle" tools:targetApi="21">@style/myMenuStyle</item>
-        <item name="android:statusBarColor" tools:targetApi="21">@color/transparent_black</item>
-        <item name="android:navigationBarColor" tools:targetApi="21">@color/navigationBarColor</item>
-        <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>
+        <item name="android:actionOverflowMenuStyle">@style/myMenuStyle</item>
+        <item name="android:statusBarColor">@color/transparent_black</item>
+        <item name="android:navigationBarColor">@color/navigationBarColor</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/TextAppearance.AppCompat.Widget.PopupMenu.Small</item>
         <item name="android:windowContentTransitions">true</item>
@@ -37,6 +37,15 @@
         <item name="android:statusBarColor" tools:targetApi="21">@color/transparent_black</item>
         <item name="android:navigationBarColor" tools:targetApi="21">@color/navigationBarColor</item>
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>-->
+    </style>
+
+    <style name="AppThemeNoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="colorPrimary">#ff0000</item>
+        <item name="colorPrimaryDark">#00ff00</item>
+        <item name="colorAccent">#0000ff</item>
+        <item name="android:windowTranslucentStatus" tools:targetApi="19">true</item>
+        <!-- Customize your theme here. -->
     </style>
 
     <style name="myMenuStyle" parent="@style/Widget.AppCompat.Light.PopupMenu.Overflow">
@@ -66,12 +75,16 @@
         <!--<item name="android:elevation">@dimen/headerbar_elevation</item>-->
     </style>
 
-    <style name="ActionBarThemeOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:textColorPrimary">@color/material_grey_50</item>
-        <item name="android:textColorSecondary">@color/material_grey_50</item>
+    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textColor">#000</item>
     </style>
 
-    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="ActionBarThemeOverlay" parent="">
+        <item name="android:textColorPrimary">#fff</item>
+        <item name="colorControlNormal">?actionBarIconColor</item>
+        <item name="colorControlHighlight">#3fff</item>
+    </style>
 
     <style name="EditText" parent="@android:style/Widget.EditText">
         <item name="android:textSize">15sp</item>
@@ -254,6 +267,40 @@
         <item name="contentPadding">@dimen/note_content_spacing</item>
         <item name="cardBackgroundColor">@color/material_grey_50</item>
         <item name="cardCornerRadius">@dimen/note_corner_radius</item>
+    </style>
+
+    <style name="StyleTitleText">
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textColor">#444444</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="SwitchButtonStyle">
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="SwitchButtonStyleMD" parent="SwitchButtonMD">
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
+    <style name="AppTheme.ActionBar.Transparent" parent="AppTheme">
+        <item name="colorPrimary">@android:color/transparent</item>
+    </style>
+
+    <style name="AppTheme.StatusBar" parent="HomeAppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
 </resources>

@@ -48,6 +48,8 @@
     <!-- Menu item to open the Settings screen [CHAR_LIMIT=20] -->
     <string name="navdrawer_item_settings">Settings</string>
 
+    <string name="navdrawer_item_nytimes">NewYorkTimes</string>
+
     <!-- Menu item to start the Sign In flow [CHAR_LIMIT=20] -->
     <string name="navdrawer_item_sign_in">Sign in</string>
 
