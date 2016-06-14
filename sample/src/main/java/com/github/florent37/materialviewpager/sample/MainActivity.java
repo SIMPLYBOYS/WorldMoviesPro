@@ -24,7 +24,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -35,6 +34,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +45,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -66,7 +68,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -76,77 +77,37 @@ import java.util.TimerTask;
 
 import io.fabric.sdk.android.Fabric;
 
-public class MainActivity extends BaseActivity implements RecyclerViewFragment.Listener, Response.Listener, Response.ErrorListener  {
+public class MainActivity extends BaseActivity implements RecyclerViewFragment.Listener, Response.Listener, Response.ErrorListener {
 
     private MaterialViewPager mViewPager;
-
     public static final String REQUEST_TAG = "MainVolleyActivity";
-
     private Context mContext;
-
-    // SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-
+    private SwipeRefreshLayout mSwipeRefreshLayout;// SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
     private boolean mActionBarShown = true;
-
     private String HOST_NAME = Config.HOST_NAME;
-
-    //    private DrawerLayout mDrawer;
-    private DrawerLayout mDrawerLayout;
-    //    private ListView mDrawerList;
-//    private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar toolbar;
-
     private RequestQueue mQueue;
-
     private boolean mSearchCheck;
-
     View headerLogo;
-
     ImageView headerLogoContent;
-
     private int mProgressBarTopWhenActionBarShown;
-
     private int mViewPagerScrollState = ViewPager.SCROLL_STATE_IDLE;
-
     private Set<RecyclerViewFragment> mMyRecyclerViewFragments = new HashSet<RecyclerViewFragment>();
-
-    // list of navdrawer items that were actually added to the navdrawer, in order
-    private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
-
-    // views that correspond to each navdrawer item, null if not yet created
-    private View[] mNavDrawerItemViews = null;
-
-    private ViewGroup mDrawerItemsListContainer;
-
-    // delay to launch nav drawer item, to allow close animation to play
-    private static final int NAVDRAWER_LAUNCH_DELAY = 250;
-
     private static final long GET_DATA_INTERVAL = 10000;
-
     private Handler mHandler;
-
     private TimerTask tTask;
-
     private Timer tTimer;
-
     private int SlideIndex;
-
     private FragmentStatePagerAdapter pagerAdapter;
-
     private SharedPreferences sp;
-
     final int tabCount = 4; //TODO title items design
-
     public static final String FILM_NAME = "filmName";
-
     private SimpleCursorAdapter mAdapter;
-
     private static String[] MOVIES = {};
-
     private SearchView searchView = null;
-
     private MenuItem searchItem = null;
+    MaterialDialog.Builder builder;
+    MaterialDialog dialog;
 
     public class MainPagerAdapter extends FragmentStatePagerAdapter {
         public MainPagerAdapter(android.support.v4.app.FragmentManager fragmentManager) {
@@ -189,7 +150,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         int oldItemPosition = -1;
 
         @Override
-        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        public void setPrimaryItem(ViewGroup container, final int position, Object object) {
             super.setPrimaryItem(container, position, object);
             Log.d("0303", "setPrimaryItem");
 
@@ -235,28 +196,72 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                         }
                     }
 
-                    if (position == 0 || position == 1) { // for IMDB channel
-                        RecyclerView recyclerView = fragment.setupRecyclerView();
-                        if (recyclerView == null) {
+                    RecyclerView recyclerView = fragment.setupRecyclerView();
+                    if (recyclerView == null) {
+                        mSwipeRefreshLayout.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (position == 1) {
+                                    mQueue = CustomVolleyRequestQueue.getInstance(MainActivity.this).getRequestQueue();
+                                    CustomJSONObjectRequest jsonRequest_q = null;
+                                    jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/monthList", new JSONObject(), new Response.Listener<JSONObject>() {
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            try {
+                                                JSONArray contents = response.getJSONArray("contents");
+                                                fragment.requestDataRefresh(false, null, contents);
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            mSwipeRefreshLayout.setRefreshing(false);
+                                            Toast.makeText(MainActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    mQueue.add(jsonRequest_q);
+                                } else {
+                                    fragment.requestDataRefresh(false, null, null);
+                                }
+                            }
+                        });
+                    } else {
+                        if (fragment.getInitiatedAdapter().getItemCount() ==1) {
                             mSwipeRefreshLayout.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Log.d("0416", "direct request");
-                                    fragment.requestDataRefresh(false, null);
+                                    if (position == 1) {
+                                        mQueue = CustomVolleyRequestQueue.getInstance(MainActivity.this).getRequestQueue();
+                                        CustomJSONObjectRequest jsonRequest_q = null;
+                                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/monthList", new JSONObject(), new Response.Listener<JSONObject>() {
+                                            @Override
+                                            public void onResponse(JSONObject response) {
+                                                try {
+                                                    JSONArray contents = response.getJSONArray("contents");
+                                                    Log.d("0607", "monthList onResponse" + contents);
+                                                    fragment.requestDataRefresh(false, null, contents);
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }, new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                mSwipeRefreshLayout.setRefreshing(false);
+                                                Log.d("0606", String.valueOf(error.getMessage()));
+                                                Toast.makeText(MainActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                        mQueue.add(jsonRequest_q);
+                                    } else {
+                                        fragment.requestDataRefresh(false, null, null);
+                                    }
+
                                 }
                             });
-                        } else {
-                            if (fragment.getInitiatedAdapter().getItemCount()==1) {
-                                mSwipeRefreshLayout.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        fragment.requestDataRefresh(false, null);
-                                    }
-                                });
-                            }
                         }
-                    } else {
-                        fragment.requestDataRefresh(false, null);
                     }
                 }
             }
@@ -327,7 +332,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                     Toast.makeText(getApplicationContext(), "Yes, the title is clickable", Toast.LENGTH_SHORT).show();
                     /*RecyclerViewFragment fragment = showVisibleFragment();
                     fragment.requestDataRefresh(true, null);*/
-                    showVisibleFragment().requestDataRefresh(true, null);
+                    showVisibleFragment().requestDataRefresh(true, null, null);
                 }
             });
 
@@ -396,10 +401,55 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         return result;
     }
 
+    private void loadHints() {
+        final String[] from = new String[]{FILM_NAME};
+        final int[] to = new int[]{android.R.id.text1};
+        final CustomJSONObjectRequest jsonRequest;
+        mAdapter = new SimpleCursorAdapter(this,
+                R.layout.hint_row,
+                null,
+                from,
+                to,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+
+        mQueue = CustomVolleyRequestQueue.getInstance(this)
+                .getRequestQueue();
+
+        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "/imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    Log.d("0419", "title onResponse");
+                    JSONArray contents = ((JSONObject) response).getJSONArray("contents");
+                    MOVIES = getStringArray(contents);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mQueue.add(jsonRequest);
+    }
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            dialog.show();
+            return false;
+        } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void toggleLogo(final Drawable newLogo, final int newColor, int duration) {
@@ -487,13 +537,13 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 switch (channel) {
                     case 0:
                         if (fragment.getInitiatedAdapter().getItemCount() < fragment.top250MovieCount)
-                            fragment.requestDataRefresh(true, null);
+                            fragment.requestDataRefresh(true, null, null);
                         else
                             mSwipeRefreshLayout.setRefreshing(false);
                         break;
                     case 1:
                         if (fragment.getInitiatedAdapter().getItemCount() < fragment.upComingMovieCount)
-                            fragment.requestDataRefresh(true, null);
+                            fragment.requestDataRefresh(true, null, null);
                         else
                             mSwipeRefreshLayout.setRefreshing(false);
                         break;
@@ -543,10 +593,11 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 RecyclerViewFragment fragment = showVisibleFragment();
 
 //                fragment.removeAdapterModel();
-                fragment.requestDataRefresh(true, query);
+                fragment.requestDataRefresh(true, query, null);
 
                 //if you want to collapse the searchview
                 invalidateOptionsMenu();
+                mSearchCheck = false;
                 mSearchCheck = false;
                 return false;
             }
@@ -579,24 +630,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         searchView.setSuggestionsAdapter(mAdapter);
 
         return true;
-    }
-
-    private void loadHints() {
-        final String[] from = new String[]{FILM_NAME};
-        final int[] to = new int[]{android.R.id.text1};
-        final CustomJSONObjectRequest jsonRequest;
-        mAdapter = new SimpleCursorAdapter(this,
-                R.layout.hint_row,
-                null,
-                from,
-                to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
-
-        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb_title", new JSONObject(), this, this);
-        mQueue.add(jsonRequest);
     }
 
     private void giveSuggestions(String query) {
@@ -676,7 +709,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 return true;
             case R.id.menu_refresh:
                 fragment = showVisibleFragment();
-                fragment.requestDataRefresh(true, null);
+                fragment.requestDataRefresh(true, null, null);
                 return true;
             case R.id.menu_smooth_zero:
                 fragment = showVisibleFragment();
@@ -785,6 +818,25 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
             tTimer = new Timer();
             tTimer.schedule(tTask, GET_DATA_INTERVAL, GET_DATA_INTERVAL);
         }
+
+        builder = new MaterialDialog.Builder(MainActivity.this)
+                .iconRes(R.drawable.ic_launcher)
+                .limitIconToDefaultSize() // limits the displayed icon size to 48dp
+                .title("Hint")
+                .titleColor(Color.BLACK)
+                .backgroundColor(Color.WHITE)
+                .contentColor(Color.BLACK)
+                .content("Do you really want to leave ?")
+                .positiveText("Agree")
+                .negativeText("Disagree")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(MaterialDialog dialog, DialogAction which) {
+                        MainActivity.this.finish();
+                    }
+                });
+
+        dialog = builder.build();
 
         // Check to ensure a Google Account is active for the app. Placing the check here ensures
         // it is run again in the case where a Google Account wasn't present on the device and a

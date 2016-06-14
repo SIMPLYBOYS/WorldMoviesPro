@@ -80,6 +80,7 @@ import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -109,9 +110,11 @@ import com.github.florent37.materialviewpager.sample.framework.UpdatableView;
 import com.github.florent37.materialviewpager.sample.framework.UserActionEnum;
 import com.github.florent37.materialviewpager.sample.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.sample.model.User;
+import com.github.florent37.materialviewpager.sample.nytimes.nyTimesActivity;
 import com.github.florent37.materialviewpager.sample.provider.ScheduleContract;
 import com.github.florent37.materialviewpager.sample.service.QuickstartPreferences;
 import com.github.florent37.materialviewpager.sample.service.RegistrationIntentService;
+import com.github.florent37.materialviewpager.sample.service.UnRegistrationIntentService;
 import com.github.florent37.materialviewpager.sample.settings.SettingsUtils;
 import com.github.florent37.materialviewpager.sample.sync.SyncHelper;
 import com.github.florent37.materialviewpager.sample.ui.widget.MultiSwipeRefreshLayout;
@@ -127,10 +130,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.kyleduo.switchbutton.SwitchButton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -160,6 +165,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private static final int SELECT_GOOGLE_ACCOUNT_RESULT = 9999;
 
     private static final int SELECT_FACEBOOK_ACCOUNT_RESULT = 64206;
+
+    public static final String FILM_NAME = "filmName";
 
     private AccessToken accessToken;
 
@@ -209,7 +216,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     protected static final int NAVDRAWER_ITEM_MAP = 3;
 
-    protected static final int NAVDRAWER_ITEM_SOCIAL = 4;
+    protected static final int NAVDRAWER_ITEM_NYTIMES = 4;
 
     protected static final int NAVDRAWER_ITEM_VIDEO_LIBRARY = 5;
 
@@ -237,7 +244,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             R.string.navdrawer_item_io_live,
             R.string.navdrawer_item_explore,
             R.string.navdrawer_item_map,
-            R.string.navdrawer_item_social,
+            R.string.navdrawer_item_nytimes,
             R.string.navdrawer_item_video_library,
             R.string.navdrawer_item_sign_in,
             R.string.navdrawer_item_settings,
@@ -386,6 +393,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 boolean sentToken = sharedPreferences
                         .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
                 Log.d("0523", String.valueOf(sentToken));
+
                 /*if (sentToken) {
                     mInformationTextView.setText(getString(R.string.gcm_send_message));
                 } else {
@@ -396,7 +404,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
         registerReceiver();
 
-        if (checkPlayServices()) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        boolean sentToken = sharedPreferences
+                .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+
+        if (checkPlayServices() && sentToken) {
             // Start IntentService to register this application with GCM.
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
@@ -641,8 +654,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             return;
         }
 
-        mDrawer.setStatusBarBackgroundColor(
-                getResources().getColor(R.color.theme_primary_dark));
+        mDrawer.setStatusBarBackgroundColor(getResources().getColor(R.color.theme_primary_dark));
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, 0, 0);
         mDrawerToggle.syncState();
@@ -784,9 +796,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
             mNavDrawerItems.add(NAVDRAWER_ITEM_EXPLORE);
             // Other items that are always in the nav drawer.
             mNavDrawerItems.add(NAVDRAWER_ITEM_IMDB);
-            mNavDrawerItems.add(NAVDRAWER_ITEM_SOCIAL);
+            mNavDrawerItems.add(NAVDRAWER_ITEM_NYTIMES);
             mNavDrawerItems.add(NAVDRAWER_ITEM_VIDEO_LIBRARY);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
+            mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SIGN_OUT);
             mNavDrawerItems.add(NAVDRAWER_ITEM_ABOUT);
         } else {
@@ -795,11 +808,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
             mNavDrawerItems.add(NAVDRAWER_ITEM_EXPLORE);
             mNavDrawerItems.add(NAVDRAWER_ITEM_IMDB);
             // Other items that are always in the nav drawer.
-            mNavDrawerItems.add(NAVDRAWER_ITEM_SOCIAL);
+            mNavDrawerItems.add(NAVDRAWER_ITEM_NYTIMES);
             mNavDrawerItems.add(NAVDRAWER_ITEM_VIDEO_LIBRARY);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
 //        mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
-
             mNavDrawerItems.add(NAVDRAWER_ITEM_ABOUT);
         }
         createNavDrawerItems();
@@ -926,7 +938,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         profileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Yes, the title is clickable", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Yes, the profile is clickable", Toast.LENGTH_SHORT).show();
                 //TODO show user profile
             }
         });
@@ -1037,6 +1049,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                         mDrawer.closeDrawer(GravityCompat.START);
                     } else {
                         Log.d("0426", "show account: " + accountName);
+                        Toast.makeText(getApplicationContext(), "the function is constructing!", Toast.LENGTH_SHORT).show();
                         //TODO friend profile display
                         /*AccountUtils.setActiveAccount(BaseActivity.this, accountName);
                         onAccountChangeRequested();
@@ -1147,8 +1160,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
             case NAVDRAWER_ITEM_MAP:
 //                createBackStack(new Intent(this, MapActivity.class));
                 break;
-            case NAVDRAWER_ITEM_SOCIAL:
-//                createBackStack(new Intent(this, SocialActivity.class));
+            case NAVDRAWER_ITEM_NYTIMES:
+                createBackStack(new Intent(this, nyTimesActivity.class));
                 break;
             case NAVDRAWER_ITEM_VIDEO_LIBRARY:
 //                createBackStack(new Intent(this, VideoLibraryActivity.class));
@@ -1284,7 +1297,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         if (isSpecialItem(itemId)) {
-            goToNavDrawerItem(itemId);
+//            goToNavDrawerItem(itemId);
+            Toast.makeText(getApplicationContext(), "the function is constructing!", Toast.LENGTH_SHORT).show();
         } else {
             // launch the target Activity after a short delay, to allow the close animation to play
             mHandler.postDelayed(new Runnable() {
@@ -1328,6 +1342,18 @@ public abstract class BaseActivity extends AppCompatActivity implements
         mSyncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
 
         startLoginProcess();
+    }
+
+    public static String[] getStringArray(JSONArray jsonArray) {
+        String[] stringArray = null;
+        int length = jsonArray.length();
+        if (jsonArray!=null) {
+            stringArray = new String[length];
+            for(int i=0;i<length;i++){
+                stringArray[i]= jsonArray.optString(i);
+            }
+        }
+        return stringArray;
     }
 
     @Override
@@ -1670,11 +1696,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
             return separator;
         }
 
-        View item =  getLayoutInflater().inflate(
-                R.layout.navdrawer_item, container, false);
-
+        View item =  getLayoutInflater().inflate(R.layout.navdrawer_item, container, false);
         ImageView iconView = (ImageView) item.findViewById(R.id.icon);
         TextView titleView = (TextView) item.findViewById(R.id.title);
+        final SwitchButton mSB = (SwitchButton) item.findViewById(R.id.sb_md);
+
         int iconId = itemId >= 0 && itemId < NAVDRAWER_ICON_RES_ID.length ?
                 NAVDRAWER_ICON_RES_ID[itemId] : 0;
         int titleId = itemId >= 0 && itemId < NAVDRAWER_TITLE_RES_ID.length ?
@@ -1682,19 +1708,45 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
         // set icon and text
         iconView.setVisibility(iconId > 0 ? View.VISIBLE : View.GONE);
+
         if (iconId > 0) {
             iconView.setImageResource(iconId);
         }
-        titleView.setText(getString(titleId));
 
+        titleView.setText(getString(titleId));
 //        item.setContent(NAVDRAWER_ICON_RES_ID[itemId], NAVDRAWER_TITLE_RES_ID[itemId]);
         item.setActivated(getSelfNavDrawerItem() == itemId);
+
         if (item.isActivated()) {
             item.setContentDescription(getString(R.string.navdrawer_selected_menu_item_a11y_wrapper,
                     getString(NAVDRAWER_TITLE_RES_ID[itemId])));
         } else {
             item.setContentDescription(getString(R.string.navdrawer_menu_item_a11y_wrapper,
                     getString(NAVDRAWER_TITLE_RES_ID[itemId])));
+        }
+
+        if (itemId == NAVDRAWER_ITEM_SETTINGS) {
+            SharedPreferences sharedPreferences =
+                    PreferenceManager.getDefaultSharedPreferences(context);
+            boolean sentToken = sharedPreferences
+                    .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+            if (sentToken)
+                mSB.setCheckedImmediately(true);
+            else
+                mSB.setCheckedImmediately(false);
+            mSB.setVisibility(View.VISIBLE);
+            mSB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (mSB.isChecked()) {
+                        Intent intent = new Intent(getApplicationContext(), RegistrationIntentService.class);
+                        startService(intent);
+                    } else {
+                        Intent intent = new Intent(getApplicationContext(), UnRegistrationIntentService.class);
+                        startService(intent);
+                    }
+                }
+            });
         }
 
         formatNavDrawerItem(item, itemId, selected);
@@ -1705,6 +1757,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 onNavDrawerItemClicked(itemId);
             }
         });
+
         return item;
     }
 
@@ -1713,6 +1766,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
             // not applicable
             return;
         }
+
+        Log.d("0609", String.valueOf(itemId));
 
         ImageView iconView = (ImageView) view.findViewById(R.id.icon);
         TextView titleView = (TextView) view.findViewById(R.id.title);
@@ -1942,5 +1997,34 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         return (floatingWindowFlag.data != 0);
+    }
+
+    // fetch height of status bar 
+    public int getStatusBarHeight() {
+        Class<?> c = null;
+        Object obj = null;
+        Field field = null;
+        int x = 0, statusBarHeight = 0;
+        try {
+            c = Class.forName("com.android.internal.R$dimen");
+            obj = c.newInstance();
+            field = c.getField("status_bar_height");
+            x = Integer.parseInt(field.get(obj).toString());
+            statusBarHeight = getResources().getDimensionPixelSize(x);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        return statusBarHeight;
+    }
+
+    // fetch heigth of action bar
+    public int getActionBarHeight() {
+        TypedValue tv = new TypedValue();
+        int actionBarHeight = 0;
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+        {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+        }
+        return actionBarHeight;
     }
 }

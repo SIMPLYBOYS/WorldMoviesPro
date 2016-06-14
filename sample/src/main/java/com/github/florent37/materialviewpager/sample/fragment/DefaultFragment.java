@@ -262,7 +262,7 @@ public class DefaultFragment extends RecyclerViewFragment implements AdapterView
             mSwipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
-                    requestDataRefresh(true, null);
+                    requestDataRefresh(true, null, null);
                 }
             });
         }

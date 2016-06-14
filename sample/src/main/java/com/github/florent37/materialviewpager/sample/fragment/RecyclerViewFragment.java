@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +23,15 @@ import com.github.florent37.materialviewpager.sample.adapter.TestRecyclerViewAda
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -49,6 +54,8 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
     public static final int upComingMovieCount = 74;
 
     public static final int top250MovieCount = 250;
+
+    public static int [] monthList;
 
     private RequestQueue mQueue;
 
@@ -77,21 +84,31 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
         return s.matches("[-+]?\\d*\\.?\\d+");
     }
 
-    public void requestDataRefresh(boolean Refresh, String Query) {
+    public void requestDataRefresh(boolean Refresh, String Query, JSONArray List) {
 
-        Log.d("0414", "requestDataRefresh");
+        Log.d("0414", "requestDataRefresh: " + List);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             if (!this.getUserVisibleHint()) {
                 return;
             }
         }
 
-        int channel = this.getArguments().getInt("index", 0);
-        Log.d("0414", String.valueOf(channel));
+        if (List != null && monthList == null) {
+            try {
+                monthList = new int[12];
+                for (int i = 0; i < List.length(); i++) {
+                    monthList[i] = List.getInt(i);
+                }
+            } catch (JSONException e) {
+                Log.e("App", "unexpect JSON exception", e);
+            }
+        }
+
         CustomJSONObjectRequest jsonRequest = null;
 
-        mQueue = CustomVolleyRequestQueue.getInstance(getContext())
-                .getRequestQueue();
+        int channel = this.getArguments().getInt("index", 0);
+
+        mQueue = CustomVolleyRequestQueue.getInstance(getContext()).getRequestQueue();
 
         CustomJSONObjectRequest jsonRequest_q = null; //json request from search bar
 
@@ -108,22 +125,25 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
                         } catch (UnsupportedEncodingException e) {
                             throw new AssertionError("UTF-8 is unknown");
                         }
-
                         jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb?title=" + Query + "&ascending=1", new JSONObject(), this, this);
                     }
                     mQueue.add(jsonRequest_q);
                     return;
                 }
+
                 final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.getInitiatedRecyclerView().getLayoutManager();
                 SharedPreferences settings = getActivity().getSharedPreferences("settings", 0);
                 boolean ascending = settings.getBoolean("ascending", false);
                 int start = linearLayoutManager.getItemCount()-1;
+
                 if (start % 6 != 0) {
                     removeAdapterModel();
                     start = 0;
                 }
+
                 int end = start + PAGE_UNIT; //6 default 6 cards per page
                 Log.d("0416", "start: " + start);
+
                 if (ascending) {
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
                             "/imdb?from=" + (start + 1) + "&to=" + end + "&ascending=1", new JSONObject(), this, this);
@@ -131,6 +151,7 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
                             "/imdb?from=" + (start + 1) + "&to=" + end + "&ascending=-1", new JSONObject(), this, this);
                 }
+
                 break;
             case 1:
                 if (Query != null) {
@@ -152,23 +173,44 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
                 }
                 ImdbCardRecycleViewAdapter adapter =  (ImdbCardRecycleViewAdapter) getInitiatedAdapter();
                 int count = adapter.getItemCount();
-                if (count < 16) {
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?release_from=" + 20160501 + "&release_to=" + 20160531, new JSONObject(), this, this);
-                } else if (count < 29) {
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?release_from=" + 20160601 + "&release_to=" + 20160630, new JSONObject(), this, this);
-                } else if (count < 47) {
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?release_from=" + 20160701 + "&release_to=" + 20160731, new JSONObject(), this, this);
-                } else if (count < 60) {
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?release_from=" + 20160801 + "&release_to=" + 20160831, new JSONObject(), this, this);
-                } else if (count < 74) {
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?release_from=" + 20160901 + "&release_to=" + 20160930, new JSONObject(), this, this);
-                }
+                Calendar c = Calendar.getInstance();
 
+                /*c.set(Calendar.YEAR, year);
+                c.set(Calendar.MONTH, month);
+                c.set(Calendar.DAY_OF_MONTH, 8);
+//                int day = c.get(Calendar.DAY_OF_MONTH)
+                SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+                String str = df.format(c.getTime());
+                String [] parts = TextUtils.split(str, "/");
+                Log.d("0606", TextUtils.join("", parts) + " " + month);
+                SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+                c.roll(Calendar.MONTH, 1);
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                String str = df.format(c.getTime());
+                String [] parts = TextUtils.split(str, "/");
+                Log.d("0606", TextUtils.join("", parts));*/
+
+                if (count < monthList[c.get(Calendar.MONTH)]) {
+                    Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(0, 1)) +' ' +String.valueOf(getReleaseDate(0, 30)));
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
+                            "/imdb?release_from=" + getReleaseDate(0, 1) + "&release_to=" + getReleaseDate(0, 30), new JSONObject(), this, this);
+                } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1]) {
+                    Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(1, 1)) +' ' +String.valueOf(getReleaseDate(1, 31)));
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
+                            "/imdb?release_from=" + getReleaseDate(1, 1) + "&release_to=" + getReleaseDate(1, 31), new JSONObject(), this, this);
+                } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2]) {
+                    Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(2, 1)) +' ' +String.valueOf(getReleaseDate(2, 31)));
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
+                            "/imdb?release_from=" + getReleaseDate(2, 1) + "&release_to=" + getReleaseDate(2, 31), new JSONObject(), this, this);
+                } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2] + monthList[c.get(Calendar.MONTH)+3]) {
+                    Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(3, 1)) +' ' +String.valueOf(getReleaseDate(3, 30)));
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
+                            "/imdb?release_from=" + getReleaseDate(3, 1) + "&release_to=" + getReleaseDate(3, 30), new JSONObject(), this, this);
+                } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2] + monthList[c.get(Calendar.MONTH)+3] + monthList[c.get(Calendar.MONTH)+4]) {
+                    Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(4, 1)) +' ' +String.valueOf(getReleaseDate(4, 31)));
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
+                            "/imdb?release_from=" + getReleaseDate(4, 1) + "&release_to=" + getReleaseDate(4, 31), new JSONObject(), this, this);
+                }
                 break;
             default:
                 jsonRequest = new CustomJSONObjectRequest(Request.Method.GET
@@ -186,6 +228,17 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
     public void onStart() {
         super.onStart();
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_refresh_layout);
+    }
+
+    private int getReleaseDate(int roll, int day) {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+        c.roll(Calendar.MONTH, roll);
+        c.set(Calendar.DAY_OF_MONTH, day);
+        String str = df.format(c.getTime());
+        String [] parts = TextUtils.split(str, "/");
+        Log.d("0606", TextUtils.join("", parts));
+        return Integer.parseInt(TextUtils.join("", parts));
     }
 
     public void setupArrangeModel() {

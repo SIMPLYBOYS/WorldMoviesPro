@@ -30,6 +30,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.ImdbSlideRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
@@ -71,7 +72,7 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
     private RequestQueue mQueue;
     private ArrayList<HashMap<String, String>> contentList;
     private ArrayList<HashMap<String, String>> galleryList;
-    private String HOST_NAME = "http://ec2-52-192-246-11.ap-northeast-1.compute.amazonaws.com/";
+    private String HOST_NAME = Config.HOST_NAME;
     public static final String REQUEST_TAG = "titleRequest";
     private int position;
 

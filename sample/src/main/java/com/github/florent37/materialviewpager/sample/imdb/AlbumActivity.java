@@ -31,6 +31,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.ImdbGalleryRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
@@ -72,7 +73,7 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
     private RequestQueue mQueue;
     public static ArrayList<HashMap<String, String>> contentList;
     public static ArrayList<HashMap<String, String>> galleryList;
-    private String HOST_NAME = "http://ec2-52-192-246-11.ap-northeast-1.compute.amazonaws.com/";
+    private String HOST_NAME = Config.HOST_NAME;
     public static final String REQUEST_TAG = "titleRequest";
     private static final String TAG_TITLE = "title";
     private static final String TAG_YEAR = "year";
@@ -92,6 +93,7 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
     private static final String TAG_COUNTRY = "country";
     private static final String TAG_TRAILER = "trailerUrl";
     private static final String TAG_GALLERY_FULL = "gallery_full";
+    private static final String TAG_DELTA = "delta";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,8 +160,7 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
             }
         }
 
-        // Retrieve the share menu item
-        shareItem = menu.findItem(R.id.action_share);
+        shareItem = menu.findItem(R.id.action_share); // Retrieve the share menu item
         searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setIconifiedByDefault(true);
@@ -372,6 +373,7 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
             JSONArray galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
             String trailerUrl;
             String slate;
+            String delta;
 
             if (c.has(TAG_TRAILER))
                 trailerUrl = c.getString(TAG_TRAILER);
@@ -382,6 +384,11 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
                 slate = d.getString(TAG_SLATE);
             else
                 slate = "N/A";
+
+            if (c.has(TAG_DELTA))
+                delta = c.getString(TAG_DELTA);
+            else
+                delta = "";
 
             Log.d("0407", trailerUrl);
             HashMap<String, String> content = new HashMap<String, String>();
@@ -400,6 +407,7 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
             content.put(TAG_VOTES, votes);
             content.put(TAG_RUNTIME,runTime);
             content.put(TAG_METASCORE, metaScore);
+            content.put(TAG_DELTA, delta);
             content.put(TAG_COUNTRY, country);
             content.put(TAG_DETAIL_POSTER_URL, detailPosterUrl);
             content.put(TAG_TRAILER, trailerUrl);
@@ -413,7 +421,7 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
             gallery = galleryList.get(0);
             ImdbObject item = new ImdbObject(content.get(TAG_TITLE), content.get(TAG_TOP), content.get(TAG_YEAR), content.get(TAG_DESCRIPTION),
                     content.get(TAG_RATING), content.get(TAG_POSTER_URL), content.get(TAG_SLATE), content.get(TAG_SUMMERY), content.get(TAG_PLOT),
-                    content.get(TAG_GENRE), content.get(TAG_VOTES), content.get(TAG_RUNTIME), content.get(TAG_METASCORE),content.get(TAG_COUNTRY),
+                    content.get(TAG_GENRE), content.get(TAG_VOTES), content.get(TAG_RUNTIME), content.get(TAG_METASCORE), content.get(TAG_DELTA),content.get(TAG_COUNTRY),
                     content.get(TAG_TRAILER), gallery.get(TAG_GALLERY_FULL));
 
             return item;

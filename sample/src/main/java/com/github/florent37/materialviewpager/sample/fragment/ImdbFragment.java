@@ -62,12 +62,12 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
 
     private ArrayList<HashMap<String, String>> contentList;
     private ArrayList<HashMap<String, String>> galleryList;
+    private int visibleThreshold = 1;
 //    private ArrayList<ImdbObject> imdbCollection = null;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager layoutManager;
     private ImdbCardRecycleViewAdapter imdbCardAdapter;
-    private int visibleThreshold = 1;
     private boolean loading;
     private int titleIndex = 0; //default
     private int lastVisibleItem, totalItemCount, channel;
@@ -103,6 +103,7 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (getActivity() instanceof Listener) {
+            Log.d("0607", "fragment attached");
             ((Listener) getActivity()).onFragmentAttached(this);
         }
     }
@@ -117,7 +118,6 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
 
     public ImdbCardRecycleViewAdapter
     getAdapter() {
-
         return new ImdbCardRecycleViewAdapter(getContext());
     }
 
@@ -142,7 +142,7 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
 
         } catch (JSONException e) {
             mSwipeRefreshLayout.setRefreshing(false);
-            Toast.makeText(getContext(), "Remote Server error!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
@@ -150,7 +150,8 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
     @Override
     public void onErrorResponse(VolleyError error) {
         mSwipeRefreshLayout.setRefreshing(false);
-        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+        Log.d("0606", String.valueOf(error.getMessage()));
+        Toast.makeText(getContext(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -176,7 +177,16 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
             int top = 0;
             String detailPosterUrl = "";
             String year = "";
-            String delta = "";
+            String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
+            String delta = "0";
+            //----- start dummy GalleryUrl ----
+            JSONObject jo = new JSONObject();
+            jo.put("type", "full");
+            jo.put("url", "");
+            JSONArray galleryFullUrl = new JSONArray();
+            galleryFullUrl.put(jo);
+            //----- end dummy GalleryUrl ----
+
             if (c.has(TAG_TOP)) {
                 Log.d("0518", title);
                 top = c.getInt(TAG_TOP);
@@ -184,17 +194,23 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
                     offSet = top;
             }
             year = c.getString(TAG_YEAR);
+
             if (c.has(TAG_RELEASE) && !c.has(TAG_TOP)) {
                 year = String.valueOf(c.getInt(TAG_RELEASE));
                 year = year.substring(4, 8);
             }
 
-            /*if (c.has(TAG_DELTA)) {
+            if (c.has(TAG_DELTA)) {
                 delta = c.getString(TAG_DELTA);
-            }*/
+            }
+
             String description= c.getString(TAG_DESCRIPTION);
             String rating = c.getString(TAG_RATING);
-            String posterUrl = c.getString(TAG_POSTER_URL);
+
+            if (c.has(TAG_POSTER_URL)) {
+                posterUrl = c.getString(TAG_POSTER_URL);
+            }
+
             String plot = c.getString(TAG_PLOT);
             String genre = c.getString(TAG_GENRE);
             String votes = c.getString(TAG_VOTES);
@@ -203,7 +219,11 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
 
             String summery = d.getString(TAG_SUMMERY);
             String country = d.getString(TAG_COUNTRY);
-            JSONArray galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
+
+            if (c.has(TAG_GALLERY_FULL)) {
+                galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
+            }
+
             String trailerUrl;
             String slate;
 
@@ -251,7 +271,7 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
             HashMap<String, String> gallery = galleryList.get(j);
             item = new ImdbObject(content.get(TAG_TITLE), content.get(TAG_TOP), content.get(TAG_YEAR), content.get(TAG_DESCRIPTION),
                     content.get(TAG_RATING), content.get(TAG_POSTER_URL), content.get(TAG_SLATE), content.get(TAG_SUMMERY), content.get(TAG_PLOT),
-                    content.get(TAG_GENRE), content.get(TAG_VOTES), content.get(TAG_RUNTIME), content.get(TAG_METASCORE),content.get(TAG_COUNTRY),
+                    content.get(TAG_GENRE), content.get(TAG_VOTES), content.get(TAG_RUNTIME), content.get(TAG_METASCORE), content.get(TAG_DELTA), content.get(TAG_COUNTRY),
                     content.get(TAG_TRAILER), gallery.get(TAG_GALLERY_FULL));
             if (byTitle)
                 return item; // only one item in case of query by title
@@ -333,6 +353,7 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
                         Log.d("0409", "case2");
                         onLoadMoreListener.onLoadMore();
                     }
+//                    loading = true;
                     loading = true;
                 }
             }
@@ -428,14 +449,14 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
                 mSwipeRefreshLayout.post(new Runnable() {
                     @Override
                     public void run() {
-                        requestDataRefresh(true, null);
+                        requestDataRefresh(true, null, null);
                     }
                 });
             } else if (ascending && imdbCardAdapter.getItemCount() < upComingMovieCount && channel == 1) {
                 mSwipeRefreshLayout.post(new Runnable() {
                     @Override
                     public void run() {
-                        requestDataRefresh(true, null);
+                        requestDataRefresh(true, null, null);
                     }
                 });
             }
