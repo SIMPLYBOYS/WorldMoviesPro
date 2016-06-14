@@ -12,6 +12,10 @@ public class Config {
 
     public static final String HOST_NAME = "http://ec2-52-192-246-11.ap-northeast-1.compute.amazonaws.com/";
 
+    public static final String NYTimesKey = "cfbde1033d5286c27aecd308b6b494bb:0:74862166";
+
+    public static final String URL_NY_TIMES = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?";
+
     // Warning messages for dogfood build
     public static final String DOGFOOD_BUILD_WARNING_TITLE = "DOGFOOD BUILD";
 
@@ -138,4 +142,5 @@ public class Config {
     // URL prefix for web links to session pages
     public static final String SESSION_DETAIL_WEB_URL_PREFIX
             = "https://www.google.com/events/io/schedule/session/";
+
 }
