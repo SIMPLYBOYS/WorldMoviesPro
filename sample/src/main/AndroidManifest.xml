@@ -68,28 +68,6 @@ package="com.github.florent37.materialviewpager.sample">
         </intent-filter>
     </activity>
 
-    <!--<activity
-        android:name=".videolibrary.VideoLibraryActivity"
-        android:theme="@style/Theme.IOSched.VideoLibrary"
-        android:label="@string/title_video_library"
-        android:parentActivityName=".MainActivity"
-        android:exported="false">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".MainActivity" />
-    </activity>-->
-
-    <!--<activity
-        android:name=".videolibrary.VideoLibraryFilteredActivity"
-        android:theme="@style/Theme.IOSched.VideoLibrary"
-        android:label="@string/title_video_library"
-        android:parentActivityName=".videolibrary.VideoLibraryActivity"
-        android:exported="false">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".videolibrary.VideoLibraryActivity" />
-    </activity>-->
-
     <activity
         android:name=".about.AboutActivity"
         android:label="@string/description_about"
@@ -108,16 +86,25 @@ package="com.github.florent37.materialviewpager.sample">
 
     <activity
         android:name=".imdb.AlbumActivity"
+        android:screenOrientation="portrait"
         android:label="@string/description_album">
     </activity>
 
     <activity
         android:name=".imdb.SlideActivity"
+        android:screenOrientation="portrait"
+        android:label="">
+    </activity>
+
+    <activity
+        android:name=".framework.WebViewActivity"
+        android:screenOrientation="portrait"
         android:label="">
     </activity>
 
     <activity
         android:name=".detail.DetailActivity"
+        android:screenOrientation="portrait"
         android:label="@string/description_detail">
     </activity>
 
@@ -125,23 +112,23 @@ package="com.github.florent37.materialviewpager.sample">
         android:name=".imdb.ImdbActivity"
         android:label="@string/description_imdb"
         android:parentActivityName=".MainActivity"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppTheme.ActionBar.Transparent"
         android:exported="false">
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".MainActivity" />
     </activity>
 
-    <!--<activity
-        android:name=".live.LiveActivity"
-        android:label="@string/description_live"
+    <activity
+        android:name=".nytimes.nyTimesActivity"
+        android:label="NY Times Movies Review"
         android:parentActivityName=".MainActivity"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppTheme.ActionBar.Transparent"
         android:exported="false">
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".MainActivity" />
-    </activity>-->
+    </activity>
 
     <activity
         android:name=".welcome.WelcomeActivity"
@@ -199,6 +186,10 @@ package="com.github.florent37.materialviewpager.sample">
         <!-- [END instanceId_listener] -->
         <service
             android:name=".service.RegistrationIntentService"
+            android:exported="false">
+        </service>
+        <service
+            android:name=".service.UnRegistrationIntentService"
             android:exported="false">
         </service>
 
