@@ -85,6 +85,23 @@ package="com.github.florent37.materialviewpager.sample">
     </activity>
 
     <activity
+        android:name=".trends.TrendsDetail"
+        android:label="@string/description_trends">
+    </activity>
+
+    <activity
+        android:name=".trends.TrendsAlbumActivity"
+        android:screenOrientation="portrait"
+        android:label="@string/description_album">
+    </activity>
+
+    <activity
+        android:name=".trends.TrendsSlideActivity"
+        android:screenOrientation="portrait"
+        android:label="@string/description_album">
+    </activity>
+
+    <activity
         android:name=".imdb.AlbumActivity"
         android:screenOrientation="portrait"
         android:label="@string/description_album">
@@ -111,6 +128,17 @@ package="com.github.florent37.materialviewpager.sample">
     <activity
         android:name=".imdb.ImdbActivity"
         android:label="@string/description_imdb"
+        android:parentActivityName=".MainActivity"
+        android:theme="@style/AppTheme.ActionBar.Transparent"
+        android:exported="false">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
+    </activity>
+
+    <activity
+        android:name=".upcoming.upComingActivity"
+        android:label="@string/description_upcoming"
         android:parentActivityName=".MainActivity"
         android:theme="@style/AppTheme.ActionBar.Transparent"
         android:exported="false">
