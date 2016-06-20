@@ -77,7 +77,7 @@ public class ImdbSlideRecycleViewAdapter extends RecyclerView.Adapter<ImdbSlideR
     public SlideItemHolder onCreateViewHolder(ViewGroup container, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(container.getContext());
         View root = null;
-        root = inflater.inflate(R.layout.imdb_slide_pic, container, false);
+        root = inflater.inflate(R.layout.slide_pic, container, false);
         mProgressBar = (ProgressBar)root.findViewById(android.R.id.progress);
         return new SlideItemHolder(root, this);
     }

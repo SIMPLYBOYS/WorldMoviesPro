@@ -10,14 +10,20 @@
     <string name="sports">sports</string>
     <string name="divertissement">divertissement</string>
     <string name="IMDB">imdb top 250</string>
+    <string name="Japan">Japan</string>
+    <string name="USA">USA</string>
+    <string name="Taiwan">Taiwan</string>
+    <string name="Korea">Korea</string>
     <string name="upcoming">upcoming</string>
     <string name="technologie">technology</string>
     <string name="international">international</string>
     <!-- Menu item that brings up the application's About screen -->
     <string name="description_about">About</string>
     <string name="description_detail">Detail</string>
+    <string name="description_trends">TrendsDetail</string>
     <string name="description_album">Album</string>
     <string name="description_imdb">IMDB Top 250</string>
+    <string name="description_upcoming">UpComing films</string>
     <string name="image">image</string>
 
     <string name="description_live">Live</string>
@@ -64,6 +70,8 @@
 
     <!-- Menu item to open a list of current and past I/O videos [CHAR_LIMIT=20] -->
     <string name="navdrawer_item_video_library">Live</string>
+
+    <string name="navdrawer_item_up_coming">UpComing</string>
 
     <!-- Menu item to open the debugging screen on debug builds [CHAR_LIMIT=20] -->
     <string name="navdrawer_item_debug">Debug</string>
@@ -521,7 +529,7 @@ user updates the rating. -->
 
     <string name="facebook_app_id">906705239447168</string>
 
-    <string name="action_search">hello search</string>
+    <string name="action_search">Search</string>
 
     <!-- Drawer Items -->
     <string name="drawer_item_persistent_compact_header">PersistentHeader Drawer</string>

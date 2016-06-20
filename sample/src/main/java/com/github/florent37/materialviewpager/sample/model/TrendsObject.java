@@ -1,7 +1,5 @@
 package com.github.florent37.materialviewpager.sample.model;
 
-import org.json.JSONArray;
-
 import java.io.Serializable;
 
 /**
@@ -14,9 +12,9 @@ public class TrendsObject implements Serializable {
     private String posterUrl;
     private String trailerUrl;
     private String galleryUrl;
-    private transient JSONArray cast;
-    private transient JSONArray staff;
-    private transient JSONArray data;
+    private String cast;
+    private String staff;
+    private String data;
     private String story;
     private String mainInfo;
 
@@ -33,8 +31,41 @@ public class TrendsObject implements Serializable {
         }
     }
 
+    public class DataItem {
+        private String data;
+        public String getData() {
+            return data;
+        }
+    }
+
+    public class StaffItem {
+        private String staff;
+        private String url;
+
+        public String getStaff() {
+            return staff;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+    }
+
+    public class CastItem {
+        private String cast;
+        private String url;
+
+        public String getCast() {
+            return cast;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+    }
+
     public TrendsObject(String title, String top, String detailUrl, String posterUrl, String trailerUrl,
-                        JSONArray cast, JSONArray staff, JSONArray data, String story, String mainInfo, String galleryUrl) {
+                        String cast, String staff, String data, String story, String mainInfo, String galleryUrl) {
         this.title = title;
         this.top = top;
         this.detailUrl = detailUrl;
@@ -57,13 +88,13 @@ public class TrendsObject implements Serializable {
 
     public String getMainInfo() { return mainInfo; }
 
-    public JSONArray getCast() { return cast;}
+    public String getCast() { return cast;}
 
-    public JSONArray getStaff() { return staff; }
+    public String getStaff() { return staff; }
 
     public String getStory() { return story; }
 
-    public JSONArray getData() { return data; }
+    public String getData() { return data; }
 
     public String getTitle() {
         return title;

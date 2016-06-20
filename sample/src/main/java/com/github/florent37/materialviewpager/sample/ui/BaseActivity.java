@@ -119,6 +119,7 @@ import com.github.florent37.materialviewpager.sample.settings.SettingsUtils;
 import com.github.florent37.materialviewpager.sample.sync.SyncHelper;
 import com.github.florent37.materialviewpager.sample.ui.widget.MultiSwipeRefreshLayout;
 import com.github.florent37.materialviewpager.sample.ui.widget.ScrimInsetsScrollView;
+import com.github.florent37.materialviewpager.sample.upcoming.upComingActivity;
 import com.github.florent37.materialviewpager.sample.util.AccountUtils;
 import com.github.florent37.materialviewpager.sample.util.ImageLoader;
 import com.github.florent37.materialviewpager.sample.util.LUtils;
@@ -218,7 +219,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     protected static final int NAVDRAWER_ITEM_NYTIMES = 4;
 
-    protected static final int NAVDRAWER_ITEM_VIDEO_LIBRARY = 5;
+    protected static final int NAVDRAWER_ITEM_UP_COMING = 5;
 
     protected static final int NAVDRAWER_ITEM_SIGN_IN = 6;
 
@@ -245,7 +246,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             R.string.navdrawer_item_explore,
             R.string.navdrawer_item_map,
             R.string.navdrawer_item_nytimes,
-            R.string.navdrawer_item_video_library,
+            R.string.navdrawer_item_up_coming,
             R.string.navdrawer_item_sign_in,
             R.string.navdrawer_item_settings,
             R.string.description_about,
@@ -261,7 +262,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             R.drawable.ic_trending_up,  // Explore
             R.drawable.ic_navview_map, // Map
             R.drawable.ic_speaker, // Social
-            R.drawable.ic_navview_video_library, // Video Library
+            R.drawable.ic_movie, // Video Library
             R.drawable.facebook, // Sign in
             R.drawable.ic_navview_settings, // Settings.
             R.drawable.ic_info_outline, // About
@@ -795,9 +796,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
             // Explore is always shown.
             mNavDrawerItems.add(NAVDRAWER_ITEM_EXPLORE);
             // Other items that are always in the nav drawer.
+            mNavDrawerItems.add(NAVDRAWER_ITEM_UP_COMING);
             mNavDrawerItems.add(NAVDRAWER_ITEM_IMDB);
             mNavDrawerItems.add(NAVDRAWER_ITEM_NYTIMES);
-            mNavDrawerItems.add(NAVDRAWER_ITEM_VIDEO_LIBRARY);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SIGN_OUT);
@@ -809,7 +810,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             mNavDrawerItems.add(NAVDRAWER_ITEM_IMDB);
             // Other items that are always in the nav drawer.
             mNavDrawerItems.add(NAVDRAWER_ITEM_NYTIMES);
-            mNavDrawerItems.add(NAVDRAWER_ITEM_VIDEO_LIBRARY);
+            mNavDrawerItems.add(NAVDRAWER_ITEM_UP_COMING);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
 //        mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
             mNavDrawerItems.add(NAVDRAWER_ITEM_ABOUT);
@@ -1155,7 +1156,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
             case NAVDRAWER_ITEM_EXPLORE:
 //                context.startService(new Intent(context, DataBootstrapService.class)); //get latest JSON file from server
                 startActivityForVersion(new Intent(this, MainActivity.class));
-                finish();
                 break;
             case NAVDRAWER_ITEM_MAP:
 //                createBackStack(new Intent(this, MapActivity.class));
@@ -1163,8 +1163,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
             case NAVDRAWER_ITEM_NYTIMES:
                 createBackStack(new Intent(this, nyTimesActivity.class));
                 break;
-            case NAVDRAWER_ITEM_VIDEO_LIBRARY:
-//                createBackStack(new Intent(this, VideoLibraryActivity.class));
+            case NAVDRAWER_ITEM_UP_COMING:
+                createBackStack(new Intent(this, upComingActivity.class));
 //                createBackStack(new Intent(this, LiveActivity.class));
                 break;
             case NAVDRAWER_ITEM_SIGN_IN:

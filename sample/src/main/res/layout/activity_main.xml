@@ -26,7 +26,7 @@
                 android:layout_centerHorizontal="true"
                 app:viewpager_logo="@layout/header_logo_2"
                 app:viewpager_pagerTitleStrip="@layout/material_view_pager_pagertitlestrip_newstand"
-                app:viewpager_logoMarginTop="100dp"
+                app:viewpager_logoMarginTop="70dp"
                 app:viewpager_color="@color/colorPrimary"
                 app:viewpager_headerHeight="200dp"
                 app:viewpager_headerAlpha="1.0"

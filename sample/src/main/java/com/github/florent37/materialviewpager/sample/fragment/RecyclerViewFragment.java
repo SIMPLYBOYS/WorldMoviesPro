@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,9 +16,10 @@ import android.view.ViewGroup;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
-import com.github.florent37.materialviewpager.sample.adapter.ImdbCardRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.adapter.TestRecyclerViewAdapter;
+import com.github.florent37.materialviewpager.sample.adapter.TrendsCardRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 
@@ -55,6 +55,8 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
 
     public static final int top250MovieCount = 250;
 
+    public static final int trendMovieCount = 10;
+
     public static int [] monthList;
 
     private RequestQueue mQueue;
@@ -63,7 +65,7 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
 
     private static final int PAGE_UNIT = 6; //default 6 cards in one page
 
-    public String HOST_NAME = "http://ec2-52-192-246-11.ap-northeast-1.compute.amazonaws.com/";
+    public String HOST_NAME = Config.HOST_NAME;
 
     private List<TestRecyclerViewAdapter.MyObject> getRandomSublist(List<TestRecyclerViewAdapter.MyObject> array, int amount) {
 
@@ -108,6 +110,8 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
 
         int channel = this.getArguments().getInt("index", 0);
 
+        Log.d("0616", String.valueOf(channel));
+
         mQueue = CustomVolleyRequestQueue.getInstance(getContext()).getRequestQueue();
 
         CustomJSONObjectRequest jsonRequest_q = null; //json request from search bar
@@ -115,7 +119,7 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
         switch (channel) {
             case 0:
                 if (Query != null) {
-                    // query from searchview
+                    /*// query from searchview
                     if (isNumeric(Query))
                         jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
                                 "/imdb?from=" + Integer.parseInt(Query) + "&to=" + Integer.parseInt(Query) + "&ascending=1", new JSONObject(), this, this);
@@ -128,30 +132,19 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
                         jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb?title=" + Query + "&ascending=1", new JSONObject(), this, this);
                     }
                     mQueue.add(jsonRequest_q);
-                    return;
+                    return;*/
                 }
 
-                final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) this.getInitiatedRecyclerView().getLayoutManager();
                 SharedPreferences settings = getActivity().getSharedPreferences("settings", 0);
                 boolean ascending = settings.getBoolean("ascending", false);
-                int start = linearLayoutManager.getItemCount()-1;
 
-                if (start % 6 != 0) {
-                    removeAdapterModel();
-                    start = 0;
-                }
-
-                int end = start + PAGE_UNIT; //6 default 6 cards per page
-                Log.d("0416", "start: " + start);
-
-                if (ascending) {
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?from=" + (start + 1) + "&to=" + end + "&ascending=1", new JSONObject(), this, this);
+                String url = HOST_NAME + "trends";
+                TrendsCardRecycleViewAdapter adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+                if (ascending ) {
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
                 } else {
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?from=" + (start + 1) + "&to=" + end + "&ascending=-1", new JSONObject(), this, this);
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=-1", new JSONObject(), this, this);
                 }
-
                 break;
             case 1:
                 if (Query != null) {
@@ -171,8 +164,9 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
                     mQueue.add(jsonRequest_q);
                     return;
                 }
-                ImdbCardRecycleViewAdapter adapter =  (ImdbCardRecycleViewAdapter) getInitiatedAdapter();
-                int count = adapter.getItemCount();
+
+                TrendsCardRecycleViewAdapter adapter2 =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+                int count = adapter2.getItemCount();
                 Calendar c = Calendar.getInstance();
 
                 /*c.set(Calendar.YEAR, year);

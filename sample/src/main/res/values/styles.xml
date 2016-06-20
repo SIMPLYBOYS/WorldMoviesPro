@@ -217,6 +217,13 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name="CollapsedAppBar" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">26sp</item>
+        <item name="android:textColor">@color/io15_white</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
     <!--<style name="ThemeOverlay.AppCompat.Dark.ActionBar" parent="Base.ThemeOverlay.AppCompat.Dark.ActionBar"/>-->
 
     <style name="HomeAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">

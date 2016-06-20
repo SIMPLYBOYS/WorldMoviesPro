@@ -16,6 +16,10 @@ public class Config {
 
     public static final String URL_NY_TIMES = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?";
 
+    public static final String YOUTUBE_API_KEY = "AIzaSyC1rMU-mkhoyTvBIdTnYU0dss0tU9vtK48";
+
+    public static final String VIDEO_KEY = "mzhX2PD6Srw";
+
     // Warning messages for dogfood build
     public static final String DOGFOOD_BUILD_WARNING_TITLE = "DOGFOOD BUILD";
 

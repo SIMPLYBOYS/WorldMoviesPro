@@ -415,8 +415,6 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
             contentList.add(content);
             galleryList.add(gallery);
 
-//        imdbCollection = new ArrayList<ImdbObject>();
-
             content = contentList.get(0);
             gallery = galleryList.get(0);
             ImdbObject item = new ImdbObject(content.get(TAG_TITLE), content.get(TAG_TOP), content.get(TAG_YEAR), content.get(TAG_DESCRIPTION),

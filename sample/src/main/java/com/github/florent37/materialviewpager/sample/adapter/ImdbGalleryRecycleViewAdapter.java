@@ -81,9 +81,9 @@ public class ImdbGalleryRecycleViewAdapter extends RecyclerView.Adapter<ImdbGall
         LayoutInflater inflater = LayoutInflater.from(container.getContext());
         View root = null;
         if (inAlbum) {
-            root = inflater.inflate(R.layout.imdb_album_pic, container, false);
+            root = inflater.inflate(R.layout.album_pic, container, false);
         } else {
-            root = inflater.inflate(R.layout.imdb_gallery_pic, container, false);
+            root = inflater.inflate(R.layout.gallery_pic, container, false);
         }
         mProgressBar = (ProgressBar)root.findViewById(android.R.id.progress);
 

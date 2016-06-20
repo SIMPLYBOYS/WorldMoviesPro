@@ -65,8 +65,7 @@
                 android:textColor="@color/red"
                 android:textStyle="bold"
                 android:layout_marginLeft="@dimen/explore_io_keynote_card_padding_start"
-                android:layout_marginStart="@dimen/explore_io_keynote_card_padding_start"
-                android:text="100" />
+                android:layout_marginStart="@dimen/explore_io_keynote_card_padding_start" />
 
             <ImageView
                 android:id="@+id/arrow"
@@ -132,7 +131,8 @@
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
             <com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView
                 android:layout_width="24dp"
                 android:layout_height="0dp"

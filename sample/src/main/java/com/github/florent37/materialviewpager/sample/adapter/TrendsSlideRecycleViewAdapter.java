@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ProgressBar;
 
 import com.github.florent37.materialviewpager.sample.R;
-import com.github.florent37.materialviewpager.sample.model.ImdbObject;
+import com.github.florent37.materialviewpager.sample.model.TrendsObject;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -21,7 +21,7 @@ import uk.co.senab.photoview.PhotoView;
  * Created by aaron on 2016/6/19.
  */
 public class TrendsSlideRecycleViewAdapter extends RecyclerView.Adapter<TrendsSlideRecycleViewAdapter.SlideItemHolder> {
-    private ArrayList<ImdbObject.GalleryItem> mItems;
+    private ArrayList<TrendsObject.GalleryItem> mItems;
 
     private AdapterView.OnItemClickListener mOnItemClickListener;
 
@@ -29,11 +29,11 @@ public class TrendsSlideRecycleViewAdapter extends RecyclerView.Adapter<TrendsSl
 
     private ProgressBar mProgressBar;
 
-    private ImdbObject imdbObject;
+    private TrendsObject trendsObject;
 
-    public ImdbSlideRecycleViewAdapter(ImdbObject imdbObject) {
-        mItems = new ArrayList<ImdbObject.GalleryItem>();
-        this.imdbObject = imdbObject;
+    public TrendsSlideRecycleViewAdapter(TrendsObject trendsObject) {
+        mItems = new ArrayList<TrendsObject.GalleryItem>();
+        this.trendsObject = trendsObject;
     }
 
     /*
@@ -53,7 +53,7 @@ public class TrendsSlideRecycleViewAdapter extends RecyclerView.Adapter<TrendsSl
      * RecyclerView method, notifyItemInserted(), to trigger any enabled item
      * animations in addition to updating the view.
      */
-    public void addItem(int position, ImdbObject.GalleryItem Item) {
+    public void addItem(int position, TrendsObject.GalleryItem Item) {
         if (position > mItems.size()) return;
         mItems.add(position, Item);
         notifyItemInserted(position);
@@ -75,14 +75,14 @@ public class TrendsSlideRecycleViewAdapter extends RecyclerView.Adapter<TrendsSl
     public SlideItemHolder onCreateViewHolder(ViewGroup container, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(container.getContext());
         View root = null;
-        root = inflater.inflate(R.layout.imdb_slide_pic, container, false);
+        root = inflater.inflate(R.layout.slide_pic, container, false);
         mProgressBar = (ProgressBar)root.findViewById(android.R.id.progress);
         return new SlideItemHolder(root, this);
     }
 
     @Override
     public void onBindViewHolder(SlideItemHolder itemHolder, int position) {
-        ImdbObject.GalleryItem item = mItems.get(position - mPlaceholderSize);
+        TrendsObject.GalleryItem item = mItems.get(position - mPlaceholderSize);
         if (item!= null) {
             final String Url = item.getUrl();
             Log.d("0502", String.valueOf(position) + " Url:" + Url);
@@ -108,10 +108,10 @@ public class TrendsSlideRecycleViewAdapter extends RecyclerView.Adapter<TrendsSl
 
     public class SlideItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private ImdbSlideRecycleViewAdapter mAdapter;
+        private TrendsSlideRecycleViewAdapter mAdapter;
         private PhotoView pictureView;
 
-        public SlideItemHolder(View itemView, ImdbSlideRecycleViewAdapter adapter) {
+        public SlideItemHolder(View itemView, TrendsSlideRecycleViewAdapter adapter) {
             super(itemView);
             itemView.setOnClickListener(this);
 
@@ -121,7 +121,7 @@ public class TrendsSlideRecycleViewAdapter extends RecyclerView.Adapter<TrendsSl
             Picasso.with(pictureView.getContext()).load(R.drawable.parisguidetower).into(pictureView);
         }
 
-        public void bind(ImdbObject.GalleryItem item, final ProgressBar mProgressBar) {
+        public void bind(TrendsObject.GalleryItem item, final ProgressBar mProgressBar) {
             Picasso.with(pictureView.getContext()).load(item.getUrl()).placeholder(R.drawable.placeholder)
                     .into(pictureView, new Callback() {
                         @Override

@@ -107,9 +107,9 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
         Response.Listener, Response.ErrorListener {
 
     public static final String IMDB_OBJECT = "IMDB_OBJECT";
-    private static final String YOUTUBE_API_KEY = "AIzaSyC1rMU-mkhoyTvBIdTnYU0dss0tU9vtK48";
-    private static final String TAG_RECORDS = "records";
-    private static String VIDEO_KEY = "mzhX2PD6Srw";
+    private final String YOUTUBE_API_KEY = Config.YOUTUBE_API_KEY;
+    private final String TAG_RECORDS = "records";
+    private String VIDEO_KEY = Config.VIDEO_KEY;
     private YouTubePlayer youtubePlayer;
     private FloatingActionButton fab;
     private YouTubePlayerView youtube_view;
@@ -119,7 +119,7 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbar;
     private KenBurnsView backgroundImageView, backgroundImageView2, backgroundImageView3, backgroundImageView4, backgroundImageView5;
-    private TextView description, plot, genre, runtime, metascrore, country, moreButton, allButton, picNum;
+    private TextView description, plot, genre, runtime, metascrore, country, moreButton, allButton, picNum, title;
     private RecyclerView myRecyclerView;
     private LinearLayoutManager linearLayoutManager;
     private ImageView thumbnailView;
@@ -219,10 +219,11 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
         allButton = (TextView) findViewById(R.id.button_all);
         mViewSwitcher = (ViewFlipper) findViewById(R.id.viewSwitcher);
         picNum = (TextView) findViewById(R.id.picNum);
-
+        title = (TextView) findViewById(R.id.title);
         imdbObject = (ImdbObject) getIntent().getSerializableExtra(IMDB_OBJECT);
+        title.setText(imdbObject.getTitle());
 //        imdbColection = (ArrayList<ImdbObject>) getIntent().getBundleExtra(IMDB_COLLECTION).getSerializable(IMDB_COLLECTION);
-        collapsingToolbar.setTitle(imdbObject.getTitle());
+//        collapsingToolbar.setTitle(imdbObject.getTitle());
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.expandedappbar);
 //        collapsingToolbar.setCollapsedTitleTextAppearance(R.style.collapseappbar);
         collapsingToolbar.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
@@ -258,6 +259,13 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
             @Override
             public void onClick(final View v) {
                 onClickButton(expandableLayout);
+            }
+        });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                Toast.makeText(MovieDetail.this, "Clicked material icon", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -506,7 +514,7 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
                 throw new AssertionError("UTF-8 is unknown");
             }
 
-            jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb_records?title=" + Query + "&ascending=1", new JSONObject(), this, this);
+            jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "imdb_records?title=" + Query + "&ascending=1", new JSONObject(), this, this);
             mQueue.add(jsonRequest_q);
             return;
         }
@@ -613,7 +621,7 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
     private Intent createShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "http://www.imdb.com/" + imdbObject.getDetailPosterUrl());
+        shareIntent.putExtra(Intent.EXTRA_TEXT, imdbObject.getTrailerUrl());
         return shareIntent;
     }
 

@@ -69,24 +69,43 @@
 
         </RelativeLayout>
 
-        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
-            android:id="@+id/summary"
-            android:layout_marginLeft="@dimen/explore_io_keynote_card_padding_start"
-            android:layout_marginStart="@dimen/explore_io_keynote_card_padding_start"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="@dimen/explore_io_keynote_card_padding_end"
-            android:layout_marginRight="@dimen/explore_io_keynote_card_padding_end"
-            android:layout_marginBottom="@dimen/explore_io_keynote_card_desc_padding"
-            android:layout_width="235dp"
-            android:layout_height="88dp"
-            android:ellipsize="end"
-            android:maxLines="10"
-            android:textColor="@color/body_text_2"
-            android:textSize="@dimen/text_size_medium"
-            android:textAppearance="@style/TextAppearance.SessionTitle"
-            tools:text="@string/placeholder_session_subtitle"
-            app:font="Roboto-Light.ttf"
-            android:layout_gravity="left|bottom" />
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+                android:id="@+id/summary"
+                android:layout_marginLeft="@dimen/explore_io_keynote_card_padding_start"
+                android:layout_marginStart="@dimen/explore_io_keynote_card_padding_start"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="@dimen/explore_io_keynote_card_padding_end"
+                android:layout_marginRight="@dimen/explore_io_keynote_card_padding_end"
+                android:layout_marginBottom="@dimen/explore_io_keynote_card_desc_padding"
+                android:layout_width="235dp"
+                android:layout_height="88dp"
+                android:ellipsize="end"
+                android:maxLines="10"
+                android:textColor="@color/body_text_2"
+                android:textSize="@dimen/text_size_medium"
+                android:textAppearance="@style/TextAppearance.SessionTitle"
+                tools:text="@string/placeholder_session_subtitle"
+                app:font="Roboto-Light.ttf"
+                android:layout_gravity="left|bottom" />
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/button_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="center"
+                android:padding="@dimen/spacing_normal"
+                android:paddingTop="@dimen/spacing_micro"
+                android:paddingBottom="@dimen/spacing_micro"
+                android:text="More"
+                style="@style/MoreButton" />
+        </RelativeLayout>
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"

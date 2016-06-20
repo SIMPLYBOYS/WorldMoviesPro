@@ -53,13 +53,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.crashlytics.android.Crashlytics;
 import com.github.florent37.materialviewpager.MaterialViewPager;
-import com.github.florent37.materialviewpager.sample.adapter.ImdbCardRecycleViewAdapter;
+import com.github.florent37.materialviewpager.sample.adapter.TrendsCardRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.fragment.DefaultFragment;
-import com.github.florent37.materialviewpager.sample.fragment.ImdbFragment;
 import com.github.florent37.materialviewpager.sample.fragment.RecyclerViewFragment;
+import com.github.florent37.materialviewpager.sample.fragment.trendsFragment;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
-import com.github.florent37.materialviewpager.sample.model.ImdbObject;
+import com.github.florent37.materialviewpager.sample.model.TrendsObject;
 import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
 import com.github.florent37.materialviewpager.sample.ui.widget.MultiSwipeRefreshLayout;
 
@@ -118,9 +118,9 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
             Log.d("0330", "getItem: " + position);
             switch (position){
                 case 0:
-                    return ImdbFragment.newInstance(position);
+                    return trendsFragment.newInstance(position);
                 case 1:
-                    return ImdbFragment.newInstance(position);
+                    return trendsFragment.newInstance(position);
                 default:
                     return DefaultFragment.newInstance(position);
             }
@@ -135,13 +135,13 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         public CharSequence getPageTitle(int position) {
             switch (position % 4) {
                 case 0:
-                    return getResources().getString(R.string.IMDB);
+                    return getResources().getString(R.string.Japan);
                 case 1:
-                    return getResources().getString(R.string.upcoming);
+                    return getResources().getString(R.string.USA);
                 case 2:
-                    return getResources().getString(R.string.technologie);
+                    return getResources().getString(R.string.Taiwan);
                 case 3:
-                    return getResources().getString(R.string.international);
+                    return getResources().getString(R.string.Korea);
                 default:
                     return "Page " + position;
             }
@@ -165,22 +165,22 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                     case 0:
                         imageUrl = "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
                         color = getResources().getColor(R.color.purple);
-                        newDrawable = getResources().getDrawable(R.drawable.ticket);
+                        newDrawable = getResources().getDrawable(R.drawable.japan);
                         break;
                     case 1:
                         imageUrl = "http://ia.media-imdb.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX640_SY720_.jpg";
                         color = getResources().getColor(R.color.material_orange_900);
-                        newDrawable = getResources().getDrawable(R.drawable.tennis);
+                        newDrawable = getResources().getDrawable(R.drawable.usa);
                         break;
                     case 2:
                         imageUrl = "http://soocurious.com/fr/wp-content/uploads/2014/03/8-facettes-de-notre-cerveau-qui-ont-evolue-avec-la-technologie8.jpg";
                         color = getResources().getColor(R.color.com_facebook_button_background_color);
-                        newDrawable = getResources().getDrawable(R.drawable.light);
+                        newDrawable = getResources().getDrawable(R.drawable.taiwan);
                         break;
                     case 3:
                         imageUrl = "http://graduate.carleton.ca/wp-content/uploads/prog-banner-masters-international-affairs-juris-doctor.jpg";
                         color = getResources().getColor(R.color.green_teal);
-                        newDrawable = getResources().getDrawable(R.drawable.earth);
+                        newDrawable = getResources().getDrawable(R.drawable.korea);
                         break;
                 }
 
@@ -195,74 +195,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                             continue;
                         }
                     }
-
-                    RecyclerView recyclerView = fragment.setupRecyclerView();
-                    if (recyclerView == null) {
-                        mSwipeRefreshLayout.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (position == 1) {
-                                    mQueue = CustomVolleyRequestQueue.getInstance(MainActivity.this).getRequestQueue();
-                                    CustomJSONObjectRequest jsonRequest_q = null;
-                                    jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/monthList", new JSONObject(), new Response.Listener<JSONObject>() {
-                                        @Override
-                                        public void onResponse(JSONObject response) {
-                                            try {
-                                                JSONArray contents = response.getJSONArray("contents");
-                                                fragment.requestDataRefresh(false, null, contents);
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    }, new Response.ErrorListener() {
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                            mSwipeRefreshLayout.setRefreshing(false);
-                                            Toast.makeText(MainActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    mQueue.add(jsonRequest_q);
-                                } else {
-                                    fragment.requestDataRefresh(false, null, null);
-                                }
-                            }
-                        });
-                    } else {
-                        if (fragment.getInitiatedAdapter().getItemCount() ==1) {
-                            mSwipeRefreshLayout.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (position == 1) {
-                                        mQueue = CustomVolleyRequestQueue.getInstance(MainActivity.this).getRequestQueue();
-                                        CustomJSONObjectRequest jsonRequest_q = null;
-                                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/monthList", new JSONObject(), new Response.Listener<JSONObject>() {
-                                            @Override
-                                            public void onResponse(JSONObject response) {
-                                                try {
-                                                    JSONArray contents = response.getJSONArray("contents");
-                                                    Log.d("0607", "monthList onResponse" + contents);
-                                                    fragment.requestDataRefresh(false, null, contents);
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                        }, new Response.ErrorListener() {
-                                            @Override
-                                            public void onErrorResponse(VolleyError error) {
-                                                mSwipeRefreshLayout.setRefreshing(false);
-                                                Log.d("0606", String.valueOf(error.getMessage()));
-                                                Toast.makeText(MainActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                        mQueue.add(jsonRequest_q);
-                                    } else {
-                                        fragment.requestDataRefresh(false, null, null);
-                                    }
-
-                                }
-                            });
-                        }
-                    }
+                    fragment.requestDataRefresh(false, null, null);
                 }
             }
         }
@@ -352,21 +285,21 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
 
                 switch (channel) {
                     case 0:
-                        ImdbCardRecycleViewAdapter ImdbAdapter = (ImdbCardRecycleViewAdapter)fragment.setupRecyclerAdapter();
+                        TrendsCardRecycleViewAdapter trendsAdapter = (TrendsCardRecycleViewAdapter)fragment.setupRecyclerAdapter();
 
-                        if (ImdbAdapter == null)
+                        if (trendsAdapter == null)
                             return;
-                        List<ImdbObject> mContentItems = ImdbAdapter.getItem();
+                        List<TrendsObject> mContentItems = trendsAdapter.getItem();
                         Log.d("0419", String.valueOf(mContentItems.size()));
 
                         if (mContentItems.size() == 0)
                             return;
 
                         SlideIndex = random.nextInt(mContentItems.size());
-                        if (mContentItems.get(SlideIndex).getSlate().equals("N/A"))
+                        /*if (mContentItems.get(SlideIndex).getSlate().equals("N/A"))
                             mViewPager.setImageUrl(mContentItems.get(SlideIndex).getPosterUrl(), 250);
                         else
-                            mViewPager.setImageUrl(mContentItems.get(SlideIndex).getSlate(), 250);
+                            mViewPager.setImageUrl(mContentItems.get(SlideIndex).getSlate(), 250);*/
                         break;
                     default:
 //                        DefaultCardRecycleViewAdapter adapter_2 = (DefaultCardRecycleViewAdapter)fragment.setupRecyclerAdapter();
@@ -443,10 +376,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            dialog.show();
-            return false;
-        } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
             return false;
         }
         return super.onKeyDown(keyCode, event);
@@ -536,7 +466,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 int channel = fragment.getArguments().getInt("index", 0);
                 switch (channel) {
                     case 0:
-                        if (fragment.getInitiatedAdapter().getItemCount() < fragment.top250MovieCount)
+                        if (fragment.getInitiatedAdapter().getItemCount() < fragment.trendMovieCount)
                             fragment.requestDataRefresh(true, null, null);
                         else
                             mSwipeRefreshLayout.setRefreshing(false);
@@ -643,12 +573,13 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
 
     @Override
     public void onBackPressed() {
-        if (searchView != null && !searchView.isIconified()) {
-            MenuItemCompat.collapseActionView(searchItem);
+        if (!searchView.isIconified()) {
             searchView.setIconified(true);
-            return;
         } else {
-            super.onBackPressed();
+            if (isNavDrawerOpen()) {
+                closeNavDrawer();
+            }
+            dialog.show();
         }
     }
 
