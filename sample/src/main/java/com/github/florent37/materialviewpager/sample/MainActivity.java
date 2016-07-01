@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -56,7 +55,7 @@ import com.github.florent37.materialviewpager.MaterialViewPager;
 import com.github.florent37.materialviewpager.sample.adapter.TrendsCardRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.fragment.DefaultFragment;
 import com.github.florent37.materialviewpager.sample.fragment.RecyclerViewFragment;
-import com.github.florent37.materialviewpager.sample.fragment.trendsFragment;
+import com.github.florent37.materialviewpager.sample.fragment.TrendsFragment;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.model.TrendsObject;
@@ -118,9 +117,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
             Log.d("0330", "getItem: " + position);
             switch (position){
                 case 0:
-                    return trendsFragment.newInstance(position);
-                case 1:
-                    return trendsFragment.newInstance(position);
+                    return TrendsFragment.newInstance(position);
                 default:
                     return DefaultFragment.newInstance(position);
             }
@@ -165,22 +162,22 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                     case 0:
                         imageUrl = "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
                         color = getResources().getColor(R.color.purple);
-                        newDrawable = getResources().getDrawable(R.drawable.japan);
+                        newDrawable = getResources().getDrawable(R.drawable.japan_circle);
                         break;
                     case 1:
                         imageUrl = "http://ia.media-imdb.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX640_SY720_.jpg";
                         color = getResources().getColor(R.color.material_orange_900);
-                        newDrawable = getResources().getDrawable(R.drawable.usa);
+                        newDrawable = getResources().getDrawable(R.drawable.united_states);
                         break;
                     case 2:
                         imageUrl = "http://soocurious.com/fr/wp-content/uploads/2014/03/8-facettes-de-notre-cerveau-qui-ont-evolue-avec-la-technologie8.jpg";
                         color = getResources().getColor(R.color.com_facebook_button_background_color);
-                        newDrawable = getResources().getDrawable(R.drawable.taiwan);
+                        newDrawable = getResources().getDrawable(R.drawable.taiwan_circle);
                         break;
                     case 3:
                         imageUrl = "http://graduate.carleton.ca/wp-content/uploads/prog-banner-masters-international-affairs-juris-doctor.jpg";
                         color = getResources().getColor(R.color.green_teal);
-                        newDrawable = getResources().getDrawable(R.drawable.korea);
+                        newDrawable = getResources().getDrawable(R.drawable.korea_circle);
                         break;
                 }
 
@@ -403,7 +400,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
 
-                ((GradientDrawable) headerLogo.getBackground()).setColor(newColor);
+//                ((GradientDrawable) headerLogo.getBackground()).setColor(newColor);
 
                 headerLogoContent.setImageDrawable(newLogo);
 

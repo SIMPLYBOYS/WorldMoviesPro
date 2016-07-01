@@ -103,6 +103,7 @@ import com.facebook.login.LoginResult;
 import com.github.florent37.materialviewpager.sample.MainActivity;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.about.AboutActivity;
+import com.github.florent37.materialviewpager.sample.favorite.MyFavoriteActivity;
 import com.github.florent37.materialviewpager.sample.framework.Model;
 import com.github.florent37.materialviewpager.sample.framework.PresenterFragmentImpl;
 import com.github.florent37.materialviewpager.sample.framework.QueryEnum;
@@ -259,9 +260,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private static final int[] NAVDRAWER_ICON_RES_ID = new int[]{
             R.drawable.ic_favorite,
             R.drawable.ic_navview_play_circle_fill, // I/O Live
-            R.drawable.ic_trending_up,  // Explore
+            R.drawable.ic_trending_up,  // Trends
             R.drawable.ic_navview_map, // Map
-            R.drawable.ic_speaker, // Social
+            R.drawable.nytimes, // Social
             R.drawable.ic_movie, // Video Library
             R.drawable.facebook, // Sign in
             R.drawable.ic_navview_settings, // Settings.
@@ -1150,7 +1151,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         Log.d("0213", "goToNavDrawerItem: " + item);
         switch (item) {
             case NAVDRAWER_ITEM_MY_FAVORITE:
-//                createBackStack(new Intent(this, MyScheduleActivity.class));
+                createBackStack(new Intent(this, MyFavoriteActivity.class));
 //                createBackStack(new Intent(this, VideoLibraryActivity.class));
                 break;
             case NAVDRAWER_ITEM_EXPLORE:

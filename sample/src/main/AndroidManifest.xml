@@ -80,12 +80,29 @@ package="com.github.florent37.materialviewpager.sample">
     </activity>
 
     <activity
+        android:name=".favorite.MyFavoriteActivity"
+        android:label="@string/description_favorite"
+        android:parentActivityName=".MainActivity"
+        android:theme="@style/AppTheme"
+        android:exported="false">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
+    </activity>
+
+    <activity
+        android:name=".framework.CustomLightBoxActivity"
+        android:configChanges="orientation|keyboardHidden|screenSize"
+        android:theme="@style/AppTheme.Translucent" />
+
+    <activity
         android:name=".imdb.MovieDetail"
         android:label="@string/description_detail">
     </activity>
 
     <activity
         android:name=".trends.TrendsDetail"
+        android:screenOrientation="portrait"
         android:label="@string/description_trends">
     </activity>
 
@@ -115,6 +132,18 @@ package="com.github.florent37.materialviewpager.sample">
 
     <activity
         android:name=".framework.WebViewActivity"
+        android:screenOrientation="portrait"
+        android:label="">
+    </activity>
+
+    <activity
+        android:name=".trends.TrendsWebViewActivity"
+        android:screenOrientation="portrait"
+        android:label="">
+    </activity>
+
+    <activity
+        android:name=".nytimes.nyTimesDetailActivity"
         android:screenOrientation="portrait"
         android:label="">
     </activity>
@@ -151,6 +180,7 @@ package="com.github.florent37.materialviewpager.sample">
         android:name=".nytimes.nyTimesActivity"
         android:label="NY Times Movies Review"
         android:parentActivityName=".MainActivity"
+        android:screenOrientation="portrait"
         android:theme="@style/AppTheme.ActionBar.Transparent"
         android:exported="false">
         <meta-data

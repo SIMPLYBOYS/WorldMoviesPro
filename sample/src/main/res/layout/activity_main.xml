@@ -17,29 +17,43 @@
             android:layout_height="match_parent"
             app:foreground="@drawable/header_shadow">
 
-
-            <com.github.florent37.materialviewpager.MaterialViewPager
-                android:id="@+id/materialViewPager"
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                app:viewpager_logo="@layout/header_logo_2"
-                app:viewpager_pagerTitleStrip="@layout/material_view_pager_pagertitlestrip_newstand"
-                app:viewpager_logoMarginTop="70dp"
-                app:viewpager_color="@color/colorPrimary"
-                app:viewpager_headerHeight="200dp"
-                app:viewpager_headerAlpha="1.0"
-                app:viewpager_imageHeaderDarkLayerAlpha="0.6"
-                app:viewpager_hideLogoWithFade="true"
-                app:viewpager_hideToolbarAndTitle="true"
-                app:viewpager_enableToolbarElevation="true"
-                app:viewpager_parallaxHeaderFactor="1.6"
-                app:viewpager_headerAdditionalHeight="20dp"
-                app:viewpager_transparentToolbar="true"
-                app:viewpager_animatedHeaderImage="true"
-                app:viewpager_disableToolbar="false"
-                app:viewpager_displayToolbarWhenSwipe="true" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <com.github.florent37.materialviewpager.MaterialViewPager
+                    android:id="@+id/materialViewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    app:viewpager_logo="@layout/header_circle"
+                    app:viewpager_pagerTitleStrip="@layout/material_view_pager_pagertitlestrip_newstand"
+                    app:viewpager_logoMarginTop="70dp"
+                    app:viewpager_color="@color/colorPrimary"
+                    app:viewpager_headerHeight="200dp"
+                    app:viewpager_headerAlpha="1.0"
+                    app:viewpager_imageHeaderDarkLayerAlpha="0.6"
+                    app:viewpager_hideLogoWithFade="true"
+                    app:viewpager_hideToolbarAndTitle="true"
+                    app:viewpager_enableToolbarElevation="true"
+                    app:viewpager_parallaxHeaderFactor="1.6"
+                    app:viewpager_headerAdditionalHeight="20dp"
+                    app:viewpager_transparentToolbar="true"
+                    app:viewpager_animatedHeaderImage="true"
+                    app:viewpager_disableToolbar="false"
+                    app:viewpager_displayToolbarWhenSwipe="true" />
+
+                <ProgressBar android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_marginBottom="151dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true" />
+            </RelativeLayout>
 
         </com.github.florent37.materialviewpager.sample.ui.widget.MultiSwipeRefreshLayout>
 

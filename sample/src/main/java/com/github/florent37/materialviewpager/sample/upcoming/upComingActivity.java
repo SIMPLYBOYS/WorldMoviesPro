@@ -101,8 +101,49 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
         view.addView(textView);
         loadHints();
         overridePendingTransition(0, 0);
-        loadHints();
-        overridePendingTransition(0, 0);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_movie_layout);
+        movieList = new ArrayList<>();
+        linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setReverseLayout(false);
+        adapter = new ImdbSwipeRecycleViewAdapter(this, movieList);
+        rvMovies = (RecyclerView) findViewById(R.id.recyclerView);
+        rvMovies.setLayoutManager(linearLayoutManager);
+        rvMovies.setAdapter(adapter);
+
+        mQueue = CustomVolleyRequestQueue.getInstance(this)
+                .getRequestQueue();
+
+        rvMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                SharedPreferences settings = getSharedPreferences("settings", 0);
+                Boolean Small = settings.getBoolean("miniCard", true);
+
+                if (Small)
+                    adapter.visibleThreshold = 2;
+                else
+                    adapter.visibleThreshold = 1;
+
+                int topRowVerticalPosition = (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
+                mSwipeRefreshLayout.setEnabled(topRowVerticalPosition >= 0);
+                adapter.totalItemCount = linearLayoutManager.getItemCount();
+                adapter.lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+
+                if (!adapter.loading && adapter.totalItemCount <= (adapter.lastVisibleItem + adapter.visibleThreshold)) {
+                    boolean ascending = settings.getBoolean("ascending", false);
+                    // End has been reached
+                    if (ascending) {
+                        fetchMovies(false);
+                        adapter.loading = true;
+                    }
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
     }
 
     private void loadHints() {
@@ -229,104 +270,57 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
 
     @Override
     public void trySetupSwipeRefresh() {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_movie_layout);
-//        gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
-//        listView = (ListView) findViewById(R.id.listView);
-        movieList = new ArrayList<>();
-//        adapter = new SwipeListAdapter(this, movieList);
-//        layoutManager = new GridLayoutManager(this, 3);
-        linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setReverseLayout(false);
-        adapter = new ImdbSwipeRecycleViewAdapter(this, movieList);
-        rvMovies = (RecyclerView) findViewById(R.id.recyclerView);
-        rvMovies.setLayoutManager(linearLayoutManager);
-        rvMovies.setAdapter(adapter);
 
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
-
-//        rvMovies.setLayoutManager(gaggeredGridLayoutManager);
-        rvMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                SharedPreferences settings = getSharedPreferences("settings", 0);
-                Boolean Small = settings.getBoolean("miniCard", true);
-
-                if (Small)
-                    adapter.visibleThreshold = 2;
-                else
-                    adapter.visibleThreshold = 1;
-
-                int topRowVerticalPosition = (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
-                mSwipeRefreshLayout.setEnabled(topRowVerticalPosition >= 0);
-                adapter.totalItemCount = linearLayoutManager.getItemCount();
-                adapter.lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-
-                if (!adapter.loading && adapter.totalItemCount <= (adapter.lastVisibleItem + adapter.visibleThreshold)) {
-                    boolean ascending = settings.getBoolean("ascending", false);
-                    // End has been reached
-                    // Do something
-                    if (ascending) {
-                        fetchMovies(false);
-                        adapter.loading = true;
-                    }
-                }
-            }
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-        });
-
-
-//        listView.setAdapter(adapter);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.flat_button_text);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
+
+        Log.d("0625", String.valueOf(adapter.getItemCount()));
 
         /**
          * Showing Swipe Refresh animation on activity create
          * As animation won't start on onCreate, post runnable is used
          */
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mQueue = CustomVolleyRequestQueue.getInstance(upComingActivity.this).getRequestQueue();
-                CustomJSONObjectRequest jsonRequest_q = null;
-                jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/monthList", new JSONObject(), new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray contents = response.getJSONArray("contents");
-                            if (contents != null && monthList == null) {
-                                try {
-                                    monthList = new int[12];
-                                    for (int i = 0; i < contents.length(); i++) {
-                                        monthList[i] = contents.getInt(i);
+        if (adapter.getItemCount() == 0) {
+            mSwipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    mQueue = CustomVolleyRequestQueue.getInstance(upComingActivity.this).getRequestQueue();
+                    CustomJSONObjectRequest jsonRequest_q = null;
+                    jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/monthList", new JSONObject(), new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONArray contents = response.getJSONArray("contents");
+                                if (contents != null && monthList == null) {
+                                    try {
+                                        monthList = new int[12];
+                                        for (int i = 0; i < contents.length(); i++) {
+                                            monthList[i] = contents.getInt(i);
+                                        }
+                                    } catch (JSONException e) {
+                                        Log.e("App", "unexpect JSON exception", e);
                                     }
-                                } catch (JSONException e) {
-                                    Log.e("App", "unexpect JSON exception", e);
                                 }
+                                mSwipeRefreshLayout.setRefreshing(true);
+                                fetchMovies(true);
+                                adapter.swipe = true;
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                            mSwipeRefreshLayout.setRefreshing(true);
-                            fetchMovies(true);
-                            adapter.swipe = true;
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(upComingActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                mQueue.add(jsonRequest_q);
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            Toast.makeText(upComingActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    mQueue.add(jsonRequest_q);
 
-            }
-        });
+                }
+            });
+        }
 
         if (mSwipeRefreshLayout instanceof MultiSwipeRefreshLayout) {
             MultiSwipeRefreshLayout mswrl = (MultiSwipeRefreshLayout) mSwipeRefreshLayout;
@@ -348,6 +342,9 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
         int count = adapter.getItemCount();
         Calendar c = Calendar.getInstance();
         Log.d("0616", "total count: " + String.valueOf(count));
+
+        if (monthList == null)
+            return; //skip fetching upon network not stable.
 
         if (count < monthList[c.get(Calendar.MONTH)]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(0, 1)) +' ' +String.valueOf(getReleaseDate(0, 30)));

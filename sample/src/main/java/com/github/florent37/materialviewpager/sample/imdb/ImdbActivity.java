@@ -151,27 +151,8 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         ViewGroup view = (ViewGroup) getWindow().getDecorView();
         view.addView(textView);
         loadHints();
-        overridePendingTransition(0, 0);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public void trySetupSwipeRefresh() {
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_movie_layout);
-//        gaggeredGridLayoutManager = new StaggeredGridLayoutManager(2, 1);
-//        listView = (ListView) findViewById(R.id.listView);
         movieList = new ArrayList<>();
-//        adapter = new SwipeListAdapter(this, movieList);
-//        layoutManager = new GridLayoutManager(this, 3);
         linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(false);
         adapter = new ImdbSwipeRecycleViewAdapter(this, movieList);
@@ -182,7 +163,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         mQueue = CustomVolleyRequestQueue.getInstance(this)
                 .getRequestQueue();
 
-//        rvMovies.setLayoutManager(gaggeredGridLayoutManager);
         rvMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -202,7 +182,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                 if (!adapter.loading && adapter.totalItemCount <= (adapter.lastVisibleItem + adapter.visibleThreshold)) {
                     boolean ascending = settings.getBoolean("ascending", false);
                     // End has been reached
-                    // Do something
                     if (ascending) {
                         fetchMovies(false);
                         adapter.loading = true;
@@ -215,9 +194,22 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
+        overridePendingTransition(0, 0);
+    }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+    }
 
-//        listView.setAdapter(adapter);
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void trySetupSwipeRefresh() {
+
         mSwipeRefreshLayout.setColorSchemeResources(R.color.flat_button_text);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -226,13 +218,16 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
          * Showing Swipe Refresh animation on activity create
          * As animation won't start on onCreate, post runnable is used
          */
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                fetchMovies(true);
-            }
-        });
+
+        if (adapter.getItemCount() == 0) {
+            mSwipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    fetchMovies(true);
+                }
+            });
+        }
 
         if (mSwipeRefreshLayout instanceof MultiSwipeRefreshLayout) {
             MultiSwipeRefreshLayout mswrl = (MultiSwipeRefreshLayout) mSwipeRefreshLayout;

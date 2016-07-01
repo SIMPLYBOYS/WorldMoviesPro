@@ -27,8 +27,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -140,70 +138,12 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
 
                 String url = HOST_NAME + "trends";
                 TrendsCardRecycleViewAdapter adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+                if (adapter != null)
+                    return;
                 if (ascending ) {
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
                 } else {
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=-1", new JSONObject(), this, this);
-                }
-                break;
-            case 1:
-                if (Query != null) {
-                    // query from searchview
-                    if (isNumeric(Query))
-                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                                "/imdb?release_from=" + Integer.parseInt(Query) + "&release_to=" + Integer.parseInt(Query) + "&ascending=1", new JSONObject(), this, this);
-                    else {
-                        try {
-                            Query = URLEncoder.encode(Query, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            throw new AssertionError("UTF-8 is unknown");
-                        }
-
-                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb?title=" + Query + "&ascending=1", new JSONObject(), this, this);
-                    }
-                    mQueue.add(jsonRequest_q);
-                    return;
-                }
-
-                TrendsCardRecycleViewAdapter adapter2 =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
-                int count = adapter2.getItemCount();
-                Calendar c = Calendar.getInstance();
-
-                /*c.set(Calendar.YEAR, year);
-                c.set(Calendar.MONTH, month);
-                c.set(Calendar.DAY_OF_MONTH, 8);
-//                int day = c.get(Calendar.DAY_OF_MONTH)
-                SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-                String str = df.format(c.getTime());
-                String [] parts = TextUtils.split(str, "/");
-                Log.d("0606", TextUtils.join("", parts) + " " + month);
-                SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-                c.roll(Calendar.MONTH, 1);
-                c.set(Calendar.DAY_OF_MONTH, 1);
-                String str = df.format(c.getTime());
-                String [] parts = TextUtils.split(str, "/");
-                Log.d("0606", TextUtils.join("", parts));*/
-
-                if (count < monthList[c.get(Calendar.MONTH)]) {
-                    Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(0, 1)) +' ' +String.valueOf(getReleaseDate(0, 30)));
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?release_from=" + getReleaseDate(0, 1) + "&release_to=" + getReleaseDate(0, 30), new JSONObject(), this, this);
-                } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1]) {
-                    Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(1, 1)) +' ' +String.valueOf(getReleaseDate(1, 31)));
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?release_from=" + getReleaseDate(1, 1) + "&release_to=" + getReleaseDate(1, 31), new JSONObject(), this, this);
-                } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2]) {
-                    Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(2, 1)) +' ' +String.valueOf(getReleaseDate(2, 31)));
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?release_from=" + getReleaseDate(2, 1) + "&release_to=" + getReleaseDate(2, 31), new JSONObject(), this, this);
-                } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2] + monthList[c.get(Calendar.MONTH)+3]) {
-                    Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(3, 1)) +' ' +String.valueOf(getReleaseDate(3, 30)));
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?release_from=" + getReleaseDate(3, 1) + "&release_to=" + getReleaseDate(3, 30), new JSONObject(), this, this);
-                } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2] + monthList[c.get(Calendar.MONTH)+3] + monthList[c.get(Calendar.MONTH)+4]) {
-                    Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(4, 1)) +' ' +String.valueOf(getReleaseDate(4, 31)));
-                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                            "/imdb?release_from=" + getReleaseDate(4, 1) + "&release_to=" + getReleaseDate(4, 31), new JSONObject(), this, this);
                 }
                 break;
             default:

@@ -86,7 +86,7 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
     private static final String TAG_STORY = "story";
     private static final String TAG_CAST = "cast";
     private static final String TAG_GENRE = "genres";
-    private static final String TAG_VOTES = "votes";
+    private static final String TAG_RATING = "rating";
     private static final String TAG_RUNTIME = "runtime";
     private static final String TAG_METASCORE = "metascore";
     private static final String TAG_SLATE = "slate";
@@ -354,7 +354,7 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
         JSONObject c = contents.getJSONObject(0);
         String title = c.getString(TAG_TITLE);
         int top = 0;
-        String detailPosterUrl = "";
+        String releaseDate = "";
         String mainInfo = "";
         String story = "";
         String trailerUrl ="";
@@ -374,6 +374,7 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
         JSONArray staff = new JSONArray();
         JSONArray cast = new JSONArray();
         JSONArray gallery = new JSONArray();
+        JSONObject rating = new JSONObject();
 
         data = c.getJSONArray(TAG_DATA);
         top = c.getInt(TAG_TOP);
@@ -385,9 +386,11 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
         posterUrl = c.getString(TAG_POSTER_URL);
         trailerUrl = c.getString(TAG_TRAILER);
         detailUrl = c.getString(TAG_DETAIL_URL);
+        rating = c.getJSONObject(TAG_RATING);
+        releaseDate = c.getString(TAG_RELEASE);
         TrendsObject item = null;
         item = new TrendsObject(title, String.valueOf(top), detailUrl, posterUrl, trailerUrl, cast.toString(),
-                staff.toString(), data.toString(), story, mainInfo, gallery.toString());
+                staff.toString(), data.toString(), story, mainInfo, gallery.toString(), rating.toString(), releaseDate);
 
         return item;
     }

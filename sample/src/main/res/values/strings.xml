@@ -19,6 +19,7 @@
     <string name="international">international</string>
     <!-- Menu item that brings up the application's About screen -->
     <string name="description_about">About</string>
+    <string name="description_favorite">Favorite</string>
     <string name="description_detail">Detail</string>
     <string name="description_trends">TrendsDetail</string>
     <string name="description_album">Album</string>

@@ -22,7 +22,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -44,7 +43,6 @@ import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.NyTimesSwipeRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.fragment.MovieRecycleFragment;
-import com.github.florent37.materialviewpager.sample.framework.WebViewActivity;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
@@ -85,8 +83,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     private SimpleCursorAdapter mAdapter;
 
     private LinearLayoutManager linearLayoutManager;
-
-    ShareActionProvider shareActionProvider;
 
     private MenuItem searchItem;
 
@@ -143,26 +139,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         ViewGroup view = (ViewGroup) getWindow().getDecorView();
         view.addView(textView);
         loadHints();
-        overridePendingTransition(0, 0);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    @Override
-    public void trySetupSwipeRefresh() {
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_movie_layout);
         movieList = new ArrayList<>();
         linearLayoutManager = new LinearLayoutManager(this);
@@ -198,6 +174,30 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void trySetupSwipeRefresh() {
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.flat_button_text);
 
@@ -207,13 +207,16 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
          * Showing Swipe Refresh animation on activity create
          * As animation won't start on onCreate, post runnable is used
          */
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                fetchMovies(true);
-            }
-        });
+
+        if (rAdapter.getItemCount() == 0) {
+            mSwipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    fetchMovies(true);
+                }
+            });
+        }
 
         if (mSwipeRefreshLayout instanceof MultiSwipeRefreshLayout) {
             MultiSwipeRefreshLayout mswrl = (MultiSwipeRefreshLayout) mSwipeRefreshLayout;
@@ -267,6 +270,7 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
+        mQueryTextView.setHint("movie title or cast name");
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -303,11 +307,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         return true;
     }
 
-    private void onShareAction() {
-        shareActionProvider.setShareIntent(createShareIntent());
-        return;
-    }
-
     private void giveSuggestions(String query) {
         final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME});
         for (int i = 0; i < MOVIES.length; i++) {
@@ -315,13 +314,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                 cursor.addRow(new Object[]{i, MOVIES[i]});
         }
         mAdapter.changeCursor(cursor);
-    }
-
-    private Intent createShareIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "http://www.imdb.com/");
-        return shareIntent;
     }
 
     /**
@@ -365,7 +357,7 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                         }
                         link = movieObj.getJSONObject("link");
                         String linkUrl = link.getString("url");
-                        Movie m = new Movie(head, date, summery, linkUrl, picUrl);
+                        Movie m = new Movie(head, date, summery, linkUrl, picUrl, null, null);
                         curSize = rAdapter.getItemCount();
                         movieList.add(movieList.size(), m);
                         if (rAdapter != null) {
@@ -418,6 +410,12 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                 public void onResponse(JSONObject response) {
                     try {
                         JSONArray contents = response.getJSONArray("results");
+
+                        if (contents.length() == 0 ) {
+                            Toast.makeText(getApplicationContext(), "Search title not found any review!", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
                         JSONObject movieObj = contents.getJSONObject(0);
                         String head = movieObj.getString("headline");
                         String date = movieObj.getString("publication_date");
@@ -431,10 +429,51 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                         }
                         link = movieObj.getJSONObject("link");
                         String linkUrl = link.getString("url");
-                        Movie movie = new Movie(head, date, summery, linkUrl, picUrl);
-                        Intent intent = new Intent(nyTimesActivity.this, WebViewActivity.class);
+                        final Movie movie = new Movie(head, date, summery, linkUrl, picUrl, null, null);
+
+                        /*Intent intent = new Intent(nyTimesActivity.this, WebViewActivity.class);
                         intent.putExtra("movie", movie);
-                        ActivityCompat.startActivity(nyTimesActivity.this, intent, null);
+                        ActivityCompat.startActivity(nyTimesActivity.this, intent, null);*/
+
+                        CustomJSONObjectRequest jsonRequest_inner = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "nyTimes?url=" + movie.getLink(), new JSONObject(), new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    JSONArray contents = response.getJSONArray("contents");
+                                    String story,imageUrl, head, description, editor, date;
+
+                                    JSONObject reviewObj = contents.getJSONObject(0);
+                                    story = reviewObj.getString("story");
+                                    JSONObject imgObj = reviewObj.getJSONObject("image");
+                                    editor = reviewObj.getString("editor");
+                                    date = reviewObj.getString("date");
+
+                                    if (imgObj.has("src")) {
+                                        imageUrl = imgObj.getString("src");
+                                        description = imgObj.getString("description");
+                                    } else {
+                                        imageUrl = null;
+                                        description = null;
+                                    }
+
+                                    head = movie.getHeadline();
+                                    Movie foo = new Movie(head, description, story, "", imageUrl, editor, date);
+                                    Intent intent = new Intent(getApplicationContext(), nyTimesDetailActivity.class);
+                                    intent.putExtra("movie", foo);
+                                    ActivityCompat.startActivity(nyTimesActivity.this, intent, null);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },new Response.ErrorListener () {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(getApplicationContext(), "Remote Server not working!", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        mQueue.add(jsonRequest_inner);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -485,9 +524,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                return true;
-            case R.id.action_share:
-                onShareAction();
                 return true;
             case R.id.menu_smooth_zero:
                 rvMovies.smoothScrollToPosition(0);

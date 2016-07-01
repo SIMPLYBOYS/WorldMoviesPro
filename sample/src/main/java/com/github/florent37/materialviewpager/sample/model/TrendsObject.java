@@ -17,6 +17,8 @@ public class TrendsObject implements Serializable {
     private String data;
     private String story;
     private String mainInfo;
+    private String rating;
+    private String releaseDate;
 
     public class GalleryItem {
         private String type;
@@ -38,6 +40,13 @@ public class TrendsObject implements Serializable {
         }
     }
 
+    public class RatingItem {
+        private String score;
+        private String votes;
+        public String getScore() { return score;}
+        public String getVotes() { return votes;}
+    }
+
     public class StaffItem {
         private String staff;
         private String url;
@@ -53,19 +62,29 @@ public class TrendsObject implements Serializable {
 
     public class CastItem {
         private String cast;
-        private String url;
+        private String link;
+        private String as;
+        private String avatar;
 
         public String getCast() {
             return cast;
         }
 
+        public String getAs() {
+            return as;
+        }
+
+        public String getAvatar() {
+            return avatar;
+        }
+
         public String getUrl() {
-            return url;
+            return link;
         }
     }
 
     public TrendsObject(String title, String top, String detailUrl, String posterUrl, String trailerUrl,
-                        String cast, String staff, String data, String story, String mainInfo, String galleryUrl) {
+                        String cast, String staff, String data, String story, String mainInfo, String galleryUrl, String rating, String releaseDate) {
         this.title = title;
         this.top = top;
         this.detailUrl = detailUrl;
@@ -78,6 +97,8 @@ public class TrendsObject implements Serializable {
         this.data = data;
         this.story = story;
         this.mainInfo = mainInfo;
+        this.rating = rating;
+        this.releaseDate = releaseDate;
     }
 
     public String getTrailerUrl() {
@@ -96,9 +117,13 @@ public class TrendsObject implements Serializable {
 
     public String getData() { return data; }
 
+    public String getRating() { return rating; }
+
     public String getTitle() {
         return title;
     }
+
+    public String getReleaseDate() { return releaseDate; }
 
     public String getTop() {
         return top;

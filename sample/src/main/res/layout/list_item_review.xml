@@ -21,8 +21,6 @@
         android:id="@+id/explore_io_clickable_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="false"
-        android:focusable="true"
         android:orientation="vertical"
         android:foreground="?android:selectableItemBackground">
 
@@ -138,7 +136,7 @@
                 android:layout_gravity="center"
                 android:src="@drawable/ic_turned_in"
                 android:layout_centerVertical="true"
-                android:layout_toStartOf="@+id/share" />
+                android:layout_toStartOf="@+id/share"/>
 
             <ImageView
                 android:id="@+id/share"
@@ -149,7 +147,8 @@
                 android:src="@drawable/ic_share"
                 android:layout_marginEnd="15dp"
                 android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                />
 
         </RelativeLayout>
     </com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout>

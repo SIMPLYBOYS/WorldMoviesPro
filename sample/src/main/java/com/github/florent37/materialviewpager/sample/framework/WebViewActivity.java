@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -39,7 +40,6 @@ public class WebViewActivity extends BaseActivity implements AdvancedWebView.Lis
         mWebView.setCookiesEnabled(true);
         mWebView.setThirdPartyCookiesEnabled(true);
         mWebView.setWebViewClient(new WebViewClient() {
-
             @Override
             public void onPageFinished(WebView view, String url) {
 //                progressBar.setVisibility(View.GONE);
@@ -57,6 +57,7 @@ public class WebViewActivity extends BaseActivity implements AdvancedWebView.Lis
 
         });
         mWebView.addHttpHeader("X-Requested-With", "");
+        Log.d("0623", String.valueOf(movie.getLink()));
         mWebView.loadUrl(movie.getLink());
     }
 

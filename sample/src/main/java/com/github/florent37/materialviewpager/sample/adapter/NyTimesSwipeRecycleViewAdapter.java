@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,14 +16,26 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.facebook.FacebookSdk;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
+import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
-import com.github.florent37.materialviewpager.sample.framework.WebViewActivity;
+import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
+import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.nytimes.Movie;
+import com.github.florent37.materialviewpager.sample.nytimes.nyTimesDetailActivity;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -41,8 +53,9 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
     public static int visibleThreshold = 2;
     public static int lastVisibleItem, totalItemCount;
     public static boolean loading;
+    private RequestQueue mQueue;
+    CustomJSONObjectRequest jsonRequest_q = null;
     private AdvancedWebView webview;
-    ShareActionProvider shareActionProvider;
 
     public static class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public MyViewHolderClick mListener;
@@ -80,7 +93,9 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
 
         public void bind(Movie movie, String color) {
             headline.setText(String.valueOf(movie.getHeadline()));
+            headline.setTextIsSelectable(true);
             summary.setText(movie.getSummary_short());
+            summary.setTextIsSelectable(true);
             date.setText(movie.getPublication_date());
             if (movie.getPicUrl()!= "") {
                 Picasso.with(photoView.getContext()).load(movie.getPicUrl()).placeholder(R.drawable.placeholder).centerCrop().fit()
@@ -106,7 +121,8 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
         this.activity = activity;
         this.movieList = movieList;
         this.bgColors = activity.getApplicationContext().getResources().getStringArray(R.array.movie_serial_bg);
-        shareActionProvider = new ShareActionProvider(activity);
+        mQueue = CustomVolleyRequestQueue.getInstance(activity)
+                .getRequestQueue();
     }
 
     @Override
@@ -140,7 +156,6 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        Log.d("0322", "onCreateViewHolder");
         final Context context = viewGroup.getContext();
         if (viewType == VIEW_TYPE_ITEM) {
             View convertView = LayoutInflater.from(context).inflate(R.layout.list_item_review, viewGroup, false);
@@ -157,9 +172,65 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
                     moreView.setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(v.getContext(), WebViewActivity.class);
+                            jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "nyTimes?url=" + movie.getLink(), new JSONObject(), new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    try {
+                                        JSONArray contents = response.getJSONArray("contents");
+                                        String story,imageUrl, head, description, editor, date;
+
+                                        JSONObject reviewObj = contents.getJSONObject(0);
+                                        story = reviewObj.getString("story");
+                                        editor = reviewObj.getString("editor");
+                                        date = reviewObj.getString("date");
+                                        JSONObject imgObj = reviewObj.getJSONObject("image");
+
+                                        if (imgObj.has("src")) {
+                                            imageUrl = imgObj.getString("src");
+                                            description = imgObj.getString("description");
+                                        } else {
+                                            imageUrl = null;
+                                            description = null;
+                                        }
+
+                                        head = movie.getHeadline();
+                                        Movie foo = new Movie(head, description, story, "", imageUrl, editor ,date);
+                                        Intent intent = new Intent(activity, nyTimesDetailActivity.class);
+                                        intent.putExtra("movie", foo);
+                                        ActivityCompat.startActivity(activity, intent, null);
+
+                                        /*JSONObject movieObj = contents.getJSONObject(0);
+                                        String head = movieObj.getString("headline");
+                                        String date = movieObj.getString("publication_date");
+                                        String summery = movieObj.getString("summary_short");
+                                        JSONObject link = null;
+                                        JSONObject media = null;
+                                        String picUrl = "";
+                                        if (!movieObj.isNull("multimedia")) {
+                                            media = movieObj.getJSONObject("multimedia");
+                                            picUrl = media.getString("src");
+                                        }
+                                        link = movieObj.getJSONObject("link");
+                                        String linkUrl = link.getString("url");
+                                        Movie movie = new Movie(head, date, summery, linkUrl, picUrl);*/
+                                        /*Intent intent = new Intent(nyTimesActivity.this, WebViewActivity.class);
+                                        intent.putExtra("movie", movie);
+                                        ActivityCompat.startActivity(nyTimesActivity.this, intent, null);*/
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }, new Response.ErrorListener () {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Toast.makeText(context, "Remote Server not working!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                            mQueue.add(jsonRequest_q);
+                            /*Intent intent = new Intent(v.getContext(), WebViewActivity.class); //TODO nyTimesDetail
                             intent.putExtra("movie", movie);
-                            startActivityForVersion(intent);
+                            startActivityForVersion(intent);*/
                         }
                     });
                     shareView.setOnClickListener(new View.OnClickListener() {

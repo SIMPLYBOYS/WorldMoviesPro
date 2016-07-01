@@ -120,7 +120,7 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
     private CollapsingToolbarLayout collapsingToolbar;
     private KenBurnsView backgroundImageView, backgroundImageView2, backgroundImageView3, backgroundImageView4, backgroundImageView5;
     private TextView description, plot, genre, runtime, metascrore, country, moreButton, allButton, picNum, title;
-    private RecyclerView myRecyclerView;
+    private RecyclerView galleryRecyclerView;
     private LinearLayoutManager linearLayoutManager;
     private ImageView thumbnailView;
     private AppCompatDelegate delegate;
@@ -287,14 +287,14 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
         }
 
         //------- Gallery RecyclerView -------//
-        myRecyclerView = (RecyclerView)findViewById(R.id.myrecyclerview);
-        myRecyclerView.getItemAnimator().setAddDuration(1000);
-        myRecyclerView.getItemAnimator().setChangeDuration(1000);
-        myRecyclerView.getItemAnimator().setMoveDuration(1000);
-        myRecyclerView.getItemAnimator().setRemoveDuration(1000);
+        galleryRecyclerView = (RecyclerView)findViewById(R.id.gallery_recyclerview);
+        galleryRecyclerView.getItemAnimator().setAddDuration(1000);
+        galleryRecyclerView.getItemAnimator().setChangeDuration(1000);
+        galleryRecyclerView.getItemAnimator().setMoveDuration(1000);
+        galleryRecyclerView.getItemAnimator().setRemoveDuration(1000);
         imdbGalleryAdapter = new ImdbGalleryRecycleViewAdapter(imdbObject, false);
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        myRecyclerView.setLayoutManager(linearLayoutManager);
+        galleryRecyclerView.setLayoutManager(linearLayoutManager);
         //------- Gallery RecyclerView -------//
 
         //------- deserialize Gallery JSON object -------//
@@ -311,7 +311,7 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
 
         picNum.setText(String.valueOf(list.size()));
         if (jsonArray.size() > 1) {
-            myRecyclerView.setAdapter(imdbGalleryAdapter);
+            galleryRecyclerView.setAdapter(imdbGalleryAdapter);
             imdbGalleryAdapter.setOnItemClickListener(this);
         } else {
             View gallery = (LinearLayout) findViewById(R.id.gallery_container);

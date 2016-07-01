@@ -301,8 +301,8 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
         imdbCardAdapter = getAdapter();
         imdbCardAdapter.setOnItemClickListener(this); //onItemClick
         mRecyclerView.setAdapter(imdbCardAdapter);
-
         MaterialViewPagerHelper.registerRecyclerView(getActivity(), mRecyclerView);
+
         return rootView;
     }
 

@@ -17,6 +17,7 @@ import com.github.florent37.materialviewpager.sample.model.TrendsObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -142,19 +143,18 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                     JsonArray dataInfo = new JsonParser().parse(trendsObject.getData()).getAsJsonArray();
                     JsonArray staffInfo = new JsonParser().parse(trendsObject.getStaff()).getAsJsonArray();
                     JsonArray castInfo = new JsonParser().parse(trendsObject.getCast()).getAsJsonArray();
-                    TrendsObject.DataItem dataItem = null;
+                    JsonObject ratingInfo = new JsonParser().parse(trendsObject.getRating()).getAsJsonObject();
                     TrendsObject.StaffItem staffItem = null;
                     TrendsObject.CastItem castItem = null;
+                    TrendsObject.RatingItem ratingItem = null;
                     JsonElement jsonElement = null;
+                    yearView.setText(trendsObject.getReleaseDate().split("公開日")[1].trim());
 
-                    if (dataInfo.size() == 5) {
-                        jsonElement = dataInfo.get(1);
-                    } else {
-                        jsonElement = dataInfo.get(0);
-                    }
-
-                    dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
-                    yearView.setText(dataItem.getData().split(":")[1]);
+                    /*------- rating -------*/
+                    jsonElement = ratingInfo.getAsJsonObject();
+                    ratingItem = gson.fromJson(jsonElement, TrendsObject.RatingItem.class);
+                    rattingView.setText(ratingItem.getScore() + " / ");
+                    votesView.setText(ratingItem.getVotes());
 
                     /*yearView.setText(tObject.getYear());
                     rattingView.setText(tObject.getRatting());
