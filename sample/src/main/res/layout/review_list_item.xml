@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:gravity="center_vertical"
+        android:weightSum="1">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatar"
+            android:src="@drawable/person_image_empty"
+            android:layout_width="@dimen/list_item_avatar_size"
+            android:layout_height="@dimen/list_item_avatar_size"
+            android:layout_marginRight="16dp"/>
+
+        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+            android:id="@+id/viewer"
+            android:text="みみ"
+            android:layout_width="69dp"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_small"
+            android:textColor="@color/body_text_1"
+            app:font="Roboto-Light.ttf"
+            android:textAppearance="?attr/textAppearanceListItem"/>
+
+        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+            android:id="@+id/date"
+            android:layout_marginLeft="165dp"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_small"
+            android:textColor="@color/body_text_1"
+            android:text="2016/7/1"
+            app:font="Roboto-Light.ttf"
+            android:textAppearance="?attr/textAppearanceListItem"/>
+
+    </LinearLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/message_card_root_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/map_info_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/keyline_2"
+            android:paddingBottom="@dimen/spacing_normal"
+            android:visibility="gone"
+            tools:text="points"
+            tools:visibility="visible"
+            style="@style/Body1Text"
+            android:layout_marginStart="83dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:text="points" />
+
+        <TextView
+            android:id="@+id/map_info_subtitle2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/keyline_2"
+            android:paddingBottom="@dimen/spacing_normal"
+            android:visibility="gone"
+            tools:text="3.5"
+            tools:visibility="visible"
+            style="@style/Body1Text"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/map_info_subtitle"
+            android:layout_marginStart="27dp" />
+    </RelativeLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/message_card_root_layout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/keyline_2"
+            android:paddingBottom="@dimen/spacing_normal"
+            android:visibility="gone"
+            tools:text="topic"
+            tools:visibility="visible"
+            style="@style/Body1Text"
+            android:layout_marginStart="83dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+    </RelativeLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/message_card_root_layout3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/keyline_2"
+            android:paddingBottom="@dimen/spacing_normal"
+            android:visibility="gone"
+            android:ellipsize="end"
+            tools:text="CGやユーモアのすばらしさについては、もう色々な方が語りつくしてくれているので特に印象に残った場面の感想を・ジュディが事件の記者会見で話した後ニックに問い詰められた時「事実を話しただけだわ。うさぎは凶暴なDNAを持たないもの」みたいなことを言う場面、ジュディに全くの悪気はないゆえに凄く残酷。ジュディにも肉食動物は獰猛だという偏見が心の底に偏見だと思わないほど当たり前として根付いていて、だからこそ、偏見はないんだ！と思っている。自分のなかの偏見に気付かずよりよい世界を作るんだと夢を見ている、きっと偏見は常識や当たり前とほとんど同義なんだなと感じました。・ニックに夜の遠吠えの玉があたってジュディに襲いかかろうとする場面、あれは玉がブルーベリーに差し替わっているとジュディも分かってたんでしょうか？？前述の自分の中の偏見を知ったあとニックが本当に撃たれたとしたらジュディはどんな態度をとるんだろうなあと思いました。（まあ、毒薬で凶暴になること自体はもう偏見とは関係ない問題なのでここでニックの善性を信じる必要もないといえばないのですが）ブルーベリーに差し替えるという回避方法についても、2人の信頼の力でジュディは逃げない！ニックは本能ねじふせて襲わない！なんていう展開を期待してしまったのでちょっと拍子抜けしたのですがそれじゃあ夢物語になっちゃうのかな。・最後に真犯人が捕まって一応事件は解決するのですが真犯人が更生する面はないのも最初は少し消化不良を感じました。でもこんな風に偏見はなくせるよ！いけないことだって人を更生できる！なんて正解は現実にはないからこその描写なのかもしれないです。そう思うとこんなに可愛いキャラクターと細かでわくわくする世界描写のなかで描かれてるのは今わたしたちの世界で起きてる「現実」を忠実に描いている映画だと思います。まあこんなことを頭の隅っこで思いつつジュディが首席で卒業する辞典でうるうるしてニックの幼少期の可愛さにもうるうるしてナマケモノには爆笑して深いテーマを感じながらもそれ以外の魅力でもとても惹きつけられる作品でした。"
+            tools:visibility="visible"
+            style="@style/Body1Text"
+            android:layout_marginStart="83dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+    </RelativeLayout>
+
+</LinearLayout>
+
+
+
