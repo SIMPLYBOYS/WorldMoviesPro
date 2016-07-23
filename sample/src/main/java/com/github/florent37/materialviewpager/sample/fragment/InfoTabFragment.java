@@ -39,10 +39,10 @@ import com.github.florent37.materialviewpager.sample.framework.CustomTextView;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.imdb.SlideActivity;
-import com.github.florent37.materialviewpager.sample.model.TrendsObject;
-import com.github.florent37.materialviewpager.sample.trends.TrendsAlbumActivity;
-import com.github.florent37.materialviewpager.sample.trends.TrendsDetail;
-import com.github.florent37.materialviewpager.sample.trends.TrendsSlideActivity;
+import com.github.florent37.materialviewpager.sample.model.jpTrendsObject;
+import com.github.florent37.materialviewpager.sample.trends.jp.TrendsAlbumActivity;
+import com.github.florent37.materialviewpager.sample.trends.jp.TrendsDetail;
+import com.github.florent37.materialviewpager.sample.trends.jp.TrendsSlideActivity;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
@@ -75,15 +75,15 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
     private ExpandableRelativeLayout expandableLayout;
     private TrendsGalleryRecycleViewAdapter trendsGalleryAdapter;
     private LinearLayoutManager linearLayoutManager;
-    private List<TrendsObject.GalleryItem> list = null;
+    private List<jpTrendsObject.GalleryItem> list = null;
     YouTubeThumbnailView youTubeThumbnailView;
 //    ObservableScrollView nested_scrollview;
     NestedScrollView nested_scrollview;
-    private TrendsObject trendsObject;
+    private jpTrendsObject trendsObject;
     MaterialDialog.Builder builder;
     MaterialDialog dialog;
 
-    public static InfoTabFragment newInstance(TrendsObject trendsObject) {
+    public static InfoTabFragment newInstance(jpTrendsObject trendsObject) {
         InfoTabFragment fragment = new InfoTabFragment();
         Bundle args = new Bundle();
         args.putSerializable("trends", trendsObject);
@@ -97,7 +97,7 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
         Gson gson = new Gson();
         View view = inflater.inflate(R.layout.info_fragment, container, false);
         nested_scrollview = (NestedScrollView) view.findViewById(R.id.nested_scrollview);
-        trendsObject = (TrendsObject) getArguments().getSerializable("trends");
+        trendsObject = (jpTrendsObject) getArguments().getSerializable("trends");
         description = (CustomTextView) view.findViewById(R.id.description);
         trailer_title =  (TextView) view.findViewById(R.id.trailer_title);
         plot = (TextView) view.findViewById(R.id.plot);
@@ -115,7 +115,7 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
 
         JsonArray dataInfo = new JsonParser().parse(trendsObject.getData()).getAsJsonArray();
         JsonElement jsonElement = null;
-        TrendsObject.DataItem dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+        jpTrendsObject.DataItem dataItem = gson.fromJson(jsonElement, jpTrendsObject.DataItem.class);
 
         if (dataInfo.size() == 5) {
             jsonElement = dataInfo.get(4);
@@ -123,7 +123,7 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
             jsonElement = dataInfo.get(3);
         }
 
-        dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+        dataItem = gson.fromJson(jsonElement, jpTrendsObject.DataItem.class);
         runtime.setText(dataItem.getData());
 
         if (dataInfo.size() == 5) {
@@ -132,7 +132,7 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
             jsonElement = dataInfo.get(1);
         }
 
-        dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+        dataItem = gson.fromJson(jsonElement, jpTrendsObject.DataItem.class);
         country.setText(dataItem.getData());
         countryFlag(dataItem.getData().split(":")[1]);
 
@@ -142,7 +142,7 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
             jsonElement = dataInfo.get(0);
         }
 
-        dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+        dataItem = gson.fromJson(jsonElement, jpTrendsObject.DataItem.class);
         year.setText(dataItem.getData());
 
         if (dataInfo.size() == 5) {
@@ -151,7 +151,7 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
             jsonElement = dataInfo.get(2);
         }
 
-        dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+        dataItem = gson.fromJson(jsonElement, jpTrendsObject.DataItem.class);
         studio.setText(dataItem.getData());
         expandableLayout = (ExpandableRelativeLayout) view.findViewById(R.id.expandableLayout);
         buttonLayout = view.findViewById(R.id.expandableButton);
@@ -192,10 +192,10 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
 
         //------- deserialize Gallery JSON object -------//
         JsonArray galleryInfo = new JsonParser().parse(trendsObject.getGalleryUrl()).getAsJsonArray();
-        list = new ArrayList<TrendsObject.GalleryItem>();
+        list = new ArrayList<jpTrendsObject.GalleryItem>();
         for (int i = 0; i < galleryInfo.size(); i++) {
             JsonElement str = galleryInfo.get(i);
-            TrendsObject.GalleryItem obj = gson.fromJson(str, TrendsObject.GalleryItem.class);
+            jpTrendsObject.GalleryItem obj = gson.fromJson(str, jpTrendsObject.GalleryItem.class);
             list.add(obj);
             trendsGalleryAdapter.addItem(i,obj);
         }

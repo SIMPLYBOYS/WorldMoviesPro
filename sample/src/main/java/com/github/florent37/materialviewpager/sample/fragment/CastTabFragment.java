@@ -22,21 +22,19 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.squareup.picasso.Picasso;
-import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.util.ArrayList;
 
 /**
  * Created by aaron on 2016/6/30.
  */
-public class CastFragment extends Fragment {
-
+public class CastTabFragment extends Fragment {
 
     private TrendsObject trendsObject;
     private Gson gson = new Gson();
 
-    public static CastFragment newInstance(TrendsObject trendsObject) {
-        CastFragment fragment = new CastFragment();
+    public static CastTabFragment newInstance(TrendsObject trendsObject) {
+        CastTabFragment fragment = new CastTabFragment();
         Bundle args = new Bundle();
         args.putSerializable("trends", trendsObject);
         fragment.setArguments(args);
@@ -57,7 +55,7 @@ public class CastFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
         recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(),
                 getCastlist()));
-        recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(recyclerView.getContext()).build());
+//        recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(recyclerView.getContext()).build());
     }
 
     private ArrayList<TrendsObject.CastItem> getCastlist() {

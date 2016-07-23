@@ -37,7 +37,7 @@ import com.github.florent37.materialviewpager.sample.adapter.TrendsGalleryRecycl
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.imdb.MovieDetail;
-import com.github.florent37.materialviewpager.sample.model.TrendsObject;
+import com.github.florent37.materialviewpager.sample.model.jpTrendsObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -60,11 +60,11 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
         Response.Listener, Response.ErrorListener {
     private ShareActionProvider shareActionProvider;
     private final String TRENDS_OBJECT = "TRENDS_OBJECT";
-    private TrendsObject trendsObject;
+    private jpTrendsObject trendsObject;
     private RecyclerView myRecyclerView;
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
     private TrendsGalleryRecycleViewAdapter trendsGalleryAdapter;
-    private List<TrendsObject.GalleryItem> list = null;
+    private List<jpTrendsObject.GalleryItem> list = null;
     private MenuItem searchItem, shareItem;
     private SearchView searchView = null;
     public static final String FILM_NAME = "filmName";
@@ -85,6 +85,7 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
     private static final String TAG_GALLERY_FULL = "gallery_full";
     private static final String TAG_STORY = "story";
     private static final String TAG_CAST = "cast";
+    private static final String TAG_REVIEW = "review";
     private static final String TAG_GENRE = "genres";
     private static final String TAG_RATING = "rating";
     private static final String TAG_RUNTIME = "runtime";
@@ -99,7 +100,7 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
-        trendsObject = (TrendsObject) getIntent().getSerializableExtra(TRENDS_OBJECT);
+        trendsObject = (jpTrendsObject) getIntent().getSerializableExtra(TRENDS_OBJECT);
         setSupportActionBar(toolbar);
 
         final ActionBar actionBar = getSupportActionBar();
@@ -132,10 +133,10 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
         //------- deserialize Gallery JSON object -------//
         Gson gson = new Gson();
         JsonArray jsonArray = new JsonParser().parse(trendsObject.getGalleryUrl()).getAsJsonArray();
-        list = new ArrayList<TrendsObject.GalleryItem>();
+        list = new ArrayList<jpTrendsObject.GalleryItem>();
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonElement str = jsonArray.get(i);
-            TrendsObject.GalleryItem obj = gson.fromJson(str, TrendsObject.GalleryItem.class);
+            jpTrendsObject.GalleryItem obj = gson.fromJson(str, jpTrendsObject.GalleryItem.class);
             list.add(obj);
             trendsGalleryAdapter.addItem(i,obj);
         }
@@ -254,7 +255,7 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
                     try {
                         JSONArray contents = response.getJSONArray("contents");
                         Log.d("0504", "title onResponse" + contents);
-                        TrendsObject item = buildImdbModel(contents);
+                        jpTrendsObject item = buildImdbModel(contents);
                         Intent intent = new Intent(TrendsAlbumActivity.this, MovieDetail.class);
                         intent.putExtra(TrendsDetail.TRENDS_OBJECT, item);
                         ActivityCompat.startActivity(TrendsAlbumActivity.this, intent, null);
@@ -350,7 +351,7 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
         return shareIntent;
     }
 
-    public static TrendsObject buildImdbModel(JSONArray contents) throws JSONException {
+    public static jpTrendsObject buildImdbModel(JSONArray contents) throws JSONException {
         JSONObject c = contents.getJSONObject(0);
         String title = c.getString(TAG_TITLE);
         int top = 0;
@@ -373,6 +374,7 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
         JSONArray data = new JSONArray();
         JSONArray staff = new JSONArray();
         JSONArray cast = new JSONArray();
+        JSONArray review = new JSONArray();
         JSONArray gallery = new JSONArray();
         JSONObject rating = new JSONObject();
 
@@ -381,6 +383,7 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
         mainInfo = c.getString(TAG_INFO);
         staff = c.getJSONArray(TAG_STAFF);
         cast = c.getJSONArray(TAG_CAST);
+        review = c.getJSONArray(TAG_REVIEW);
         gallery = c.getJSONArray(TAG_GALLERY_FULL);
         story = c.getString(TAG_STORY);
         posterUrl = c.getString(TAG_POSTER_URL);
@@ -388,8 +391,8 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
         detailUrl = c.getString(TAG_DETAIL_URL);
         rating = c.getJSONObject(TAG_RATING);
         releaseDate = c.getString(TAG_RELEASE);
-        TrendsObject item = null;
-        item = new TrendsObject(title, String.valueOf(top), detailUrl, posterUrl, trailerUrl, cast.toString(),
+        jpTrendsObject item = null;
+        item = new jpTrendsObject(title, String.valueOf(top), detailUrl, posterUrl, trailerUrl, cast.toString(), review.toString(),
                 staff.toString(), data.toString(), story, mainInfo, gallery.toString(), rating.toString(), releaseDate);
 
         return item;

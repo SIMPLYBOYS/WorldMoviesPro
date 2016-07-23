@@ -13,6 +13,7 @@ public class TrendsObject implements Serializable {
     private String trailerUrl;
     private String galleryUrl;
     private String cast;
+    private String review;
     private String staff;
     private String data;
     private String story;
@@ -83,8 +84,31 @@ public class TrendsObject implements Serializable {
         }
     }
 
+    public class ReviewItem {
+        private String name;
+        private String avatar;
+        private String topic;
+        private String text;
+        private int point;
+        private String date;
+
+
+        public String getAvatar() { return avatar;}
+
+        public String getViewer() { return name;}
+
+        public String getDate() { return date;}
+
+        public String getTopic() { return topic;}
+
+        public String getContent() { return text;}
+
+        public int getPoint() { return point;}
+
+    }
+
     public TrendsObject(String title, String top, String detailUrl, String posterUrl, String trailerUrl,
-                        String cast, String staff, String data, String story, String mainInfo, String galleryUrl, String rating, String releaseDate) {
+                        String cast, String review, String staff, String data, String story, String mainInfo, String galleryUrl, String rating, String releaseDate) {
         this.title = title;
         this.top = top;
         this.detailUrl = detailUrl;
@@ -93,6 +117,7 @@ public class TrendsObject implements Serializable {
         this.detailUrl = detailUrl;
         this.galleryUrl = galleryUrl;
         this.cast = cast;
+        this.review = review;
         this.staff = staff;
         this.data = data;
         this.story = story;
@@ -114,6 +139,8 @@ public class TrendsObject implements Serializable {
     public String getStaff() { return staff; }
 
     public String getStory() { return story; }
+
+    public String getReview() { return review; }
 
     public String getData() { return data; }
 

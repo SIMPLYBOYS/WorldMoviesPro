@@ -39,9 +39,9 @@ import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.flaviofaria.kenburnsview.Transition;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.fragment.CastFragment;
-import com.github.florent37.materialviewpager.sample.fragment.InfoTabFragment;
-import com.github.florent37.materialviewpager.sample.fragment.TabFragment;
-import com.github.florent37.materialviewpager.sample.model.TrendsObject;
+import com.github.florent37.materialviewpager.sample.fragment.jpInfoTabFragment;
+import com.github.florent37.materialviewpager.sample.fragment.ReviewFragment;
+import com.github.florent37.materialviewpager.sample.model.jpTrendsObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -70,7 +70,7 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
     public static String TRENDS_OBJECT = "TRENDS_OBJECT";
     private int mTransitionsCount = 0;
     private static int TRANSITIONS_TO_SWITCH = 1;
-    private List<TrendsObject.GalleryItem> list = null;
+    private List<jpTrendsObject.GalleryItem> list = null;
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbar;
     private KenBurnsView backgroundImageView, backgroundImageView2, backgroundImageView3, backgroundImageView4, backgroundImageView5;
@@ -78,7 +78,7 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
     private FloatingActionButton fab;
     private TextView title;
     private ViewFlipper mViewSwitcher;
-    private TrendsObject trendsObject = null;
+    private jpTrendsObject trendsObject = null;
     ShareActionProvider shareActionProvider;
 
     @Override
@@ -120,17 +120,17 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
         backgroundImageView5.setTransitionListener(this);
         //---------- Ken Burn Animation-----------//
 
-        trendsObject = (TrendsObject) getIntent().getSerializableExtra(TRENDS_OBJECT);
+        trendsObject = (jpTrendsObject) getIntent().getSerializableExtra(TRENDS_OBJECT);
         mViewSwitcher = (ViewFlipper) findViewById(R.id.viewSwitcher);
 //        collapsingToolbar.setTitle(trendsObject.getTitle());
         title.setText(trendsObject.getTitle());
 
         //------- deserialize Gallery JSON object -------//
         JsonArray galleryInfo = new JsonParser().parse(trendsObject.getGalleryUrl()).getAsJsonArray();
-        list = new ArrayList<TrendsObject.GalleryItem>();
+        list = new ArrayList<jpTrendsObject.GalleryItem>();
         for (int i = 0; i < galleryInfo.size(); i++) {
             JsonElement str = galleryInfo.get(i);
-            TrendsObject.GalleryItem obj = gson.fromJson(str, TrendsObject.GalleryItem.class);
+            jpTrendsObject.GalleryItem obj = gson.fromJson(str, jpTrendsObject.GalleryItem.class);
             list.add(obj);
         }
         //------- deserialize Gallery JSON object -------//
@@ -161,11 +161,11 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
     private void setupViewPager(final ViewPager viewPager) {
         final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         if (trendsObject == null) {
-            trendsObject = (TrendsObject) getIntent().getSerializableExtra(TRENDS_OBJECT);
+            trendsObject = (jpTrendsObject) getIntent().getSerializableExtra(TRENDS_OBJECT);
         }
-        adapter.addFrag(InfoTabFragment.newInstance(trendsObject), "Info");
+        adapter.addFrag(jpInfoTabFragment.newInstance(trendsObject), "Info");
         adapter.addFrag(CastFragment.newInstance(trendsObject), "Cast");
-        adapter.addFrag(new TabFragment(), "Review");
+        adapter.addFrag(ReviewFragment.newInstance(trendsObject), "Review");
         viewPager.setAdapter(adapter);
         /*viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -253,6 +253,8 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
     @Override
     public void onTransitionEnd(Transition transition) {
         mTransitionsCount++;
+        if (list.size() < 1)
+            return;
         if (mTransitionsCount == TRANSITIONS_TO_SWITCH) {
             Random random = new Random();
             transitionImageUrl(backgroundImageView, list.get(random.nextInt(list.size())).getUrl(), 250);
