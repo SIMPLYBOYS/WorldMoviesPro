@@ -1,7 +1,6 @@
 package com.github.florent37.materialviewpager.sample.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +93,6 @@ public class TrendsGalleryRecycleViewAdapter extends RecyclerView.Adapter<Trends
         TrendsObject.GalleryItem item = mItems.get(position - mPlaceholderSize);
         if (item!= null) {
             final String Url = item.getUrl();
-            Log.d("0502", String.valueOf(position) + " Url:" + Url);
             if (!Url.isEmpty()) {
                 mProgressBar.setVisibility(View.VISIBLE);
                 itemHolder.bind(itemHolder, item, mProgressBar);

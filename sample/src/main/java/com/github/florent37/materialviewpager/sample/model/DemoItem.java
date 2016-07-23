@@ -4,7 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import com.felipecsl.asymmetricgridview.AsymmetricItem;
+import com.github.florent37.materialviewpager.sample.framework.AsymmetricItem;
+
 
 public class DemoItem implements AsymmetricItem {
 

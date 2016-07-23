@@ -119,6 +119,11 @@
     <color name="navdrawer_icon_tint">#808080</color>
     <color name="navdrawer_icon_tint_selected">@color/theme_accent_1</color>
 
+    <color name="red">#f2100c</color>
+    <color name="dark_red">#40000c</color>
+    <color name="window_background">#FFF5F5F5</color>
+    <color name="black_opacity_66">#AA000000</color>
+
     <string-array name="movie_serial_bg">
         <item>#24c6d5</item>
         <item>#57dd86</item>

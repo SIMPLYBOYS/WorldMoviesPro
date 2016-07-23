@@ -109,6 +109,7 @@ import com.github.florent37.materialviewpager.sample.framework.PresenterFragment
 import com.github.florent37.materialviewpager.sample.framework.QueryEnum;
 import com.github.florent37.materialviewpager.sample.framework.UpdatableView;
 import com.github.florent37.materialviewpager.sample.framework.UserActionEnum;
+import com.github.florent37.materialviewpager.sample.imdb.GenreActivity;
 import com.github.florent37.materialviewpager.sample.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.sample.model.User;
 import com.github.florent37.materialviewpager.sample.nytimes.nyTimesActivity;
@@ -220,19 +221,19 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     protected static final int NAVDRAWER_ITEM_NYTIMES = 4;
 
-    protected static final int NAVDRAWER_ITEM_UP_COMING = 5;
+    protected static final int NAVDRAWER_ITEM_UP_COMING = 6;
 
-    protected static final int NAVDRAWER_ITEM_SIGN_IN = 6;
+    protected static final int NAVDRAWER_ITEM_SIGN_IN = 7;
 
-    protected static final int NAVDRAWER_ITEM_SETTINGS = 7;
+    protected static final int NAVDRAWER_ITEM_SETTINGS = 8;
 
-    protected static final int NAVDRAWER_ITEM_ABOUT = 8;
+    protected static final int NAVDRAWER_ITEM_ABOUT = 9;
 
-    protected static final int NAVDRAWER_ITEM_DEBUG = 11;
+    protected static final int NAVDRAWER_ITEM_GENRE = 5;
 
-    protected static final int NAVDRAWER_ITEM_SIGN_OUT = 10;
+    protected static final int NAVDRAWER_ITEM_SIGN_OUT = 11;
 
-    protected static final int NAVDRAWER_ITEM_IMDB = 9;
+    protected static final int NAVDRAWER_ITEM_IMDB = 10;
 
     protected static final int NAVDRAWER_ITEM_INVALID = -1;
 
@@ -247,6 +248,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             R.string.navdrawer_item_explore,
             R.string.navdrawer_item_map,
             R.string.navdrawer_item_nytimes,
+            R.string.navdrawer_item_genre,
             R.string.navdrawer_item_up_coming,
             R.string.navdrawer_item_sign_in,
             R.string.navdrawer_item_settings,
@@ -263,7 +265,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
             R.drawable.ic_trending_up,  // Trends
             R.drawable.ic_navview_map, // Map
             R.drawable.nytimes, // Social
-            R.drawable.ic_movie, // Video Library
+            R.drawable.ic_genre, //Genre
+            R.drawable.ic_movie, // Upcoming movies
             R.drawable.facebook, // Sign in
             R.drawable.ic_navview_settings, // Settings.
             R.drawable.ic_info_outline, // About
@@ -800,6 +803,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             mNavDrawerItems.add(NAVDRAWER_ITEM_UP_COMING);
             mNavDrawerItems.add(NAVDRAWER_ITEM_IMDB);
             mNavDrawerItems.add(NAVDRAWER_ITEM_NYTIMES);
+            mNavDrawerItems.add(NAVDRAWER_ITEM_GENRE);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SIGN_OUT);
@@ -1163,6 +1167,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 break;
             case NAVDRAWER_ITEM_NYTIMES:
                 createBackStack(new Intent(this, nyTimesActivity.class));
+                break;
+            case NAVDRAWER_ITEM_GENRE:
+                createBackStack(new Intent(this, GenreActivity.class));
                 break;
             case NAVDRAWER_ITEM_UP_COMING:
                 createBackStack(new Intent(this, upComingActivity.class));

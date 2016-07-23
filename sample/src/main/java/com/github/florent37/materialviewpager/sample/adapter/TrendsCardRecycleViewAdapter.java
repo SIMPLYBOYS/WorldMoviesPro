@@ -106,7 +106,6 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
         private TrendsCardRecycleViewAdapter mAdapter;
         private TrendsObject trendsObject;
 
-
         public ContentViewHolder(View itemView, TrendsCardRecycleViewAdapter adapter) {
             super(itemView);
             int tag = (Integer) itemView.getTag();
@@ -140,7 +139,6 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                     titleView.setText(title);
                     topView.setText(trendsObject.getTop());
                     Gson gson = new Gson();
-                    JsonArray dataInfo = new JsonParser().parse(trendsObject.getData()).getAsJsonArray();
                     JsonArray staffInfo = new JsonParser().parse(trendsObject.getStaff()).getAsJsonArray();
                     JsonArray castInfo = new JsonParser().parse(trendsObject.getCast()).getAsJsonArray();
                     JsonObject ratingInfo = new JsonParser().parse(trendsObject.getRating()).getAsJsonObject();
@@ -148,13 +146,17 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                     TrendsObject.CastItem castItem = null;
                     TrendsObject.RatingItem ratingItem = null;
                     JsonElement jsonElement = null;
-                    yearView.setText(trendsObject.getReleaseDate().split("公開日")[1].trim());
+                    if (trendsObject.getReleaseDate().indexOf("公開日")!= -1)
+                        yearView.setText(trendsObject.getReleaseDate().split("公開日")[1].trim());
+                    else
+                        yearView.setText(trendsObject.getReleaseDate());
 
                     /*------- rating -------*/
                     jsonElement = ratingInfo.getAsJsonObject();
                     ratingItem = gson.fromJson(jsonElement, TrendsObject.RatingItem.class);
                     rattingView.setText(ratingItem.getScore() + " / ");
-                    votesView.setText(ratingItem.getVotes());
+                    if (ratingItem.getVotes() != null)
+                        votesView.setText(ratingItem.getVotes());
 
                     /*yearView.setText(tObject.getYear());
                     rattingView.setText(tObject.getRatting());
@@ -173,17 +175,27 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                         arrowView.setVisibility(View.GONE);
                     }*/
 
-                    jsonElement = staffInfo.get(0);
-                    staffItem = gson.fromJson(jsonElement, TrendsObject.StaffItem.class);
-                    String desciption = staffItem.getStaff().split(":")[1] + " (dir)";
+                    if (staffInfo.size() > 0) {
+                        jsonElement = staffInfo.get(0);
+                        staffItem = gson.fromJson(jsonElement, TrendsObject.StaffItem.class);
+                        String desciption;
+                        if (staffItem.getStaff().indexOf(':') != -1)
+                            desciption = staffItem.getStaff().split(":")[1] + " (dir)";
+                        else
+                            desciption = staffItem.getStaff() + " (dir)";
 
-                    for(int i=0; i<castInfo.size(); i++ ) {
-                        jsonElement = castInfo.get(i);
-                        castItem = gson.fromJson(jsonElement, TrendsObject.CastItem.class);
-                        desciption += ", " + castItem.getCast().split(":")[0];
+                        for(int i=0; i<castInfo.size(); i++ ) {
+                            jsonElement = castInfo.get(i);
+                            castItem = gson.fromJson(jsonElement, TrendsObject.CastItem.class);
+                            if (castItem.getCast().indexOf(':') != -1)
+                                desciption += ", " + castItem.getCast().split(":")[0];
+                            else
+                                desciption += ", " + castItem.getCast();
+                        }
+                        desciptionView.setText(desciption);
+                    } else {
+                        desciptionView.setText("");
                     }
-
-                    desciptionView.setText(desciption);
 
                     Picasso.with(posterView.getContext()).load(trendsObject.getPosterUrl()).placeholder(R.drawable.placeholder).centerCrop().fit()
                             .into(posterView, new Callback() {

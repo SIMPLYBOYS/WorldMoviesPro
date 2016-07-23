@@ -36,7 +36,7 @@ import com.github.florent37.materialviewpager.sample.adapter.TrendsSlideRecycleV
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.imdb.MovieDetail;
-import com.github.florent37.materialviewpager.sample.model.jpTrendsObject;
+import com.github.florent37.materialviewpager.sample.model.TrendsObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -59,11 +59,11 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
         Response.Listener, Response.ErrorListener {
     public static final String PIC_POSITION = "PIC_POSITION";
     private final String TRENDS_OBJECT = "TRENDS_OBJECT";
-    private jpTrendsObject trendsObject;
+    private TrendsObject trendsObject;
     private RecyclerView myRecyclerView;
     private LinearLayoutManager linearLayoutManager;
     private TrendsSlideRecycleViewAdapter trendsSlideAdapter;
-    private List<jpTrendsObject.GalleryItem> list = null;
+    private List<TrendsObject.GalleryItem> list = null;
     private MenuItem searchItem, shareItem;
     private SearchView searchView = null;
     public static final String FILM_NAME = "filmName";
@@ -81,7 +81,7 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
-        trendsObject = (jpTrendsObject) getIntent().getSerializableExtra(TRENDS_OBJECT);
+        trendsObject = (TrendsObject) getIntent().getSerializableExtra(TRENDS_OBJECT);
         position = getIntent().getExtras().getInt(PIC_POSITION);
         setSupportActionBar(toolbar);
 
@@ -115,10 +115,10 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
         //------- deserialize Gallery JSON object -------//
         Gson gson = new Gson();
         JsonArray jsonArray = new JsonParser().parse(trendsObject.getGalleryUrl()).getAsJsonArray();
-        list = new ArrayList<jpTrendsObject.GalleryItem>();
+        list = new ArrayList<TrendsObject.GalleryItem>();
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonElement str = jsonArray.get(i);
-            jpTrendsObject.GalleryItem obj = gson.fromJson(str, jpTrendsObject.GalleryItem.class);
+            TrendsObject.GalleryItem obj = gson.fromJson(str, TrendsObject.GalleryItem.class);
             list.add(obj);
             trendsSlideAdapter.addItem(i,obj);
         }
@@ -244,7 +244,7 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
                         galleryList = new ArrayList<HashMap<String, String>>();
                         JSONArray contents = response.getJSONArray("contents");
                         Log.d("0504", "title onResponse" + contents);
-                        jpTrendsObject item = TrendsAlbumActivity.buildImdbModel(contents);
+                        TrendsObject item = TrendsAlbumActivity.buildImdbModel(contents);
                         Intent intent = new Intent(TrendsSlideActivity.this, MovieDetail.class);
                         intent.putExtra(TrendsDetail.TRENDS_OBJECT, item);
                         ActivityCompat.startActivity(TrendsSlideActivity.this, intent, null);

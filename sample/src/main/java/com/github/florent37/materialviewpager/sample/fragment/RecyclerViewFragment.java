@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -65,6 +66,8 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
 
     public String HOST_NAME = Config.HOST_NAME;
 
+    private ProgressBar progressBar;
+
     private List<TestRecyclerViewAdapter.MyObject> getRandomSublist(List<TestRecyclerViewAdapter.MyObject> array, int amount) {
 
         ArrayList<TestRecyclerViewAdapter.MyObject> list = new ArrayList<>(amount);
@@ -114,6 +117,11 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
 
         CustomJSONObjectRequest jsonRequest_q = null; //json request from search bar
 
+        SharedPreferences settings = getActivity().getSharedPreferences("settings", 0);
+        boolean ascending = settings.getBoolean("ascending", false);
+        String url = "";
+        TrendsCardRecycleViewAdapter adapter;
+
         switch (channel) {
             case 0:
                 if (Query != null) {
@@ -132,15 +140,81 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
                     mQueue.add(jsonRequest_q);
                     return;*/
                 }
-
-                SharedPreferences settings = getActivity().getSharedPreferences("settings", 0);
-                boolean ascending = settings.getBoolean("ascending", false);
-
-                String url = HOST_NAME + "trends";
-                TrendsCardRecycleViewAdapter adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
-                if (adapter != null)
+                url = HOST_NAME + "trends";
+                adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+                if (adapter != null && adapter.getItemCount() > 1)
                     return;
-                if (ascending ) {
+                progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.VISIBLE);
+                if (ascending) {
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
+                } else {
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=-1", new JSONObject(), this, this);
+                }
+                break;
+            case 1:
+                url = HOST_NAME + "usTrends";
+                adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+                if (adapter != null && adapter.getItemCount() > 1)
+                    return;
+                progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.VISIBLE);
+                if (ascending) {
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
+                } else {
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=-1", new JSONObject(), this, this);
+                }
+                break;
+            case 2:
+                if (Query != null) {
+                    /*// query from searchview
+                    if (isNumeric(Query))
+                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
+                                "/imdb?from=" + Integer.parseInt(Query) + "&to=" + Integer.parseInt(Query) + "&ascending=1", new JSONObject(), this, this);
+                    else {
+                        try {
+                            Query = URLEncoder.encode(Query, "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            throw new AssertionError("UTF-8 is unknown");
+                        }
+                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb?title=" + Query + "&ascending=1", new JSONObject(), this, this);
+                    }
+                    mQueue.add(jsonRequest_q);
+                    return;*/
+                }
+                url = HOST_NAME + "twTrends";
+                adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+                if (adapter != null && adapter.getItemCount() > 1)
+                    return;
+                progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.VISIBLE);
+                if (ascending) {
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
+                } else {
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=-1", new JSONObject(), this, this);
+                }
+                break;
+            case 3:
+                url = HOST_NAME + "krTrends";
+                adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+                if (adapter != null && adapter.getItemCount() > 1)
+                    return;
+                progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.VISIBLE);
+                if (ascending) {
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
+                } else {
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=-1", new JSONObject(), this, this);
+                }
+                break;
+            case 4:
+                url = HOST_NAME + "frTrends";
+                adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+                if (adapter != null && adapter.getItemCount() > 1)
+                    return;
+                progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.VISIBLE);
+                if (ascending) {
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
                 } else {
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=-1", new JSONObject(), this, this);

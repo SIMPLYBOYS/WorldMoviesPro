@@ -89,7 +89,7 @@ public class TrendsObject implements Serializable {
         private String avatar;
         private String topic;
         private String text;
-        private int point;
+        private float point;
         private String date;
 
 
@@ -103,7 +103,7 @@ public class TrendsObject implements Serializable {
 
         public String getContent() { return text;}
 
-        public int getPoint() { return point;}
+        public float getPoint() { return point;}
 
     }
 

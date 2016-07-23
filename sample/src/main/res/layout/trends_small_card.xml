@@ -133,7 +133,7 @@
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="5dp">
             <TextView
                 android:id="@+id/rating"
                 android:layout_width="40dp"
@@ -155,7 +155,7 @@
                 android:text="12345件"
                 android:layout_alignTop="@+id/rating"
                 android:layout_alignStart="@+id/rating"
-                android:layout_marginStart="39dp" />
+                android:layout_marginStart="24dp" />
 
             <com.github.florent37.materialviewpager.sample.framework.CustomTextView
                 android:id="@+id/year"

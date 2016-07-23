@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 
+import com.github.florent37.materialviewpager.sample.R;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

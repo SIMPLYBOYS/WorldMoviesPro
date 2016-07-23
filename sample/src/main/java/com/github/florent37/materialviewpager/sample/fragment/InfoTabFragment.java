@@ -39,10 +39,10 @@ import com.github.florent37.materialviewpager.sample.framework.CustomTextView;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.imdb.SlideActivity;
-import com.github.florent37.materialviewpager.sample.model.jpTrendsObject;
-import com.github.florent37.materialviewpager.sample.trends.jp.TrendsAlbumActivity;
-import com.github.florent37.materialviewpager.sample.trends.jp.TrendsDetail;
-import com.github.florent37.materialviewpager.sample.trends.jp.TrendsSlideActivity;
+import com.github.florent37.materialviewpager.sample.model.TrendsObject;
+import com.github.florent37.materialviewpager.sample.trends.TrendsAlbumActivity;
+import com.github.florent37.materialviewpager.sample.trends.TrendsDetail;
+import com.github.florent37.materialviewpager.sample.trends.TrendsSlideActivity;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
@@ -75,15 +75,15 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
     private ExpandableRelativeLayout expandableLayout;
     private TrendsGalleryRecycleViewAdapter trendsGalleryAdapter;
     private LinearLayoutManager linearLayoutManager;
-    private List<jpTrendsObject.GalleryItem> list = null;
+    private List<TrendsObject.GalleryItem> list = null;
     YouTubeThumbnailView youTubeThumbnailView;
 //    ObservableScrollView nested_scrollview;
     NestedScrollView nested_scrollview;
-    private jpTrendsObject trendsObject;
+    private TrendsObject trendsObject;
     MaterialDialog.Builder builder;
     MaterialDialog dialog;
 
-    public static InfoTabFragment newInstance(jpTrendsObject trendsObject) {
+    public static InfoTabFragment newInstance(TrendsObject trendsObject) {
         InfoTabFragment fragment = new InfoTabFragment();
         Bundle args = new Bundle();
         args.putSerializable("trends", trendsObject);
@@ -97,7 +97,7 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
         Gson gson = new Gson();
         View view = inflater.inflate(R.layout.info_fragment, container, false);
         nested_scrollview = (NestedScrollView) view.findViewById(R.id.nested_scrollview);
-        trendsObject = (jpTrendsObject) getArguments().getSerializable("trends");
+        trendsObject = (TrendsObject) getArguments().getSerializable("trends");
         description = (CustomTextView) view.findViewById(R.id.description);
         trailer_title =  (TextView) view.findViewById(R.id.trailer_title);
         plot = (TextView) view.findViewById(R.id.plot);
@@ -111,48 +111,74 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
         allButton = (TextView) view.findViewById(R.id.button_all);
         picNum = (TextView) view.findViewById(R.id.picNum);
         description.setText(trendsObject.getMainInfo());
-        plot.setText(trendsObject.getStory());
 
-        JsonArray dataInfo = new JsonParser().parse(trendsObject.getData()).getAsJsonArray();
-        JsonElement jsonElement = null;
-        jpTrendsObject.DataItem dataItem = gson.fromJson(jsonElement, jpTrendsObject.DataItem.class);
-
-        if (dataInfo.size() == 5) {
-            jsonElement = dataInfo.get(4);
-        } else {
-            jsonElement = dataInfo.get(3);
+        if (trendsObject.getStory() != "")
+            plot.setText(trendsObject.getStory());
+        else {
+            ViewGroup parent = (ViewGroup) plot.getParent();
+            parent.removeView(plot);
         }
 
-        dataItem = gson.fromJson(jsonElement, jpTrendsObject.DataItem.class);
-        runtime.setText(dataItem.getData());
+        if (trendsObject.getData().length() > 2) { //for japan trends only
+            JsonArray dataInfo = new JsonParser().parse(trendsObject.getData()).getAsJsonArray();
+            JsonElement jsonElement = null;
+            TrendsObject.DataItem dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
 
-        if (dataInfo.size() == 5) {
-            jsonElement = dataInfo.get(2);
-        } else {
-            jsonElement = dataInfo.get(1);
+            if (dataInfo.size() == 5) {
+                jsonElement = dataInfo.get(4);
+            } else {
+                jsonElement = dataInfo.get(3);
+            }
+
+            dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+
+            if (dataItem.getData().indexOf(":") != -1) {
+                runtime.setText(dataItem.getData());
+            } else {
+                runtime.setText("RunTime: "+dataItem.getData());
+            }
+
+            if (dataInfo.size() == 5) {
+                jsonElement = dataInfo.get(2);
+            } else {
+                jsonElement = dataInfo.get(1);
+            }
+
+            dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+
+            if (dataItem.getData().indexOf(":") != -1) {
+                country.setText(dataItem.getData());
+                countryFlag(dataItem.getData().split(":")[1]);
+            } else {
+                country.setText("Country: "+dataItem.getData());
+                countryFlag(dataItem.getData());
+            }
+
+            if (dataInfo.size() == 5) {
+                jsonElement = dataInfo.get(1);
+            } else {
+                jsonElement = dataInfo.get(0);
+            }
+
+            dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+
+            if (dataItem.getData().indexOf(":") != -1) {
+                year.setText(dataItem.getData());
+            } else {
+                year.setText("Year: "+dataItem.getData());
+            }
+
+            if (dataInfo.size() == 5) {
+                jsonElement = dataInfo.get(3);
+            } else {
+                jsonElement = dataInfo.get(2);
+            }
+
+            dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+            studio.setText(dataItem.getData());
         }
 
-        dataItem = gson.fromJson(jsonElement, jpTrendsObject.DataItem.class);
-        country.setText(dataItem.getData());
-        countryFlag(dataItem.getData().split(":")[1]);
 
-        if (dataInfo.size() == 5) {
-            jsonElement = dataInfo.get(1);
-        } else {
-            jsonElement = dataInfo.get(0);
-        }
-
-        dataItem = gson.fromJson(jsonElement, jpTrendsObject.DataItem.class);
-        year.setText(dataItem.getData());
-
-        if (dataInfo.size() == 5) {
-            jsonElement = dataInfo.get(3);
-        } else {
-            jsonElement = dataInfo.get(2);
-        }
-
-        dataItem = gson.fromJson(jsonElement, jpTrendsObject.DataItem.class);
-        studio.setText(dataItem.getData());
         expandableLayout = (ExpandableRelativeLayout) view.findViewById(R.id.expandableLayout);
         buttonLayout = view.findViewById(R.id.expandableButton);
 
@@ -192,10 +218,10 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
 
         //------- deserialize Gallery JSON object -------//
         JsonArray galleryInfo = new JsonParser().parse(trendsObject.getGalleryUrl()).getAsJsonArray();
-        list = new ArrayList<jpTrendsObject.GalleryItem>();
+        list = new ArrayList<TrendsObject.GalleryItem>();
         for (int i = 0; i < galleryInfo.size(); i++) {
             JsonElement str = galleryInfo.get(i);
-            jpTrendsObject.GalleryItem obj = gson.fromJson(str, jpTrendsObject.GalleryItem.class);
+            TrendsObject.GalleryItem obj = gson.fromJson(str, TrendsObject.GalleryItem.class);
             list.add(obj);
             trendsGalleryAdapter.addItem(i,obj);
         }
@@ -366,6 +392,7 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
 
         switch (location) {
             case "France":
+            case "Français":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.fr).into(thumbnailView);
                 break;
             case "Germany":
@@ -388,6 +415,7 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
             case "New Zealand":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.newzealand).into(thumbnailView);
                 break;
+            case "한국":
             case "South Korea":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.korea).into(thumbnailView);
                 break;
@@ -433,6 +461,11 @@ public class InfoTabFragment extends Fragment implements AdapterView.OnItemClick
             case "Denmark":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.denmark).into(thumbnailView);
                 break;
+            case "Taiwan":
+                Picasso.with(thumbnailView.getContext()).load(R.drawable.taiwan).into(thumbnailView);
+                break;
+            case "Américain":
+            case "미국":
             case "アメリカ":
             case "USA":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.usa).into(thumbnailView);

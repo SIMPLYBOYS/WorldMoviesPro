@@ -126,7 +126,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         this.toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         toolbar.setTitleTextColor(Color.BLACK);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

@@ -14,6 +14,7 @@
     <string name="USA">USA</string>
     <string name="Taiwan">Taiwan</string>
     <string name="Korea">Korea</string>
+    <string name="France">France</string>
     <string name="upcoming">upcoming</string>
     <string name="technologie">technology</string>
     <string name="international">international</string>
@@ -24,6 +25,7 @@
     <string name="description_trends">TrendsDetail</string>
     <string name="description_album">Album</string>
     <string name="description_imdb">IMDB Top 250</string>
+    <string name="description_genre">MovieGenre</string>
     <string name="description_upcoming">UpComing films</string>
     <string name="image">image</string>
 
@@ -56,6 +58,8 @@
     <string name="navdrawer_item_settings">Settings</string>
 
     <string name="navdrawer_item_nytimes">NewYorkTimes</string>
+
+    <string name="navdrawer_item_genre">Genre</string>
 
     <!-- Menu item to start the Sign In flow [CHAR_LIMIT=20] -->
     <string name="navdrawer_item_sign_in">Sign in</string>
@@ -567,6 +571,7 @@ user updates the rating. -->
 
     <string name="drawer_item_menu_drawer_item">Menu Drawer Item</string>
     <string name="drawer_item_menu_drawer_item_desc">Sample menu item with overflow button</string>
+    <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 
     <string name="drawer_item_home">Home</string>
     <string name="drawer_item_free_play">Free Play</string>

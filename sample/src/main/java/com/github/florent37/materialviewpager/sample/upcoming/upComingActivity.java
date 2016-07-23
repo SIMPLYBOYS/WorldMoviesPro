@@ -349,7 +349,7 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
         if (count < monthList[c.get(Calendar.MONTH)]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(0, 1)) +' ' +String.valueOf(getReleaseDate(0, 30)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(0, 1) + "&release_to=" + getReleaseDate(0, 30), new JSONObject(), this, this);
+                    "/imdb?release_from=" + getReleaseDate(0, 1) + "&release_to=" + getReleaseDate(0, 31), new JSONObject(), this, this);
         } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(1, 1)) +' ' +String.valueOf(getReleaseDate(1, 31)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
@@ -357,15 +357,15 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
         } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(2, 1)) +' ' +String.valueOf(getReleaseDate(2, 31)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(2, 1) + "&release_to=" + getReleaseDate(2, 31), new JSONObject(), this, this);
+                    "/imdb?release_from=" + getReleaseDate(2, 1) + "&release_to=" + getReleaseDate(2, 30), new JSONObject(), this, this);
         } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2] + monthList[c.get(Calendar.MONTH)+3]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(3, 1)) +' ' +String.valueOf(getReleaseDate(3, 30)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(3, 1) + "&release_to=" + getReleaseDate(3, 30), new JSONObject(), this, this);
+                    "/imdb?release_from=" + getReleaseDate(3, 1) + "&release_to=" + getReleaseDate(3, 31), new JSONObject(), this, this);
         } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2] + monthList[c.get(Calendar.MONTH)+3] + monthList[c.get(Calendar.MONTH)+4]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(4, 1)) +' ' +String.valueOf(getReleaseDate(4, 31)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(4, 1) + "&release_to=" + getReleaseDate(4, 31), new JSONObject(), this, this);
+                    "/imdb?release_from=" + getReleaseDate(4, 1) + "&release_to=" + getReleaseDate(4, 30), new JSONObject(), this, this);
         }
 
         if (count > monthList[c.get(Calendar.MONTH)] +

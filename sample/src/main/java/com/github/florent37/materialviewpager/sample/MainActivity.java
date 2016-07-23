@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -18,7 +17,6 @@ import android.os.Message;
 import android.provider.BaseColumns;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
@@ -89,6 +87,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     private boolean mSearchCheck;
     View headerLogo;
     ImageView headerLogoContent;
+
     private int mProgressBarTopWhenActionBarShown;
     private int mViewPagerScrollState = ViewPager.SCROLL_STATE_IDLE;
     private Set<RecyclerViewFragment> mMyRecyclerViewFragments = new HashSet<RecyclerViewFragment>();
@@ -99,7 +98,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     private int SlideIndex;
     private FragmentStatePagerAdapter pagerAdapter;
     private SharedPreferences sp;
-    final int tabCount = 4; //TODO title items design
+    final int tabCount = 5; //TODO title items design
     public static final String FILM_NAME = "filmName";
     private SimpleCursorAdapter mAdapter;
     private static String[] MOVIES = {};
@@ -114,9 +113,16 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         }
         @Override
         public Fragment getItem(int position) {
-            Log.d("0330", "getItem: " + position);
             switch (position){
                 case 0:
+                    return TrendsFragment.newInstance(position);
+                case 1:
+                    return TrendsFragment.newInstance(position);
+                case 2:
+                    return TrendsFragment.newInstance(position);
+                case 3:
+                    return TrendsFragment.newInstance(position);
+                case 4:
                     return TrendsFragment.newInstance(position);
                 default:
                     return DefaultFragment.newInstance(position);
@@ -130,7 +136,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position % 4) {
+            switch (position % tabCount) {
                 case 0:
                     return getResources().getString(R.string.Japan);
                 case 1:
@@ -139,6 +145,8 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                     return getResources().getString(R.string.Taiwan);
                 case 3:
                     return getResources().getString(R.string.Korea);
+                case 4:
+                    return getResources().getString(R.string.France);
                 default:
                     return "Page " + position;
             }
@@ -179,6 +187,11 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                         color = getResources().getColor(R.color.green_teal);
                         newDrawable = getResources().getDrawable(R.drawable.korea_circle);
                         break;
+                    case 4:
+                        imageUrl = "http://graduate.carleton.ca/wp-content/uploads/prog-banner-masters-international-affairs-juris-doctor.jpg";
+                        color = getResources().getColor(R.color.green_teal);
+                        newDrawable = getResources().getDrawable(R.drawable.france_circle);
+                        break;
                 }
 
                 int fadeDuration = 250;
@@ -208,7 +221,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
 
         setContentView(R.layout.activity_main);
         getOverflowMenu();
-        Log.d("0224", "onCreate");
         mContext = this;
 
         /*ContentResolver mContentResolver = mContext.getContentResolver();
@@ -468,8 +480,8 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                         else
                             mSwipeRefreshLayout.setRefreshing(false);
                         break;
-                    case 1:
-                        if (fragment.getInitiatedAdapter().getItemCount() < fragment.upComingMovieCount)
+                    default:
+                        if (fragment.getInitiatedAdapter().getItemCount() < fragment.trendMovieCount)
                             fragment.requestDataRefresh(true, null, null);
                         else
                             mSwipeRefreshLayout.setRefreshing(false);
@@ -760,7 +772,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(MaterialDialog dialog, DialogAction which) {
-                        MainActivity.this.finish();
+                        MainActivity.this.finishAffinity();
                     }
                 });
 
@@ -799,26 +811,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     @Override
     protected int getSelfNavDrawerItem() {
         return NAVDRAWER_ITEM_EXPLORE;
-    }
-
-    private boolean isSpecialItem(int itemId) {
-        return itemId == NAVDRAWER_ITEM_SETTINGS;
-    }
-
-    /**
-     * Enables back navigation for activities that are launched from the NavBar. See
-     * {@code AndroidManifest.xml} to find out the parent activity names for each activity.
-     * @param intent
-     */
-    private void createBackStack(Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            TaskStackBuilder builder = TaskStackBuilder.create(this);
-            builder.addNextIntentWithParentStack(intent);
-            builder.startActivities();
-        } else {
-            startActivity(intent);
-            finish();
-        }
     }
 
     @Override

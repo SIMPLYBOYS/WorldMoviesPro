@@ -52,135 +52,102 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:orientation="vertical"
-            android:paddingTop="@dimen/padding_normal"
-            android:paddingStart="@dimen/padding_normal"
-            android:paddingLeft="@dimen/padding_normal">
+            android:paddingLeft="6dp">
 
             <com.github.florent37.materialviewpager.sample.framework.CustomTextView
                 android:id="@+id/top"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:paddingTop="10dp"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:paddingTop="5dp"
+                android:paddingLeft="10dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:textSize="22dp"
                 android:textColor="@color/red"
                 android:layout_alignParentTop="true"
-                app:font="Roboto-Regular.ttf"/>
+                app:font="Roboto-Black.ttf"/>
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="65dp"
-                android:weightSum="1">
+                android:weightSum="1"
+                android:id="@+id/linearLayout">
 
-                <com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView
-                    android:layout_width="65dp"
-                    android:layout_height="0dp"
-                    app:aspectRatio="@dimen/aspect_16_9"
-                    android:layout_marginLeft="30dp"
-                    android:paddingTop="18dp"
-                    android:layout_alignBottom="@+id/delta"
-                    android:layout_toLeftOf="@+id/delta"
-                    android:layout_toStartOf="@+id/delta">
-
-                    <ImageView
-                        android:id="@+id/arrow"
-                        android:layout_width="38dp"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/ic_trending_down"
-                        android:scaleType="centerInside"
-                        android:visibility="gone"
-                        android:layout_weight="0.12" />
-
-                    <com.github.florent37.materialviewpager.sample.framework.CustomTextView
-                        android:id="@+id/delta"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" 1"
-                        android:textSize="10dp"
-                        android:layout_marginLeft="28dp"
-                        android:textColor="@color/body_text_3"
-                        android:paddingTop="4dp"
-                        app:font="Roboto-Bold.ttf"
-                        android:layout_alignParentTop="true"
-                        android:layout_toRightOf="@+id/view"
-                        android:layout_toEndOf="@+id/view"
-                        android:layout_weight="0.03" />
-
-                </com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView>
-
+                <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="10dp"
+                    android:textColor="@color/red"
+                    android:text="8.4"
+                    android:layout_alignRight="@+id/top"
+                    android:layout_alignEnd="@+id/top"
+                    android:layout_marginRight="1dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginBottom="6dp"
+                    android:layout_gravity="bottom"
+                    app:font="Roboto-Light.ttf"/>
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/rating"
-                android:layout_width="16dp"
+            <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+                android:id="@+id/year"
+                android:layout_width="75dp"
                 android:layout_height="16dp"
                 android:textSize="10dp"
                 android:textColor="@color/body_text_3"
-                android:layout_alignRight="@+id/top"
-                android:layout_alignEnd="@+id/top"
-                android:layout_marginRight="19dp"
-                android:layout_marginEnd="19dp" />
-
-            <com.github.florent37.materialviewpager.sample.framework.CustomTextView
-                android:id="@+id/votes"
-                android:layout_width="35dp"
-                android:layout_height="16dp"
-                android:text=" 10"
-                android:textSize="8dp"
-                android:textColor="@color/body_text_3"
-                android:paddingTop="3dp"
-                android:layout_marginRight="4dp"
-                android:layout_above="@+id/year"
-                android:layout_toRightOf="@+id/year"
-                app:font="Roboto-Light.ttf"/>
-
-            <com.github.florent37.materialviewpager.sample.framework.CustomTextView
-                android:id="@+id/year"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:textSize="12dp"
-                android:textColor="@color/body_text_3"
-                android:layout_alignParentBottom="true"
                 android:layout_alignLeft="@+id/top"
                 android:layout_alignStart="@+id/top"
-                android:text="1988"
-                android:layout_alignRight="@+id/rating"
-                android:layout_alignEnd="@+id/rating"
+                app:font="Roboto-Black.ttf"
                 android:layout_marginBottom="13dp"
-                app:font="Roboto-Black.ttf"/>
+                android:layout_alignParentBottom="true" />
 
             <com.github.florent37.materialviewpager.sample.framework.CustomTextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:ellipsize="end"
-                android:maxLines="2"
-                android:layout_marginBottom="@dimen/explore_io_keynote_card_desc_padding"
-                android:layout_toRightOf="@+id/top"
+                android:maxLines="1"
                 android:layout_toEndOf="@+id/top"
                 android:textColor="@color/body_text_1"
-                android:textSize="@dimen/text_size_xlarge"
-                tools:text="@string/placeholder_session_title"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="1dp"
-                app:font="Roboto-Black.ttf"/>
+                android:textSize="@dimen/text_size_medium"
+                android:paddingLeft="38dp"
+                android:paddingTop="10dp"
+                android:text="2456"
+                app:font="Roboto-Bold.ttf"
+                android:layout_alignBottom="@+id/top" />
 
             <com.github.florent37.materialviewpager.sample.framework.CustomTextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ellipsize="end"
-                android:maxLines="1"
-                android:paddingTop="1dp"
+                android:maxLines="3"
+                android:paddingTop="8dp"
+                android:paddingLeft="18dp"
                 android:textAppearance="@style/TextAppearance.SessionTitle"
                 tools:text="@string/placeholder_session_subtitle"
-                android:layout_below="@+id/rating"
                 android:layout_alignLeft="@+id/title"
                 android:layout_alignStart="@+id/title"
-                app:font="Roboto-Light.ttf"/>
+                android:textSize="@dimen/text_size_body"
+                android:layout_marginLeft="20dp"
+                app:font="Roboto-Light.ttf"
+                android:layout_below="@+id/title" />
+
+            <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+                android:id="@+id/votes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10dp"
+                android:textColor="@color/red"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="6dp"
+                app:font="Roboto-Light.ttf"
+                android:layout_gravity="bottom"
+                android:layout_weight="0.07"
+                android:layout_above="@+id/year"
+                android:layout_alignStart="@+id/year" />
 
         </RelativeLayout>
 

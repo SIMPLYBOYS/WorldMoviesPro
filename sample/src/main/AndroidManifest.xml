@@ -50,7 +50,7 @@ package="com.github.florent37.materialviewpager.sample">
 
 <application
     android:name=".app.AppApplication"
-    android:allowBackup="false"
+    android:allowBackup="true"
     android:hardwareAccelerated="true"
     android:icon="@drawable/ic_launcher"
     android:label="@string/app_name"
@@ -157,6 +157,17 @@ package="com.github.florent37.materialviewpager.sample">
     <activity
         android:name=".imdb.ImdbActivity"
         android:label="@string/description_imdb"
+        android:parentActivityName=".MainActivity"
+        android:theme="@style/AppTheme.ActionBar.Transparent"
+        android:exported="false">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
+    </activity>
+
+    <activity
+        android:name=".imdb.GenreActivity"
+        android:label="@string/description_genre"
         android:parentActivityName=".MainActivity"
         android:theme="@style/AppTheme.ActionBar.Transparent"
         android:exported="false">

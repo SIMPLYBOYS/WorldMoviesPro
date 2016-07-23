@@ -20,9 +20,9 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
 import com.github.florent37.materialviewpager.sample.R;
-import com.github.florent37.materialviewpager.sample.adapter.jpTrendsCardRecycleViewAdapter;
-import com.github.florent37.materialviewpager.sample.model.jpTrendsObject;
-import com.github.florent37.materialviewpager.sample.trends.jp.TrendsDetail;
+import com.github.florent37.materialviewpager.sample.adapter.TrendsCardRecycleViewAdapter;
+import com.github.florent37.materialviewpager.sample.model.TrendsObject;
+import com.github.florent37.materialviewpager.sample.trends.TrendsDetail;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,12 +60,11 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     private static final String TAG_STAFF = "staff";
     private ArrayList<HashMap<String, String>> contentList;
     private int visibleThreshold = 1;
-    //    private ArrayList<ImdbObject> imdbCollection = null;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private ProgressBar progressBar;
     private LinearLayoutManager layoutManager;
-    private jpTrendsCardRecycleViewAdapter trendsCardAdapter;
+    private TrendsCardRecycleViewAdapter trendsCardAdapter;
     private boolean loading;
     private int titleIndex = 0; //default
     private int lastVisibleItem, totalItemCount, channel;
@@ -113,9 +112,9 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
         }
     }
 
-    public jpTrendsCardRecycleViewAdapter
+    public TrendsCardRecycleViewAdapter
     getAdapter() {
-        return new jpTrendsCardRecycleViewAdapter(getContext());
+        return new TrendsCardRecycleViewAdapter(getContext());
     }
 
     @Override
@@ -125,7 +124,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             JSONArray contents = ((JSONObject) response).getJSONArray("contents");
             Log.d("0616", String.valueOf(contents));
             boolean byTitle = ((JSONObject) response).getBoolean("byTitle");
-            jpTrendsObject item = buildTrendsModel(contents, byTitle);
+            TrendsObject item = buildTrendsModel(contents, byTitle);
             loading = false;
             mSwipeRefreshLayout.setRefreshing(false);
             Log.d("0515", String.valueOf(byTitle));
@@ -156,24 +155,26 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
         Toast.makeText(getActivity(),
                 "Clicked: " + position + ", index " + mRecyclerView.indexOfChild(view),
                 Toast.LENGTH_SHORT).show();
-        jpTrendsObject tObject = trendsCardAdapter.getItem().get(position - 1);
+        TrendsObject tObject = trendsCardAdapter.getItem().get(position - 1);
+        Log.d("0713", String.valueOf(tObject.getTitle()));
         Intent intent = new Intent(getActivity(), TrendsDetail.class);
         intent.putExtra(TrendsDetail.TRENDS_OBJECT, tObject);
         ActivityCompat.startActivity(getActivity(), intent, null);
     }
 
-    private jpTrendsObject buildTrendsModel(JSONArray contents, boolean byTitle) throws JSONException {
+    private TrendsObject buildTrendsModel(JSONArray contents, boolean byTitle) throws JSONException {
         channel = this.getArguments().getInt("index", 0);
         for (int i = 0; i < contents.length(); i++) {
             JSONObject c = contents.getJSONObject(i);
             String title = c.getString(TAG_TITLE);
-            int top = 0;
+            int top = c.getInt(TAG_TOP);;
             String releaseDate = "";
             String mainInfo = "";
             String story = "";
             String trailerUrl ="";
             String posterUrl = "";
             String detailUrl = "";
+            String country = "";
 
             //----- start dummy GalleryUrl ----
             JSONObject jo = new JSONObject();
@@ -190,23 +191,34 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             JSONArray gallery = new JSONArray();
             JSONObject rating = new JSONObject();
 
-            data = c.getJSONArray(TAG_DATA);
-            top = c.getInt(TAG_TOP);
-            mainInfo = c.getString(TAG_INFO);
-            staff = c.getJSONArray(TAG_STAFF);
-            cast = c.getJSONArray(TAG_CAST);
-            review = c.getJSONArray(TAG_REVIEW);
+            if (c.has(TAG_DATA))
+                data = c.getJSONArray(TAG_DATA);
+            if (c.has(TAG_INFO))
+                mainInfo = c.getString(TAG_INFO);
+            if (c.has(TAG_STAFF))
+                staff = c.getJSONArray(TAG_STAFF);
+            if (c.has(TAG_CAST))
+                cast = c.getJSONArray(TAG_CAST);
+            if (c.has(TAG_REVIEW))
+                review = c.getJSONArray(TAG_REVIEW);
             if (c.has(TAG_GALLERY_FULL))
                 gallery = c.getJSONArray(TAG_GALLERY_FULL);
+            if (c.has(TAG_DETAIL_URL))
+                detailUrl = c.getString(TAG_DETAIL_URL);
+            if (c.has(TAG_COUNTRY)) {
+                country = c.getString(TAG_COUNTRY);
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("data", country);
+                data.put(2, jsonObj);
+            }
 
             story = c.getString(TAG_STORY);
             posterUrl = c.getString(TAG_POSTER_URL);
             trailerUrl = c.getString(TAG_TRAILER);
-            detailUrl = c.getString(TAG_DETAIL_URL);
             rating = c.getJSONObject(TAG_RATING);
             releaseDate = c.getString(TAG_RELEASE);
-            jpTrendsObject item = null;
-            item = new jpTrendsObject(title, String.valueOf(top), detailUrl, posterUrl, trailerUrl, cast.toString(), review.toString(),
+            TrendsObject item = null;
+            item = new TrendsObject(title, String.valueOf(top), detailUrl, posterUrl, trailerUrl, cast.toString(), review.toString(),
                     staff.toString(), data.toString(), story, mainInfo, gallery.toString(), rating.toString(), releaseDate);
             if (byTitle)
                 return item; // only one item in case of query by title
@@ -305,7 +317,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             return;
         SharedPreferences settings = getContext().getSharedPreferences("settings", 0);
         boolean ascending = settings.getBoolean("ascending", false);
-        List<jpTrendsObject> trendsContentItems = trendsCardAdapter.getItem();
+        List<TrendsObject> trendsContentItems = trendsCardAdapter.getItem();
 
         if (!ascending)
             Collections.sort(trendsContentItems, DescendingComparator);
@@ -316,16 +328,16 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     }
 
     public void clearModel() {
-        List<jpTrendsObject> trendsContentItems = trendsCardAdapter.getItem();
+        List<TrendsObject> trendsContentItems = trendsCardAdapter.getItem();
 
         for (int i=trendsContentItems.size(); i >= 0; i--) {
             trendsCardAdapter.removeItem(i);
         }
     }
 
-    private Comparator AscendingComparator = new Comparator<jpTrendsObject>() {
+    private Comparator AscendingComparator = new Comparator<TrendsObject>() {
         @Override
-        public int compare(jpTrendsObject o1, jpTrendsObject o2) {
+        public int compare(TrendsObject o1, TrendsObject o2) {
             if (Integer.parseInt(o1.getTop()) > Integer.parseInt(o2.getTop())) {
                 return 1;
             }
@@ -336,9 +348,9 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
         }
     };
 
-    private Comparator DescendingComparator = new Comparator<jpTrendsObject>() {
+    private Comparator DescendingComparator = new Comparator<TrendsObject>() {
         @Override
-        public int compare(jpTrendsObject o1, jpTrendsObject o2) {
+        public int compare(TrendsObject o1, TrendsObject o2) {
             if (Integer.parseInt(o1.getTop()) < Integer.parseInt(o2.getTop())) {
                 return 1;
             }
@@ -349,7 +361,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
         }
     };
 
-    private jpTrendsCardRecycleViewAdapter.OnLoadMoreListener onLoadMoreListener = new jpTrendsCardRecycleViewAdapter.OnLoadMoreListener() {
+    private TrendsCardRecycleViewAdapter.OnLoadMoreListener onLoadMoreListener = new TrendsCardRecycleViewAdapter.OnLoadMoreListener() {
         @Override
         public void onLoadMore() {
             Log.d("0409", "loading more!");

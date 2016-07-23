@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
+import com.roger.catloadinglibrary.CatLoadingView;
 
 import im.delight.android.webview.AdvancedWebView;
 
@@ -24,14 +25,16 @@ public class TrendsWebViewActivity extends BaseActivity implements AdvancedWebVi
     private ProgressBar progressBar;
     private AdvancedWebView mWebView;
     private String castUrl;
+    CatLoadingView mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
+        mView = new CatLoadingView();
+        mView.show(getSupportFragmentManager(), "");
         castUrl = (String) getIntent().getSerializableExtra("url");
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setIndeterminate(true);
+
         mWebView = (AdvancedWebView) findViewById(R.id.webview);
         mWebView.setListener(this, this);
         mWebView.setGeolocationEnabled(false);
@@ -41,7 +44,7 @@ public class TrendsWebViewActivity extends BaseActivity implements AdvancedWebVi
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-//                progressBar.setVisibility(View.GONE);
+                mView.dismiss();
                 Toast.makeText(TrendsWebViewActivity.this, "Finished loading", Toast.LENGTH_SHORT).show();
             }
 

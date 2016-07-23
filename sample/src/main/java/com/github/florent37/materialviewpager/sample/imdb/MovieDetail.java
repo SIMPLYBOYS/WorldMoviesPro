@@ -568,7 +568,7 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
         View chart = (LinearLayout) findViewById(R.id.chart_layout);
         ViewGroup parent = (ViewGroup) chart.getParent();
         parent.removeView(chart);
-        Toast.makeText(this, "Rating records not exisit for the movie!", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Rating records not exisit for the movie!", Toast.LENGTH_LONG).show();
     }
 
     public static void transitionImageUrl(final ImageView imageView, final String urlImage, final int fadeDuration) {

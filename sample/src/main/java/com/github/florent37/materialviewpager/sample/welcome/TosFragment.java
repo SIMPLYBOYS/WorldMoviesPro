@@ -36,6 +36,7 @@ public class TosFragment extends WelcomeFragment implements WelcomeActivity.Welc
     @Override
     public boolean shouldDisplay(Context context) {
         return !SettingsUtils.isTosAccepted(context);
+//        return true;
     }
 
     @Override
