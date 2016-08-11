@@ -28,13 +28,13 @@ import java.util.ArrayList;
 /**
  * Created by aaron on 2016/6/30.
  */
-public class CastTabFragment extends Fragment {
+public class TrendsCastTabFragment extends Fragment {
 
     private TrendsObject trendsObject;
     private Gson gson = new Gson();
 
-    public static CastTabFragment newInstance(TrendsObject trendsObject) {
-        CastTabFragment fragment = new CastTabFragment();
+    public static TrendsCastTabFragment newInstance(TrendsObject trendsObject) {
+        TrendsCastTabFragment fragment = new TrendsCastTabFragment();
         Bundle args = new Bundle();
         args.putSerializable("trends", trendsObject);
         fragment.setArguments(args);

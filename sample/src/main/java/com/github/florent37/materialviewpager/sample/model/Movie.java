@@ -1,4 +1,4 @@
-package com.github.florent37.materialviewpager.sample.imdb;
+package com.github.florent37.materialviewpager.sample.model;
 
 /**
  * Created by aaron on 2016/3/21.

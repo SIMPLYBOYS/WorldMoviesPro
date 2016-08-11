@@ -8,10 +8,10 @@ import java.util.List;
 /**
  * Created by aaron on 2016/7/14.
  */
-final public class DemoUtils  {
+final public class BlockUtils {
     int currentOffset;
 
-    public DemoUtils() {
+    public BlockUtils() {
     }
 
     public List<DemoItem> moarItems(int qty) {
@@ -21,8 +21,13 @@ final public class DemoUtils  {
             int colSpan = Math.random() < 0.2f ? 2 : 1;
             // Swap the next 2 lines to have items with variable
             // column/row span.
-            // int rowSpan = Math.random() < 0.2f ? 2 : 1;
-            int rowSpan = colSpan;
+            int rowSpan;
+
+            if (colSpan == 1)
+                rowSpan = colSpan;
+            else
+                rowSpan = Math.random() < 0.2f ? 2 : 1;
+//            int rowSpan = colSpan;
             DemoItem item = new DemoItem(colSpan, rowSpan, currentOffset + i);
             items.add(item);
         }

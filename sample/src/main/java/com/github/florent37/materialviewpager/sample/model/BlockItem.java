@@ -7,23 +7,23 @@ import android.support.annotation.NonNull;
 import com.github.florent37.materialviewpager.sample.framework.AsymmetricItem;
 
 
-public class DemoItem implements AsymmetricItem {
+public class BlockItem implements AsymmetricItem {
 
   private int columnSpan;
   private int rowSpan;
   private int position;
 
-  public DemoItem() {
+  public BlockItem() {
     this(1, 1, 0);
   }
 
-  public DemoItem(int columnSpan, int rowSpan, int position) {
+  public BlockItem(int columnSpan, int rowSpan, int position) {
     this.columnSpan = columnSpan;
     this.rowSpan = rowSpan;
     this.position = position;
   }
 
-  public DemoItem(Parcel in) {
+  public BlockItem(Parcel in) {
     readFromParcel(in);
   }
 
@@ -60,15 +60,15 @@ public class DemoItem implements AsymmetricItem {
   }
 
   /* Parcelable interface implementation */
-  public static final Parcelable.Creator<DemoItem> CREATOR = new Parcelable.Creator<DemoItem>() {
+  public static final Parcelable.Creator<BlockItem> CREATOR = new Parcelable.Creator<BlockItem>() {
 
-    @Override public DemoItem createFromParcel(@NonNull Parcel in) {
-      return new DemoItem(in);
+    @Override public BlockItem createFromParcel(@NonNull Parcel in) {
+      return new BlockItem(in);
     }
 
     @Override @NonNull
-    public DemoItem[] newArray(int size) {
-      return new DemoItem[size];
+    public BlockItem[] newArray(int size) {
+      return new BlockItem[size];
     }
   };
 }

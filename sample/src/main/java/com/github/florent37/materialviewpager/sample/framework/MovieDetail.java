@@ -1,4 +1,4 @@
-package com.github.florent37.materialviewpager.sample.imdb;
+package com.github.florent37.materialviewpager.sample.framework;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -58,6 +58,8 @@ import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.ImdbGalleryRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
+import com.github.florent37.materialviewpager.sample.imdb.AlbumActivity;
+import com.github.florent37.materialviewpager.sample.imdb.SlideActivity;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -172,7 +174,7 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
         delegate.installViewFactory();
         //we need to call the onCreate() of the AppCompatDelegate
         delegate.onCreate(savedInstanceState);
-        delegate.setContentView(R.layout.movie_detail);
+        delegate.setContentView(R.layout.b_movie_detail);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
         upArrow.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
@@ -234,7 +236,7 @@ public class MovieDetail extends YouTubeBaseActivity implements AppCompatCallbac
         plot.setText(imdbObject.getPlot());
         genre.setText("Genre : " + imdbObject.getGenre());
         runtime.setText("RunTime : " + imdbObject.getRunTime());
-        country.setText("Country : " + imdbObject.getCountry());
+        country.setText("Country : " + imdbObject.getCountry().split(",")[0]);
         countryFlag(imdbObject.getCountry());
 
         //---------- Expandable Layout ---------//
