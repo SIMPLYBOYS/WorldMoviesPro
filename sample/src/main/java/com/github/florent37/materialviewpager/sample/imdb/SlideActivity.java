@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,10 +30,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
+import com.github.florent37.materialviewpager.sample.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.sample.adapter.ImdbSlideRecycleViewAdapter;
+import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
+import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -67,8 +68,10 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
     private MenuItem searchItem, shareItem;
     private SearchView searchView = null;
     public static final String FILM_NAME = "filmName";
-    private SimpleCursorAdapter mAdapter;
-    private static String[] MOVIES = {};
+    public static final String FILM_DESCRIPTION = "filmDescription";
+    public static final String FILM_POSTER = "filmPoster";
+    private ImageCursorAdapter mAdapter;
+    private static JSONObject[] MOVIES = {};
     private RequestQueue mQueue;
     private ArrayList<HashMap<String, String>> contentList;
     private ArrayList<HashMap<String, String>> galleryList;
@@ -181,10 +184,13 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
             @Override
             public boolean onSuggestionClick(int position) {
                 Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
-                String feedName = cursor.getString(1);
-                Log.d("0419", "suggesion select2: " + feedName);
-                searchView.setQuery(feedName, false);
-//                searchView.clearFocus();
+                final String feedName = cursor.getString(1);
+                searchView.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        searchView.setQuery(feedName, true);
+                    }
+                });
                 return true;
             }
         });
@@ -195,29 +201,49 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
     }
 
     private void giveSuggestions(String query) {
-        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME});
-        for (int i = 0; i < MOVIES.length; i++) {
-            if (MOVIES[i].toLowerCase().contains(query.toLowerCase()))
-                cursor.addRow(new Object[]{i, MOVIES[i]});
+        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        try {
+            for (int i = 0; i < MOVIES.length; i++) {
+                if (MOVIES[i].getString("title").toLowerCase().contains(query.toLowerCase()))
+                    cursor.addRow(new Object[]{i, MOVIES[i].getString("title"), MOVIES[i].getString("description"), MOVIES[i].getString("posterUrl")});
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         mAdapter.changeCursor(cursor);
     }
 
     private void loadHints() {
-        final String[] from = new String[]{FILM_NAME};
-        final int[] to = new int[]{android.R.id.text1};
+        final String[] from = new String [] {FILM_NAME};
+        final int[] to = new int[] { R.id.text1};
         final CustomJSONObjectRequest jsonRequest;
-        mAdapter = new SimpleCursorAdapter(this,
-                R.layout.hint_row,
+
+        mAdapter = new ImageCursorAdapter(this,
+                R.layout.search_row,
                 null,
                 from,
                 to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                "detail");
 
         mQueue = CustomVolleyRequestQueue.getInstance(this)
                 .getRequestQueue();
 
-        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb_title", new JSONObject(), this, this);
+        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray contents = ((JSONObject) response).getJSONArray("contents");
+                    MOVIES = BaseActivity.getJsonObjectArray(contents);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(SlideActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+            }
+        });
         mQueue.add(jsonRequest);
     }
 
@@ -298,9 +324,8 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
     @Override
     public void onResponse(Object response) {
         try {
-            Log.d("0419", "title onResponse");
             JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-            MOVIES = getStringArray(contents);
+            MOVIES = BaseActivity.getJsonObjectArray(contents);
         } catch (JSONException e) {
             e.printStackTrace();
         }

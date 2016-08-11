@@ -38,12 +38,6 @@
             android:layout_height="match_parent"
             app:foreground="@drawable/header_shadow">
 
-            <!--<ListView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/listView">
-            </ListView>-->
-
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"

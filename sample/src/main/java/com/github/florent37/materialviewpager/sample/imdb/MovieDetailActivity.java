@@ -26,8 +26,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -42,6 +40,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -58,14 +57,17 @@ import com.flaviofaria.kenburnsview.Transition;
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.MainActivity;
 import com.github.florent37.materialviewpager.sample.R;
+import com.github.florent37.materialviewpager.sample.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.sample.fragment.ImdbCastTabFragment;
 import com.github.florent37.materialviewpager.sample.fragment.ImdbInfoTabFragment;
 import com.github.florent37.materialviewpager.sample.fragment.ImdbReviewTabFragment;
+import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
+import com.github.florent37.materialviewpager.sample.genre.GenreActivity;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
-import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 import com.github.florent37.materialviewpager.sample.nytimes.nyTimesActivity;
+import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
 import com.github.florent37.materialviewpager.sample.upcoming.upComingActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -75,6 +77,7 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
+import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -100,17 +103,21 @@ import lecho.lib.hellocharts.view.PreviewLineChartView;
 public class MovieDetailActivity extends AppCompatActivity implements KenBurnsView.TransitionListener, BottomNavigationBar.OnTabSelectedListener,
         Response.Listener, Response.ErrorListener {
     public static String IMDB_OBJECT = "IMDB_OBJECT";
-    public static final String FILM_NAME = "filmName";
-    protected static final int NAV_ITEM_TREND = 0;
-    protected static final int NAV_ITEM_UPCOMING = 1;
-    protected static final int NAV_ITEM_IMDB = 2;
-    protected static final int NAV_ITEM_NYTIMES = 3;
-    protected static final int NAV_ITEM_GENRE = 4;
+    public final String FILM_NAME = "filmName";
+    public final String FILM_DESCRIPTION = "filmDescription";
+    public final String FILM_POSTER = "filmPoster";
+    protected final int NAV_ITEM_TREND = 0;
+    protected final int NAV_ITEM_UPCOMING = 1;
+    protected final int NAV_ITEM_IMDB = 2;
+    protected final int NAV_ITEM_NYTIMES = 3;
+    protected final int NAV_ITEM_GENRE = 4;
     private int mTransitionsCount = 0;
+    private String TAG_TOP = "top";
     private String HOST_NAME = Config.HOST_NAME;
-    private static int TRANSITIONS_TO_SWITCH = 1;
+    private String type;
+    private int TRANSITIONS_TO_SWITCH = 1;
     private List<ImdbObject.GalleryItem> list = null;
-    public static final String REQUEST_TAG = "titleRequest";
+    public  String REQUEST_TAG = "titleRequest";
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbar;
     private KenBurnsView backgroundImageView, backgroundImageView2, backgroundImageView3, backgroundImageView4, backgroundImageView5;
@@ -121,32 +128,29 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
     private ImdbObject imdbObject = null;
     private SearchView searchView = null;
     private MenuItem searchItem = null;
+    private MenuItem bookmarkItem = null;
     private RequestQueue mQueue;
-    public static ArrayList<HashMap<String, String>> contentList;
-    public static ArrayList<HashMap<String, String>> galleryList;
-    private SimpleCursorAdapter mAdapter;
-    private static String[] MOVIES = {};
+    public ArrayList<HashMap<String, String>> contentList;
+    public ArrayList<HashMap<String, String>> galleryList;
+    private ImageCursorAdapter mAdapter;
+    private JSONObject[] MOVIES = {};
     int lastSelectedPosition = 0;
     ShareActionProvider shareActionProvider;
     BottomNavigationBar bottomNavigationBar;
     BadgeItem numberBadgeItem;
+    LinearLayout bookmarkActionView;
+    private ShineButton bookmarkView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Gson gson = new Gson();
         setContentView(R.layout.movie_detail);
-
         setupToolbar();
-
         setupViewPager();
-
         setupCollapsingToolbar();
-
         title = (TextView) findViewById(R.id.title);
-
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
-
         fab = (FloatingActionButton) findViewById(R.id.floating_button);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +168,6 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         backgroundImageView3 = (KenBurnsView) findViewById(R.id.backgroundImageView3);
         backgroundImageView4 = (KenBurnsView) findViewById(R.id.backgroundImageView4);
         backgroundImageView5 = (KenBurnsView) findViewById(R.id.backgroundImageView5);
-
         backgroundImageView.setTransitionListener(this);
         backgroundImageView2.setTransitionListener(this);
         backgroundImageView3.setTransitionListener(this);
@@ -176,15 +179,18 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         mViewSwitcher = (ViewFlipper) findViewById(R.id.viewSwitcher);
 //        collapsingToolbar.setTitle(trendsObject.getTitle());
         title.setText(imdbObject.getTitle());
+        type = imdbObject.getType();
 
         //------- deserialize Gallery JSON object -------//
         JsonArray galleryInfo = new JsonParser().parse(imdbObject.getGalleryUrl()).getAsJsonArray();
         list = new ArrayList<ImdbObject.GalleryItem>();
+
         for (int i = 0; i < galleryInfo.size(); i++) {
             JsonElement str = galleryInfo.get(i);
             ImdbObject.GalleryItem obj = gson.fromJson(str, ImdbObject.GalleryItem.class);
             list.add(obj);
         }
+
         //------- deserialize Gallery JSON object -------//
         refresh();
         loadHints();
@@ -222,6 +228,7 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
 
     private void setupToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             final ActionBar actionBar = getSupportActionBar();
@@ -245,7 +252,6 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
 
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
-
         bottomNavigationBar
                 .addItem(new BottomNavigationItem(R.drawable.ic_trending_up, R.string.navdrawer_item_explore).setActiveColorResource(R.color.material_orange_900).setBadgeItem(numberBadgeItem))
                 .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
@@ -265,9 +271,11 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
 
     private void setupViewPager(final ViewPager viewPager) {
         final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
         if (imdbObject == null) {
             imdbObject = (ImdbObject) getIntent().getSerializableExtra(IMDB_OBJECT);
         }
+
         adapter.addFrag(ImdbInfoTabFragment.newInstance(imdbObject), "Info");
         adapter.addFrag(ImdbCastTabFragment.newInstance(imdbObject), "Cast");
         adapter.addFrag(ImdbReviewTabFragment.newInstance(imdbObject), "Review");
@@ -279,7 +287,7 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         try {
             Log.d("0419", "title onResponse");
             JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-            MOVIES = AlbumActivity.getStringArray(contents);
+            MOVIES = BaseActivity.getJsonObjectArray(contents);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -291,8 +299,7 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
     }
 
     private void setupCollapsingToolbar() {
-        collapsingToolbar = (CollapsingToolbarLayout) findViewById(
-                R.id.collapsing_toolbar);
+        collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitleEnabled(false);
         collapsingToolbar.setContentScrimColor(getResources().getColor(android.R.color.transparent));
         collapsingToolbar.setStatusBarScrimColor(getResources().getColor(android.R.color.transparent));
@@ -417,13 +424,36 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
             }
         }
 
+        bookmarkActionView = (LinearLayout) getLayoutInflater().inflate(R.layout.bookmark_image, null);
+        bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
+        bookmarkView.init(this);
+        bookmarkView.getLayoutParams().height=96;
+        bookmarkView.getLayoutParams().width=96;
+//        bookmarkView.setImageResource(R.drawable.ic_turned_in);
+        bookmarkView.setColorFilter(getResources().getColor(R.color.app_white));
+        bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
         searchItem = menu.findItem(R.id.action_search);
+        bookmarkItem = menu.findItem(R.id.action_bookmark);
+        bookmarkItem.setActionView(bookmarkView);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
+
+        bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(View view, boolean checked) {
+//                Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
+                Toast.makeText(MovieDetailActivity.this, "Bookmark "+checked+" !!!", Toast.LENGTH_SHORT).show();
+                if (checked)
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+                else
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                //TODO bookmark info for the user's acccount
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -449,9 +479,14 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
 
             @Override
             public boolean onSuggestionClick(int position) {
-                Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
-                String feedName = cursor.getString(1);
-                searchView.setQuery(feedName, false);
+                Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
+                final String feedName = cursor.getString(1);
+                searchView.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        searchView.setQuery(feedName, true);
+                    }
+                });
                 return true;
             }
         });
@@ -468,28 +503,48 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
     }
 
     private void loadHints() {
-        final String[] from = new String[]{FILM_NAME};
-        final int[] to = new int[]{android.R.id.text1};
+        final String[] from = new String [] {FILM_NAME};
+        final int[] to = new int[] { R.id.text1};
         final CustomJSONObjectRequest jsonRequest;
-        mAdapter = new SimpleCursorAdapter(this,
-                R.layout.hint_row,
+
+        mAdapter = new ImageCursorAdapter(this,
+                R.layout.search_row,
                 null,
                 from,
                 to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                "detail");
 
         mQueue = CustomVolleyRequestQueue.getInstance(this)
                 .getRequestQueue();
 
-        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb_title", new JSONObject(), this, this);
+        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray contents = ((JSONObject) response).getJSONArray("contents");
+                    MOVIES = BaseActivity.getJsonObjectArray(contents);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MovieDetailActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+            }
+        });
         mQueue.add(jsonRequest);
     }
 
     private void giveSuggestions(String query) {
-        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME});
-        for (int i = 0; i < MOVIES.length; i++) {
-            if (MOVIES[i].toLowerCase().contains(query.toLowerCase()))
-                cursor.addRow(new Object[]{i, MOVIES[i]});
+        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        try {
+            for (int i = 0; i < MOVIES.length; i++) {
+                if (MOVIES[i].getString("title").toLowerCase().contains(query.toLowerCase()))
+                    cursor.addRow(new Object[]{i, MOVIES[i].getString("title"), MOVIES[i].getString("description"), MOVIES[i].getString("posterUrl")});
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         mAdapter.changeCursor(cursor);
     }
@@ -516,10 +571,14 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
                 public void onResponse(JSONObject response) {
                     try {
                         JSONArray contents = response.getJSONArray("contents");
-                        Log.d("0504", "title onResponse" + contents);
-                        ImdbObject item = AlbumActivity.buildImdbModel(contents);
-                        Intent intent = new Intent(MovieDetailActivity.this, MovieDetail.class);
-                        intent.putExtra(MovieDetail.IMDB_OBJECT, item);
+                        JSONObject c = contents.getJSONObject(0);
+                        ImdbObject movie = AlbumActivity.buildImdbModel(contents);
+                        if (c.has(TAG_TOP))
+                            movie.setType("imdb");
+                        else
+                            movie.setType("genre");
+                        Intent intent = new Intent(MovieDetailActivity.this, MovieDetailActivity.class);
+                        intent.putExtra(MovieDetail.IMDB_OBJECT, movie);
                         ActivityCompat.startActivity(MovieDetailActivity.this, intent, null);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -638,7 +697,10 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
     private Intent createShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, imdbObject.getDetailUrl());
+        if (type.compareTo("imdb") == 0)
+            shareIntent.putExtra(Intent.EXTRA_TEXT, imdbObject.getDetailUrl());
+        else
+            shareIntent.putExtra(Intent.EXTRA_TEXT, imdbObject.getTrailerUrl());
         return shareIntent;
     }
 
@@ -646,7 +708,10 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, imdbObject.getDetailUrl());
+        if (type.compareTo("imdb") == 0)
+            shareIntent.putExtra(Intent.EXTRA_TEXT, imdbObject.getDetailUrl());
+        else
+            shareIntent.putExtra(Intent.EXTRA_TEXT, imdbObject.getTrailerUrl());
         // Launch sharing dialog for image
         startActivity(Intent.createChooser(shareIntent, "Share Review"));
     }

@@ -1,7 +1,6 @@
 package com.github.florent37.materialviewpager.sample.imdb;
 
 import android.app.SearchManager;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -11,13 +10,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,6 +41,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
+import com.github.florent37.materialviewpager.sample.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.sample.adapter.ImdbSwipeRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.fragment.MovieRecycleFragment;
 import com.github.florent37.materialviewpager.sample.fragment.RecyclerViewFragment;
@@ -58,14 +55,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
 
 /**
  * Created by aaron on 2016/3/21.
@@ -77,7 +74,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     private List<ImdbObject> movieList;
     private RecyclerView rvMovies;
     private RequestQueue mQueue;
-    public String HOST_NAME = Config.HOST_NAME;
+    private String HOST_NAME = Config.HOST_NAME;
     private ImdbSwipeRecycleViewAdapter adapter;
     private StaggeredGridLayoutManager gaggeredGridLayoutManager;
     private LinearLayoutManager linearLayoutManager;
@@ -91,33 +88,35 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private Set<MovieRecycleFragment> mMovieRecycleFragments = new HashSet<MovieRecycleFragment>();
     // JSON Node names
-    private static final String TAG_TITLE = "title";
-    private static final String TAG_YEAR = "year";
-    private static final String TAG_RELEASE = "releaseDate";
-    private static final String TAG_TOP = "top";
-    private static final String TAG_POSTER_URL = "posterUrl";
-    private static final String TAG_RATING = "rating";
-    private static final String TAG_DESCRIPTION = "description";
-    private static final String TAG_DETAIL_URL = "detailUrl";
-    private static final String TAG_DETAIL_POSTER_URL = "poster";
-    private static final String TAG_SUMMERY = "summery";
-    private static final String TAG_PLOT = "plot";
-    private static final String TAG_GENRE = "genres";
-    private static final String TAG_VOTES = "votes";
-    private static final String TAG_RUNTIME = "runtime";
-    private static final String TAG_METASCORE = "metascore";
-    private static final String TAG_SLATE = "slate";
-    private static final String TAG_COUNTRY = "country";
-    private static final String TAG_TRAILER = "trailerUrl";
-    private static final String TAG_GALLERY_FULL = "gallery_full";
-    private static final String TAG_DELTA = "delta";
-    public static final String REQUEST_TAG = "imdb250Request";
+    private final String TAG_TITLE = "title";
+    private final String TAG_YEAR = "year";
+    private final String TAG_RELEASE = "releaseDate";
+    private final String TAG_DATA = "data";
+    private final String TAG_TOP = "top";
+    private final String TAG_POSTER_URL = "posterUrl";
+    private final String TAG_RATING = "rating";
+    private final String TAG_DESCRIPTION = "description";
+    private final String TAG_CAST = "cast";
+    private final String TAG_DETAIL_URL = "detailUrl";
+    private final String TAG_DETAIL_POSTER_URL = "poster";
+    private final String TAG_SUMMERY = "summery";
+    private final String TAG_PLOT = "plot";
+    private final String TAG_GENRE = "genres";
+    private final String TAG_VOTES = "votes";
+    private final String TAG_RUNTIME = "runtime";
+    private final String TAG_METASCORE = "metascore";
+    private final String TAG_SLATE = "slate";
+    private final String TAG_COUNTRY = "country";
+    private final String TAG_TRAILER = "trailerUrl";
+    private final String TAG_GALLERY_FULL = "gallery_full";
+    private final String TAG_DELTA = "delta";
+    public final String REQUEST_TAG = "imdb250Request";
     int curSize = 0;
     private MenuItem searchItem;
     private SearchView searchView = null;
-    private SimpleCursorAdapter mAdapter;
+    private ImageCursorAdapter mAdapter;
     public static final String FILM_NAME = "filmName";
-    private static String[] MOVIES = {};
+    private static JSONObject[] MOVIES = {};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -236,26 +235,27 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     }
 
     private void loadHints() {
-        final String[] from = new String[]{FILM_NAME};
-        final int[] to = new int[]{android.R.id.text1};
+        final String[] from = new String [] {FILM_NAME};
+        final int[] to = new int[] { R.id.text1};
         final CustomJSONObjectRequest jsonRequest;
-        mAdapter = new SimpleCursorAdapter(this,
-                R.layout.hint_row,
+
+        mAdapter = new ImageCursorAdapter(this,
+                R.layout.search_row,
                 null,
                 from,
                 to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                "imdb");
 
         mQueue = CustomVolleyRequestQueue.getInstance(this)
                 .getRequestQueue();
 
-        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "/imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
+        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Log.d("0419", "title onResponse");
                     JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-                    MOVIES = getStringArray(contents);
+                    JSONObject c = contents.getJSONObject(0);
+                    MOVIES = getJsonObjectArray(contents);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -263,7 +263,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ImdbActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ImdbActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
             }
         });
         mQueue.add(jsonRequest);
@@ -366,11 +366,14 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                     boolean byTitle = ((JSONObject) response).getBoolean("byTitle");
 
                     for (int i = 0; i < contents.length(); i++) {
+                        JSONObject jsonObj = new JSONObject();
+                        JSONArray data = new JSONArray();
                         JSONObject c = contents.getJSONObject(i);
                         String title = c.getString(TAG_TITLE);
                         JSONObject d = c.getJSONObject("detailContent");
                         int top = 0;
                         String detailPosterUrl = "";
+                        String detailUrl = "";
                         String year = "";
                         String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
                         String delta = "0";
@@ -379,67 +382,68 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                         jo.put("type", "full");
                         jo.put("url", "");
                         JSONArray galleryFullUrl = new JSONArray();
+                        JSONArray cast = new JSONArray();
                         galleryFullUrl.put(jo);
                         //----- end dummy GalleryUrl ----
 
                         if (c.has(TAG_TOP)) {
-                            Log.d("0518", title);
                             top = c.getInt(TAG_TOP);
                             if (top > offSet)
                                 offSet = top;
                         }
-                        year = c.getString(TAG_YEAR);
 
-                        if (c.has(TAG_RELEASE) && !c.has(TAG_TOP)) {
-                            year = String.valueOf(c.getInt(TAG_RELEASE));
-                            year = year.substring(4, 8);
-                        }
+                        if (c.has(TAG_DATA))
+                            data = c.getJSONArray(TAG_DATA);
 
-                        if (c.has(TAG_DELTA)) {
+                        if (c.has(TAG_DELTA))
                             delta = c.getString(TAG_DELTA);
-                        }
 
                         String description= c.getString(TAG_DESCRIPTION);
                         String rating = c.getString(TAG_RATING);
+                        year = c.has(TAG_YEAR) ? c.getString(TAG_YEAR) : c.getString("releaseDate");
 
-                        if (c.has(TAG_POSTER_URL)) {
+                        if (c.has(TAG_POSTER_URL))
                             posterUrl = c.getString(TAG_POSTER_URL);
-                        }
+
+                        if (c.has(TAG_DETAIL_URL))
+                            detailUrl = c.getString(TAG_DETAIL_URL);
+
+                        if (c.has(TAG_CAST))
+                            cast = c.getJSONArray(TAG_CAST);
 
                         String plot = c.getString(TAG_PLOT);
-                        String genre = c.getString(TAG_GENRE);
+                        String genre = c.has(TAG_GENRE) ? c.getString(TAG_GENRE) : "";
                         String votes = c.getString(TAG_VOTES);
-                        String runTime = c.getString(TAG_RUNTIME);
+                        String runTime = c.has(TAG_RUNTIME) ? c.getString(TAG_RUNTIME) : "";
                         String metaScore = c.getString(TAG_METASCORE);
-
                         String summery = d.getString(TAG_SUMMERY);
                         String country = d.getString(TAG_COUNTRY);
 
-                        if (c.has(TAG_GALLERY_FULL)) {
-                            galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
+                        if (runTime.compareTo("") == 0 && data.length()>0) {
+                            jsonObj = new JSONObject();
+                            LOGD("0811", String.valueOf(data.length()));
+                            jsonObj = (JSONObject) data.get(4);
+                            runTime = jsonObj.getString("data");
                         }
+
+                        if (genre.compareTo("") == 0)
+                            genre = c.getString("genre");
+
+                        if (c.has(TAG_GALLERY_FULL))
+                            galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
 
                         String trailerUrl;
                         String slate;
-
-                        if (c.has(TAG_TRAILER))
-                            trailerUrl = c.getString(TAG_TRAILER);
-                        else
-                            trailerUrl = "N/A";
-
-                        if (d.has(TAG_SLATE))
-                            slate = d.getString(TAG_SLATE);
-                        else
-                            slate = "N/A";
-
+                        trailerUrl = c.has(TAG_TRAILER) ? c.getString(TAG_TRAILER) : "N/A";
+                        slate = d.has(TAG_SLATE) ? d.getString(TAG_SLATE) : "N/A";
                         ImdbObject item = new ImdbObject(title, String.valueOf(top), year, description,
                                 rating, posterUrl, slate, summery, plot,
                                 genre, votes, runTime, metaScore, delta, country,
-                                trailerUrl, galleryFullUrl.toString());
-
+                                trailerUrl, cast.toString(), galleryFullUrl.toString(), detailUrl);
                         SharedPreferences settings = getSharedPreferences("settings", 0);
                         boolean ascending = settings.getBoolean("ascending", false);
                         curSize = adapter.getItemCount();
+
                         if (ascending)
                             movieList.add(movieList.size(), item);
                         else
@@ -473,114 +477,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         mQueue.add(jsonRequest_q);
     }
 
-    public void requestDataRefresh(String Query) {
-        final CustomJSONObjectRequest jsonRequest = null;
-
-        mQueue = CustomVolleyRequestQueue.getInstance(ImdbActivity.this)
-                .getRequestQueue();
-        CustomJSONObjectRequest jsonRequest_q = null;
-        String url = null;
-
-        if (Query != null) {
-            // launch query from searchview
-            try {
-                Query = URLEncoder.encode(Query, "UTF-8");
-
-                url= Config.HOST_NAME + "/imdb?title=" + Query + "&ascending=1";
-            } catch (UnsupportedEncodingException e) {
-                throw new AssertionError("UTF-8 is unknown");
-            }
-            jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        JSONArray contents = response.getJSONArray("contents");
-                        JSONObject c = contents.getJSONObject(0);
-                        String title = c.getString(TAG_TITLE);
-                        JSONObject d = c.getJSONObject("detailContent");
-                        int top = 0;
-                        String year = "";
-                        String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
-                        String delta = "0";
-                        //----- start dummy GalleryUrl ----
-                        JSONObject jo = new JSONObject();
-                        jo.put("type", "full");
-                        jo.put("url", "");
-                        JSONArray galleryFullUrl = new JSONArray();
-                        galleryFullUrl.put(jo);
-                        //----- end dummy GalleryUrl ----
-
-                        if (c.has(TAG_TOP)) {
-                            Log.d("0518", title);
-                            top = c.getInt(TAG_TOP);
-                            if (top > offSet)
-                                offSet = top;
-                        }
-                        year = c.getString(TAG_YEAR);
-
-                        if (c.has(TAG_RELEASE) && !c.has(TAG_TOP)) {
-                            year = String.valueOf(c.getInt(TAG_RELEASE));
-                            year = year.substring(4, 8);
-                        }
-
-                        if (c.has(TAG_DELTA)) {
-                            delta = c.getString(TAG_DELTA);
-                        }
-
-                        String description= c.getString(TAG_DESCRIPTION);
-                        String rating = c.getString(TAG_RATING);
-
-                        if (c.has(TAG_POSTER_URL)) {
-                            posterUrl = c.getString(TAG_POSTER_URL);
-                        }
-
-                        String plot = c.getString(TAG_PLOT);
-                        String genre = c.getString(TAG_GENRE);
-                        String votes = c.getString(TAG_VOTES);
-                        String runTime = c.getString(TAG_RUNTIME);
-                        String metaScore = c.getString(TAG_METASCORE);
-
-                        String summery = d.getString(TAG_SUMMERY);
-                        String country = d.getString(TAG_COUNTRY);
-
-                        if (c.has(TAG_GALLERY_FULL)) {
-                            galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
-                        }
-
-                        String trailerUrl;
-                        String slate;
-
-                        if (c.has(TAG_TRAILER))
-                            trailerUrl = c.getString(TAG_TRAILER);
-                        else
-                            trailerUrl = "N/A";
-
-                        if (d.has(TAG_SLATE))
-                            slate = d.getString(TAG_SLATE);
-                        else
-                            slate = "N/A";
-
-                        ImdbObject movie = new ImdbObject(title, String.valueOf(top), year, description,
-                                rating, posterUrl, slate, summery, plot,
-                                genre, votes, runTime, metaScore, delta, country,
-                                trailerUrl, galleryFullUrl.toString());
-                        Intent intent = new Intent(ImdbActivity.this, MovieDetail.class);
-                        intent.putExtra(MovieDetail.IMDB_OBJECT, movie);
-                        ActivityCompat.startActivity(ImdbActivity.this, intent, null);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, this);
-            mQueue.add(jsonRequest_q);
-            return;
-        }
-
-        jsonRequest.setTag(REQUEST_TAG);
-
-        mQueue.add(jsonRequest); //trigger volley request
-    }
-
     @Override
     public void onErrorResponse(VolleyError error) {
         Toast.makeText(this, "Remote Server not working!", Toast.LENGTH_LONG).show();
@@ -608,8 +504,8 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
-        mQueryTextView.setTextColor(Color.WHITE);
-        mQueryTextView.setHintTextColor(Color.WHITE);
+        mQueryTextView.setTextColor(getResources().getColor(R.color.material_grey_500));
+        mQueryTextView.setHintTextColor(getResources().getColor(R.color.material_grey_500));
         mQueryTextView.setHint("movie title or cast name");
         miniCard.setChecked(settings.getBoolean("miniCard", true));
         ascending.setChecked(settings.getBoolean("ascending", false));
@@ -639,8 +535,13 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
             @Override
             public boolean onSuggestionClick(int position) {
                 Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
-                String feedName = cursor.getString(1);
-                searchView.setQuery(feedName, false);
+                final String feedName = cursor.getString(1);
+                searchView.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        searchView.setQuery(feedName, true);
+                    }
+                });
                 return true;
             }
         });
@@ -669,8 +570,8 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
 
         int searchTextViewId = android.support.v7.appcompat.R.id.search_src_text;
         AutoCompleteTextView searchTextView = (AutoCompleteTextView) searchView.findViewById(searchTextViewId);
-        searchTextView.setHintTextColor(getResources().getColor(R.color.material_lime_500));
-        searchTextView.setTextColor(getResources().getColor(android.R.color.white));
+        searchTextView.setHintTextColor(getResources().getColor(R.color.material_grey_500));
+        searchTextView.setTextColor(getResources().getColor(R.color.material_grey_700));
         searchTextView.setTextSize(18.0f);
 
         SpannableStringBuilder ssb = new SpannableStringBuilder("   "); // for the icon
@@ -684,16 +585,21 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     }
 
     private void giveSuggestions(String query) {
-        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME});
-        for (int i = 0; i < MOVIES.length; i++) {
-            if (MOVIES[i].toLowerCase().contains(query.toLowerCase()))
-                cursor.addRow(new Object[]{i, MOVIES[i]});
+        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        try {
+            for (int i = 0; i < MOVIES.length; i++) {
+                if (MOVIES[i].getString("title").toLowerCase().contains(query.toLowerCase()))
+                    cursor.addRow(new Object[]{i, MOVIES[i].getString("title"), MOVIES[i].getString("description"), MOVIES[i].getString("posterUrl")});
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         mAdapter.changeCursor(cursor);
     }
 
     @Override
     public void onBackPressed() {
+        Log.d("0809", "onBackPressed");
         if (!searchView.isIconified()) {
             searchView.setIconified(true);
         } else {

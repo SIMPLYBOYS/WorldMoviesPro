@@ -224,12 +224,13 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
                         public void onResponse(JSONObject response) {
                             try {
                                 JSONArray contents = response.getJSONArray("contents");
-                                String story,imageUrl, head, description, editor, date;
+                                String story,imageUrl, head, description, editor, date, url;
 
                                 JSONObject reviewObj = contents.getJSONObject(0);
                                 story = reviewObj.getString("story");
                                 editor = reviewObj.getString("editor");
                                 date = reviewObj.getString("date");
+                                url = reviewObj.getString("url");
                                 JSONObject imgObj = reviewObj.getJSONObject("image");
 
                                 if (imgObj.has("src")) {
@@ -241,7 +242,7 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
                                 }
 
                                 head = movie.getHeadline();
-                                Movie foo = new Movie(head, description, story, "", imageUrl, editor ,date);
+                                Movie foo = new Movie(head, description, story, url, imageUrl, editor ,date);
                                 Intent intent = new Intent(activity, nyTimesDetailActivity.class);
                                 intent.putExtra("movie", foo);
                                 ActivityCompat.startActivity(activity, intent, null);

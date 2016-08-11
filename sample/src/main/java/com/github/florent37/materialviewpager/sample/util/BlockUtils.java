@@ -1,6 +1,6 @@
 package com.github.florent37.materialviewpager.sample.util;
 
-import com.github.florent37.materialviewpager.sample.model.DemoItem;
+import com.github.florent37.materialviewpager.sample.model.BlockItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ final public class BlockUtils {
     public BlockUtils() {
     }
 
-    public List<DemoItem> moarItems(int qty) {
-        List<DemoItem> items = new ArrayList<>();
+    public List<BlockItem> moarItems(int qty) {
+        List<BlockItem> items = new ArrayList<>();
 
         for (int i = 0; i < qty; i++) {
             int colSpan = Math.random() < 0.2f ? 2 : 1;
@@ -28,7 +28,7 @@ final public class BlockUtils {
             else
                 rowSpan = Math.random() < 0.2f ? 2 : 1;
 //            int rowSpan = colSpan;
-            DemoItem item = new DemoItem(colSpan, rowSpan, currentOffset + i);
+            BlockItem item = new BlockItem(colSpan, rowSpan, currentOffset + i);
             items.add(item);
         }
 

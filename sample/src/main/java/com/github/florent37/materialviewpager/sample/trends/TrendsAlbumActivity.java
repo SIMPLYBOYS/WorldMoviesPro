@@ -36,7 +36,7 @@ import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.TrendsGalleryRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
-import com.github.florent37.materialviewpager.sample.imdb.MovieDetail;
+import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
 import com.github.florent37.materialviewpager.sample.model.TrendsObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -194,8 +194,13 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
             @Override
             public boolean onSuggestionClick(int position) {
                 Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
-                String feedName = cursor.getString(1);
-                searchView.setQuery(feedName, false);
+                final String feedName = cursor.getString(1);
+                searchView.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        searchView.setQuery(feedName, true);
+                    }
+                });
                 return true;
             }
         });
@@ -321,7 +326,7 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(this, "Remote Server not working!", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Remote Server not working!", Toast.LENGTH_LONG).show();
     }
 
     public static String[] getStringArray(JSONArray jsonArray) {

@@ -98,7 +98,7 @@
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
-        <item name="color">@color/drawerArrowColor</item>
+        <item name="color">@color/app_white</item>
     </style>
 
     <style name="SessionLiveStreamed">

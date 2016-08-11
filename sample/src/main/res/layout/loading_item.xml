@@ -29,7 +29,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:textColor="@color/material_red_800"
+            android:textColor="@color/transparent_black"
             android:text=" Loading ...."
             app:font="Roboto-Bold.ttf"
             android:layout_centerVertical="true"

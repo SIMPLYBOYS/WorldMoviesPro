@@ -20,7 +20,8 @@ import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.ImdbCardRecycleViewAdapter;
-import com.github.florent37.materialviewpager.sample.imdb.MovieDetail;
+import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
+import com.github.florent37.materialviewpager.sample.imdb.MovieDetailActivity;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 
 import org.json.JSONArray;
@@ -45,6 +46,7 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
     private static final String TAG_TOP = "top";
     private static final String TAG_POSTER_URL = "posterUrl";
     private static final String TAG_RATING = "rating";
+    private static final String TAG_CAST = "cast";
     private static final String TAG_DESCRIPTION = "description";
     private static final String TAG_DETAIL_URL = "detailUrl";
     private static final String TAG_DETAIL_POSTER_URL = "poster";
@@ -160,8 +162,8 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
                 "Clicked: " + position + ", index " + mRecyclerView.indexOfChild(view),
                 Toast.LENGTH_SHORT).show();
         ImdbObject imdbObject = imdbCardAdapter.getItem().get(position - 1);
-        Intent intent = new Intent(getActivity(), MovieDetail.class);
-        intent.putExtra(MovieDetail.IMDB_OBJECT, imdbObject);
+        Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+        intent.putExtra(MovieDetailActivity.IMDB_OBJECT, imdbObject);
         /*Bundle bundle = new Bundle();
         bundle.putSerializable(MovieDetail.IMDB_COLLECTION, imdbCollection);
         intent.putExtra(MovieDetail.IMDB_COLLECTION, bundle);*/
@@ -178,12 +180,14 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
             String detailPosterUrl = "";
             String year = "";
             String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
+            String detailUrl ="";
             String delta = "0";
             //----- start dummy GalleryUrl ----
             JSONObject jo = new JSONObject();
             jo.put("type", "full");
             jo.put("url", "");
             JSONArray galleryFullUrl = new JSONArray();
+            JSONArray cast = new JSONArray();
             galleryFullUrl.put(jo);
             //----- end dummy GalleryUrl ----
 
@@ -211,6 +215,9 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
                 posterUrl = c.getString(TAG_POSTER_URL);
             }
 
+            if (c.has(TAG_DETAIL_URL))
+                detailUrl = c.getString(TAG_DETAIL_URL);
+
             String plot = c.getString(TAG_PLOT);
             String genre = c.getString(TAG_GENRE);
             String votes = c.getString(TAG_VOTES);
@@ -222,6 +229,10 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
 
             if (c.has(TAG_GALLERY_FULL)) {
                 galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
+            }
+
+            if (c.has(TAG_CAST)) {
+                cast = c.getJSONArray(TAG_CAST);
             }
 
             String trailerUrl;
@@ -251,6 +262,7 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
             content.put(TAG_SUMMERY, summery);
             content.put(TAG_PLOT, plot);
             content.put(TAG_GENRE, genre);
+            content.put(TAG_DETAIL_URL, detailUrl);
             content.put(TAG_VOTES, votes);
             content.put(TAG_RUNTIME,runTime);
             content.put(TAG_METASCORE, metaScore);
@@ -272,7 +284,7 @@ public class ImdbFragment extends RecyclerViewFragment implements AdapterView.On
             item = new ImdbObject(content.get(TAG_TITLE), content.get(TAG_TOP), content.get(TAG_YEAR), content.get(TAG_DESCRIPTION),
                     content.get(TAG_RATING), content.get(TAG_POSTER_URL), content.get(TAG_SLATE), content.get(TAG_SUMMERY), content.get(TAG_PLOT),
                     content.get(TAG_GENRE), content.get(TAG_VOTES), content.get(TAG_RUNTIME), content.get(TAG_METASCORE), content.get(TAG_DELTA), content.get(TAG_COUNTRY),
-                    content.get(TAG_TRAILER), gallery.get(TAG_GALLERY_FULL));
+                    content.get(TAG_TRAILER), content.get(TAG_CAST), gallery.get(TAG_GALLERY_FULL), content.get(TAG_DETAIL_URL));
             if (byTitle)
                 return item; // only one item in case of query by title
             imdbCardAdapter.addItem(j, item);

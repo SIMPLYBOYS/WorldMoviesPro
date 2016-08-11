@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Config {
 
-    public static final String HOST_NAME = "http://ec2-52-192-246-11.ap-northeast-1.compute.amazonaws.com/";
+    public static final String HOST_NAME = "http://ec2-52-196-226-25.ap-northeast-1.compute.amazonaws.com/";
 
     public static final String NYTimesKey = "cfbde1033d5286c27aecd308b6b494bb:0:74862166";
 

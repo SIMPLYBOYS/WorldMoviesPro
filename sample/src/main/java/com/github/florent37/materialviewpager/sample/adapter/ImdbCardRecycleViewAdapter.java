@@ -15,6 +15,10 @@ import android.widget.TextView;
 
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -133,18 +137,24 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
         }
 
         public void bind(ImdbObject imdbObject, final ProgressBar mProgressBar) {
-            Log.d("0320", "bind viewholder");
             String title = imdbObject.getTitle();
             this.imdbObject = imdbObject;
+            Gson gson = new Gson();
+            ImdbObject.RatingItem ratingItem = null;
+            JsonElement jsonElement = null;
+            JsonObject ratingInfo = new JsonParser().parse(imdbObject.getRating()).getAsJsonObject();
+            jsonElement = ratingInfo.getAsJsonObject();
+            ratingItem = gson.fromJson(jsonElement, ImdbObject.RatingItem.class);
             if (titleView == null)
                 return;
             titleView.setText(title);
             topView.setText(imdbObject.getTop());
             yearView.setText(imdbObject.getYear());
-            rattingView.setText(imdbObject.getRatting());
+            rattingView.setText(ratingItem.getScore());
             votesView.setText(imdbObject.getVotes());
             int delta = Math.abs(imdbObject.getDelta());
             Log.d("0601: ", String.valueOf(delta));
+
             if (delta != 0) {
                 deltaView.setText(String.valueOf(delta));
                 arrowView.setVisibility(View.VISIBLE);
@@ -156,7 +166,6 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
                 deltaView.setText("");
                 arrowView.setVisibility(View.GONE);
             }
-
 
             desciptionView.setText(imdbObject.getDescription());
             Picasso.with(posterView.getContext()).load(imdbObject.getPosterUrl()).placeholder(R.drawable.placeholder).centerCrop().fit()

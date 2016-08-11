@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/detail_trailer"/>
+    <include layout="@layout/trailer_thumbnail"/>
 
     <include layout="@layout/detail_imdb_summery"/>
 

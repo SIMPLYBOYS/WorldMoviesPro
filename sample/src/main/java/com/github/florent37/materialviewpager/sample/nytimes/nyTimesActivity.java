@@ -24,7 +24,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -53,7 +52,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -147,10 +145,8 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         rvMovies = (RecyclerView) findViewById(R.id.recyclerView);
         rvMovies.setLayoutManager(linearLayoutManager);
         rvMovies.setAdapter(rAdapter);
-
         mQueue = CustomVolleyRequestQueue.getInstance(this)
                 .getRequestQueue();
-
         rvMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -239,14 +235,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     @Override
     public void onRefresh() {
         fetchMovies(true);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        upArrow.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
-        toolbar.setDrawingCacheBackgroundColor(Color.WHITE);
     }
 
     @Override
@@ -630,34 +618,5 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
             }
         }
         return stringArray;
-    }
-
-    // 获取手机状态栏高度
-    public int getStatusBarHeight() {
-        Class<?> c = null;
-        Object obj = null;
-        Field field = null;
-        int x = 0, statusBarHeight = 0;
-        try {
-            c = Class.forName("com.android.internal.R$dimen");
-            obj = c.newInstance();
-            field = c.getField("status_bar_height");
-            x = Integer.parseInt(field.get(obj).toString());
-            statusBarHeight = getResources().getDimensionPixelSize(x);
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
-        return statusBarHeight;
-    }
-
-    // 获取ActionBar的高度
-    public int getActionBarHeight() {
-        TypedValue tv = new TypedValue();
-        int actionBarHeight = 0;
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))// 如果资源是存在的、有效的
-        {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-        }
-        return actionBarHeight;
     }
 }

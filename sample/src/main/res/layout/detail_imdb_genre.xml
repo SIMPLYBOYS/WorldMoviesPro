@@ -94,6 +94,13 @@
         </RelativeLayout>
 
         <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+            android:id="@+id/year"
+            android:text="1999"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:font="Roboto-Light.ttf"/>
+
+        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
             android:id="@+id/metascrore"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

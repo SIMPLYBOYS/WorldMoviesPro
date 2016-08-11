@@ -18,6 +18,7 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -26,8 +27,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
@@ -42,6 +41,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -58,18 +58,19 @@ import com.flaviofaria.kenburnsview.Transition;
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.MainActivity;
 import com.github.florent37.materialviewpager.sample.R;
-import com.github.florent37.materialviewpager.sample.fragment.CastTabFragment;
-import com.github.florent37.materialviewpager.sample.fragment.InfoTabFragment;
-import com.github.florent37.materialviewpager.sample.fragment.ReviewTabFragment;
+import com.github.florent37.materialviewpager.sample.adapter.ImageCursorAdapter;
+import com.github.florent37.materialviewpager.sample.fragment.TrendsCastTabFragment;
+import com.github.florent37.materialviewpager.sample.fragment.TrendsInfoTabFragment;
+import com.github.florent37.materialviewpager.sample.fragment.TrendsReviewTabFragment;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.imdb.AlbumActivity;
-import com.github.florent37.materialviewpager.sample.imdb.GenreActivity;
+import com.github.florent37.materialviewpager.sample.genre.GenreActivity;
 import com.github.florent37.materialviewpager.sample.imdb.ImdbActivity;
-import com.github.florent37.materialviewpager.sample.imdb.MovieDetail;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 import com.github.florent37.materialviewpager.sample.model.TrendsObject;
 import com.github.florent37.materialviewpager.sample.nytimes.nyTimesActivity;
+import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
 import com.github.florent37.materialviewpager.sample.upcoming.upComingActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -79,6 +80,7 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
+import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -103,9 +105,13 @@ import lecho.lib.hellocharts.view.PreviewLineChartView;
  */
 public class TrendsDetail extends AppCompatActivity implements KenBurnsView.TransitionListener, BottomNavigationBar.OnTabSelectedListener,
         Response.Listener, Response.ErrorListener {
-
     public static String TRENDS_OBJECT = "TRENDS_OBJECT";
     public static final String FILM_NAME = "filmName";
+    public static final String FILM_DESCRIPTION = "filmDescription";
+    public static final String FILM_POSTER = "filmPoster";
+    public static final String REQUEST_TAG = "titleRequest";
+    public static ArrayList<HashMap<String, String>> contentList;
+    public static ArrayList<HashMap<String, String>> galleryList;
     protected static final int NAV_ITEM_TREND = 0;
     protected static final int NAV_ITEM_UPCOMING = 1;
     protected static final int NAV_ITEM_IMDB = 2;
@@ -115,7 +121,6 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
     private String HOST_NAME = Config.HOST_NAME;
     private static int TRANSITIONS_TO_SWITCH = 1;
     private List<TrendsObject.GalleryItem> list = null;
-    public static final String REQUEST_TAG = "titleRequest";
     private Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbar;
     private KenBurnsView backgroundImageView, backgroundImageView2, backgroundImageView3, backgroundImageView4, backgroundImageView5;
@@ -125,22 +130,23 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
     private ViewFlipper mViewSwitcher;
     private TrendsObject trendsObject = null;
     private SearchView searchView = null;
+    private ShineButton bookmarkView = null;
     private MenuItem searchItem = null;
+    private MenuItem bookmarkItem = null;
     private RequestQueue mQueue;
-    public static ArrayList<HashMap<String, String>> contentList;
-    public static ArrayList<HashMap<String, String>> galleryList;
-    private SimpleCursorAdapter mAdapter;
-    private static String[] MOVIES = {};
+    private ImageCursorAdapter mAdapter;
+    private static JSONObject[] MOVIES = {};
     int lastSelectedPosition = 0;
     ShareActionProvider shareActionProvider;
     BottomNavigationBar bottomNavigationBar;
     BadgeItem numberBadgeItem;
+    LinearLayout bookmarkActionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Gson gson = new Gson();
-        setContentView(R.layout.trends_detail);
+        setContentView(R.layout.movie_detail);
 
         setupToolbar();
 
@@ -256,7 +262,7 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
                 .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
                 .addItem(new BottomNavigationItem(R.drawable.ic_theaters, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
                 .addItem(new BottomNavigationItem(R.drawable.nytimes, "NyTimes").setActiveColorResource(R.color.material_brown_300))
-                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_grey_400))
+                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_light_blue_A100))
                 .setFirstSelectedPosition(lastSelectedPosition)
                 .initialise();
     }
@@ -274,9 +280,9 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
         if (trendsObject == null) {
             trendsObject = (TrendsObject) getIntent().getSerializableExtra(TRENDS_OBJECT);
         }
-        adapter.addFrag(InfoTabFragment.newInstance(trendsObject), "Info");
-        adapter.addFrag(CastTabFragment.newInstance(trendsObject), "Cast");
-        adapter.addFrag(ReviewTabFragment.newInstance(trendsObject), "Review");
+        adapter.addFrag(TrendsInfoTabFragment.newInstance(trendsObject), "Info");
+        adapter.addFrag(TrendsCastTabFragment.newInstance(trendsObject), "Cast");
+        adapter.addFrag(TrendsReviewTabFragment.newInstance(trendsObject), "Review");
         viewPager.setAdapter(adapter);
         /*viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -306,7 +312,7 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
         try {
             Log.d("0419", "title onResponse");
             JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-            MOVIES = AlbumActivity.getStringArray(contents);
+            MOVIES = BaseActivity.getJsonObjectArray(contents);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -434,7 +440,7 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.trends_menu, menu);
 
         for(int i = 0; i < menu.size(); i++) {
             Drawable drawable = menu.getItem(i).getIcon();
@@ -444,13 +450,36 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
             }
         }
 
+        bookmarkActionView = (LinearLayout) getLayoutInflater().inflate(R.layout.bookmark_image, null);
+        bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
+        bookmarkView.init(this);
+        bookmarkView.getLayoutParams().height=96;
+        bookmarkView.getLayoutParams().width=96;
+//        bookmarkView.setImageResource(R.drawable.ic_turned_in);
+        bookmarkView.setColorFilter(getResources().getColor(R.color.app_white));
+        bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
         searchItem = menu.findItem(R.id.action_search);
+        bookmarkItem = menu.findItem(R.id.action_bookmark);
+        bookmarkItem.setActionView(bookmarkView);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
+
+        bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(View view, boolean checked) {
+//                Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
+                Toast.makeText(TrendsDetail.this, "Bookmark "+checked+" !!!", Toast.LENGTH_SHORT).show();
+                if (checked)
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+                else
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                //TODO bookmark info for the user's acccount
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -477,8 +506,14 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
             @Override
             public boolean onSuggestionClick(int position) {
                 Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
-                String feedName = cursor.getString(1);
-                searchView.setQuery(feedName, false);
+                final String feedName = cursor.getString(1);
+                searchView.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        searchView.setQuery(feedName, false);
+                    }
+                });
+//                searchView.setQuery(feedName, false);
                 return true;
             }
         });
@@ -495,28 +530,64 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
     }
 
     private void loadHints() {
-        final String[] from = new String[]{FILM_NAME};
-        final int[] to = new int[]{android.R.id.text1};
+        final String[] from = new String [] {FILM_NAME};
+        final int[] to = new int[] { R.id.text1};
         final CustomJSONObjectRequest jsonRequest;
-        mAdapter = new SimpleCursorAdapter(this,
-                R.layout.hint_row,
+
+        mAdapter = new ImageCursorAdapter(this,
+                R.layout.search_row,
                 null,
                 from,
                 to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                "detail");
 
         mQueue = CustomVolleyRequestQueue.getInstance(this)
                 .getRequestQueue();
 
-        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb_title", new JSONObject(), this, this);
+        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray contents = ((JSONObject) response).getJSONArray("contents");
+                    MOVIES = getJsonObjectArray(contents);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(TrendsDetail.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+            }
+        });
         mQueue.add(jsonRequest);
     }
 
+    public static JSONObject [] getJsonObjectArray(JSONArray jsonArray) {
+        JSONObject[] jsonObjectsArray = null;
+        int length = jsonArray.length();
+        if (jsonArray!=null) {
+            try {
+                jsonObjectsArray = new JSONObject[length];
+                for (int i = 0; i < length; i++) {
+                    jsonObjectsArray[i] = jsonArray.getJSONObject(i);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return jsonObjectsArray;
+    }
+
     private void giveSuggestions(String query) {
-        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME});
-        for (int i = 0; i < MOVIES.length; i++) {
-            if (MOVIES[i].toLowerCase().contains(query.toLowerCase()))
-                cursor.addRow(new Object[]{i, MOVIES[i]});
+        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        try {
+            for (int i = 0; i < MOVIES.length; i++) {
+                if (MOVIES[i].getString("title").toLowerCase().contains(query.toLowerCase()))
+                    cursor.addRow(new Object[]{i, MOVIES[i].getString("title"), MOVIES[i].getString("description"), MOVIES[i].getString("posterUrl")});
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         mAdapter.changeCursor(cursor);
     }
@@ -538,15 +609,16 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
             } catch (UnsupportedEncodingException e) {
                 throw new AssertionError("UTF-8 is unknown");
             }
+            //TODO trends query api
             jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb?title=" + Query + "&ascending=1", new JSONObject(), new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
                         JSONArray contents = response.getJSONArray("contents");
                         Log.d("0504", "title onResponse" + contents);
-                        ImdbObject item = AlbumActivity.buildImdbModel(contents);
-                        Intent intent = new Intent(TrendsDetail.this, MovieDetail.class);
-                        intent.putExtra(MovieDetail.IMDB_OBJECT, item);
+                        ImdbObject item = AlbumActivity.buildImdbModel(contents); //TODO build trendmodel method
+                        Intent intent = new Intent(TrendsDetail.this, TrendsDetail.class);
+                        intent.putExtra(TrendsDetail.TRENDS_OBJECT, item);
                         ActivityCompat.startActivity(TrendsDetail.this, intent, null);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -571,6 +643,9 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
                 return true;
             case R.id.action_share:
                 onShareAction();
+                return true;
+            case R.id.action_bookmark:
+                Snackbar.make(item.getActionView(),"Bookmark !!!", Snackbar.LENGTH_LONG).show();
                 return true;
         }
 

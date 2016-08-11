@@ -1,6 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/app_white"
+    android:weightSum="1">
 
+    <ImageView
+        android:id="@+id/pic"
+        android:layout_width="50dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/parisguidetower"
+        android:layout_gravity="center_vertical">
+    </ImageView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_weight="0.26">
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:weightSum="1">
+
+            <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:layout_marginLeft="10dp"
+                android:text="label"
+                android:textSize="16dp"
+                app:font="Roboto-Bold.ttf"
+                android:layout_weight="3.15">
+            </com.github.florent37.materialviewpager.sample.framework.CustomTextView>
+
+            <TextView
+                android:id="@+id/label1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:textStyle="bold"
+                android:textColor="#000"
+                android:textSize="20sp" >
+            </TextView>
+
+        </LinearLayout>
+
+        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+            android:id="@+id/descriptioin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            app:font="Roboto-Light.ttf"
+            android:textColor="@color/app_white"
+            android:textSize="12dp" >
+        </com.github.florent37.materialviewpager.sample.framework.CustomTextView>
+    </LinearLayout>
 </LinearLayout>

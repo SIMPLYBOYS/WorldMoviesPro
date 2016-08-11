@@ -17,10 +17,10 @@
         <item name="colorPrimaryDark">@color/material_grey_800</item>
         <item name="colorAccent">@color/io15_grey</item>
         <item name="android:windowBackground">@android:color/white</item>
-         <item name="android:actionOverflowMenuStyle" tools:targetApi="21">@style/myMenuStyle</item>
-         <item name="android:statusBarColor" tools:targetApi="21">@color/transparent_black</item>
-         <item name="android:navigationBarColor" tools:targetApi="21">@color/navigationBarColor</item>
-         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>
+        <item name="android:actionOverflowMenuStyle" tools:targetApi="21">@style/myMenuStyle</item>
+        <item name="android:statusBarColor" tools:targetApi="21">@color/transparent_black</item>
+        <item name="android:navigationBarColor" tools:targetApi="21">@color/navigationBarColor</item>
+        <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="21">true</item>
         <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.LargePopupMenu</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/TextAppearance.AppCompat.Widget.PopupMenu.Small</item>
     </style>
@@ -64,7 +64,7 @@
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
-        <item name="color">@color/drawerArrowColor</item>
+        <item name="color">#FFFFFF</item>
     </style>
 
     <style name="expandedappbar">
@@ -240,7 +240,6 @@
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
-
 
 </resources>
 

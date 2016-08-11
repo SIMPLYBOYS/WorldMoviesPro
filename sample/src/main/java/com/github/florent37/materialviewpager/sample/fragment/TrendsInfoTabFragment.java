@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,7 +50,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +60,7 @@ import java.util.List;
 /**
  * Created by aaron on 2016/6/21.
  */
-public class TrendsInfoTabFragment extends Fragment implements AdapterView.OnItemClickListener,
+public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterView.OnItemClickListener,
         YouTubeThumbnailView.OnInitializedListener {
 
     private ImageView thumbnailView;
@@ -95,7 +93,7 @@ public class TrendsInfoTabFragment extends Fragment implements AdapterView.OnIte
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Gson gson = new Gson();
-        View view = inflater.inflate(R.layout.info_fragment, container, false);
+        View view = inflater.inflate(R.layout.trends_info_fragment, container, false);
         nested_scrollview = (NestedScrollView) view.findViewById(R.id.nested_scrollview);
         trendsObject = (TrendsObject) getArguments().getSerializable("trends");
         description = (CustomTextView) view.findViewById(R.id.description);
@@ -148,10 +146,10 @@ public class TrendsInfoTabFragment extends Fragment implements AdapterView.OnIte
 
             if (dataItem.getData().indexOf(":") != -1) {
                 country.setText(dataItem.getData());
-                countryFlag(dataItem.getData().split(":")[1]);
+                countryFlag(dataItem.getData().split(":")[1], thumbnailView);
             } else {
                 country.setText("Country: "+dataItem.getData());
-                countryFlag(dataItem.getData());
+                countryFlag(dataItem.getData(), thumbnailView);
             }
 
             if (dataInfo.size() == 5) {
@@ -388,88 +386,4 @@ public class TrendsInfoTabFragment extends Fragment implements AdapterView.OnIte
         }
     }
 
-    public void countryFlag ( String location) {
-
-        switch (location) {
-            case "France":
-            case "Français":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.fr).into(thumbnailView);
-                break;
-            case "Germany":
-            case "West Germany":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.gm).into(thumbnailView);
-                break;
-            case "日本":
-            case "Japan":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.japan).into(thumbnailView);
-                break;
-            case "Brazil":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.brazil).into(thumbnailView);
-                break;
-            case "Espagne":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.es).into(thumbnailView);
-                break;
-            case "Italy":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.it).into(thumbnailView);
-                break;
-            case "New Zealand":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.newzealand).into(thumbnailView);
-                break;
-            case "한국":
-            case "South Korea":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.korea).into(thumbnailView);
-                break;
-            case "UK":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.uk).into(thumbnailView);
-                break;
-            case "Iran":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.iran).into(thumbnailView);
-                break;
-            case "India":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.india).into(thumbnailView);
-                break;
-            case "Lebanon":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.lebanon).into(thumbnailView);
-                break;
-            case "Spain":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.es).into(thumbnailView);
-                break;
-            case "Sweden":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.sweden).into(thumbnailView);
-                break;
-            case "Argentina":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.argentina).into(thumbnailView);
-                break;
-            case "Canada":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.canada).into(thumbnailView);
-                break;
-            case "Australia":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.australia).into(thumbnailView);
-                break;
-            case "Ireland":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.ireland).into(thumbnailView);
-                break;
-            case "Mexico":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.mexico).into(thumbnailView);
-                break;
-            case "Soviet Union":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.ru).into(thumbnailView);
-                break;
-            case "Hong Kong":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.hong_kong).into(thumbnailView);
-                break;
-            case "Denmark":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.denmark).into(thumbnailView);
-                break;
-            case "Taiwan":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.taiwan).into(thumbnailView);
-                break;
-            case "Américain":
-            case "미국":
-            case "アメリカ":
-            case "USA":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.usa).into(thumbnailView);
-                break;
-        }
-    }
 }

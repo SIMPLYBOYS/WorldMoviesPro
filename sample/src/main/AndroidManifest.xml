@@ -72,6 +72,7 @@ package="com.github.florent37.materialviewpager.sample">
         android:name=".about.AboutActivity"
         android:label="@string/description_about"
         android:parentActivityName=".MainActivity"
+        android:screenOrientation="portrait"
         android:theme="@style/AppTheme"
         android:exported="false">
         <meta-data
@@ -96,7 +97,7 @@ package="com.github.florent37.materialviewpager.sample">
         android:theme="@style/AppTheme.Translucent" />
 
     <activity
-        android:name=".imdb.MovieDetail"
+        android:name=".framework.MovieDetail"
         android:label="@string/description_detail">
     </activity>
 
@@ -166,9 +167,10 @@ package="com.github.florent37.materialviewpager.sample">
     </activity>
 
     <activity
-        android:name=".imdb.GenreActivity"
+        android:name=".genre.GenreActivity"
         android:label="@string/description_genre"
         android:parentActivityName=".MainActivity"
+        android:screenOrientation="portrait"
         android:theme="@style/AppTheme.ActionBar.Transparent"
         android:exported="false">
         <meta-data
@@ -180,11 +182,24 @@ package="com.github.florent37.materialviewpager.sample">
         android:name=".upcoming.upComingActivity"
         android:label="@string/description_upcoming"
         android:parentActivityName=".MainActivity"
+        android:screenOrientation="portrait"
         android:theme="@style/AppTheme.ActionBar.Transparent"
         android:exported="false">
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".MainActivity" />
+    </activity>
+
+    <activity
+        android:name=".imdb.MovieDetailActivity"
+        android:screenOrientation="portrait"
+        android:label="@string/description_detail">
+    </activity>
+
+    <activity
+        android:name=".genre.GenreDetailActivity"
+        android:screenOrientation="portrait"
+        android:label="@string/description_genre_detail">
     </activity>
 
     <activity

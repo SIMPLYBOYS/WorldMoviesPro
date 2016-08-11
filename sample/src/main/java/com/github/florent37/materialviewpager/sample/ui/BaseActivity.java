@@ -55,6 +55,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -87,6 +88,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -100,17 +105,23 @@ import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.MainActivity;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.about.AboutActivity;
 import com.github.florent37.materialviewpager.sample.favorite.MyFavoriteActivity;
 import com.github.florent37.materialviewpager.sample.framework.Model;
+import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
 import com.github.florent37.materialviewpager.sample.framework.PresenterFragmentImpl;
 import com.github.florent37.materialviewpager.sample.framework.QueryEnum;
 import com.github.florent37.materialviewpager.sample.framework.UpdatableView;
 import com.github.florent37.materialviewpager.sample.framework.UserActionEnum;
-import com.github.florent37.materialviewpager.sample.imdb.GenreActivity;
+import com.github.florent37.materialviewpager.sample.genre.GenreActivity;
+import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
+import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.imdb.ImdbActivity;
+import com.github.florent37.materialviewpager.sample.imdb.MovieDetailActivity;
+import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 import com.github.florent37.materialviewpager.sample.model.User;
 import com.github.florent37.materialviewpager.sample.nytimes.nyTimesActivity;
 import com.github.florent37.materialviewpager.sample.provider.ScheduleContract;
@@ -136,9 +147,12 @@ import com.google.gson.reflect.TypeToken;
 import com.kyleduo.switchbutton.SwitchButton;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -162,86 +176,77 @@ public abstract class BaseActivity extends AppCompatActivity implements
         SwipeRefreshLayout.OnRefreshListener {
 
     public final static String PRESENTER_TAG = "Presenter";
-
     private static final String TAG = makeLogTag(BaseActivity.class);
-
     private static final int SELECT_GOOGLE_ACCOUNT_RESULT = 9999;
-
     private static final int SELECT_FACEBOOK_ACCOUNT_RESULT = 64206;
-
     public static final String FILM_NAME = "filmName";
-
+    public static final String FILM_DESCRIPTION = "filmDescription";
+    public static final String FILM_POSTER = "filmPoster";
+    private int offSet = 0;
+    private RequestQueue mQueue;
     private AccessToken accessToken;
-
     private Context context;
-
     // the LoginAndAuthHelper handles signing in to Google Play Services and OAuth
     private LoginAndAuthHelper mLoginAndAuthHelper;
-
     // Navigation drawer:
     private DrawerLayout mDrawer;
-
     // Helper methods for L APIs
     private LUtils mLUtils;
-
     private ObjectAnimator mStatusBarColorAnimator;
-
     private LinearLayout mAccountListContainer;
-
     private ViewGroup mDrawerItemsListContainer;
-
     private ActionBarDrawerToggle mDrawerToggle;
-
     private Handler mHandler;
-
     private ImageView mExpandAccountBoxIndicator;
-
     private boolean mAccountBoxExpanded = false;
-
     // When set, these components will be shown/hidden in sync with the action bar
     // to implement the "quick recall" effect (the Action Bar and the header views disappear
     // when you scroll down a list, and reappear quickly when you scroll up).
     private ArrayList<View> mHideableHeaderViews = new ArrayList<View>();
-
     // Durations for certain animations we use:
     private static final int HEADER_HIDE_ANIM_DURATION = 300;
-
     private static final int ACCOUNT_BOX_EXPAND_ANIM_DURATION = 200;
-
     // symbols for navdrawer items (indices must correspond to array below). This is
     // not a list of items that are necessarily *present* in the Nav Drawer; rather,
     // it's a list of all possible items.
-    protected static final int NAVDRAWER_ITEM_MY_FAVORITE = 0;
-
-    protected static final int NAVDRAWER_ITEM_IO_LIVE = 1;
-
-    protected static final int NAVDRAWER_ITEM_EXPLORE = 2;
-
-    protected static final int NAVDRAWER_ITEM_MAP = 3;
-
-    protected static final int NAVDRAWER_ITEM_NYTIMES = 4;
-
-    protected static final int NAVDRAWER_ITEM_UP_COMING = 6;
-
-    protected static final int NAVDRAWER_ITEM_SIGN_IN = 7;
-
-    protected static final int NAVDRAWER_ITEM_SETTINGS = 8;
-
-    protected static final int NAVDRAWER_ITEM_ABOUT = 9;
-
-    protected static final int NAVDRAWER_ITEM_GENRE = 5;
-
-    protected static final int NAVDRAWER_ITEM_SIGN_OUT = 11;
-
-    protected static final int NAVDRAWER_ITEM_IMDB = 10;
-
-    protected static final int NAVDRAWER_ITEM_INVALID = -1;
-
-    protected static final int NAVDRAWER_ITEM_SEPARATOR = -2;
-
-    protected static final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
-
+    protected final int NAVDRAWER_ITEM_MY_FAVORITE = 0;
+    protected final int NAVDRAWER_ITEM_IO_LIVE = 1;
+    protected final int NAVDRAWER_ITEM_EXPLORE = 2;
+    protected final int NAVDRAWER_ITEM_MAP = 3;
+    protected final int NAVDRAWER_ITEM_NYTIMES = 4;
+    protected final int NAVDRAWER_ITEM_UP_COMING = 6;
+    protected final int NAVDRAWER_ITEM_SIGN_IN = 7;
+    protected final int NAVDRAWER_ITEM_SETTINGS = 8;
+    protected final int NAVDRAWER_ITEM_ABOUT = 9;
+    protected final int NAVDRAWER_ITEM_GENRE = 5;
+    protected final int NAVDRAWER_ITEM_SIGN_OUT = 11;
+    protected final int NAVDRAWER_ITEM_IMDB = 10;
+    protected final int NAVDRAWER_ITEM_INVALID = -1;
+    protected final int NAVDRAWER_ITEM_SEPARATOR = -2;
+    protected final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
+    private final String TAG_TITLE = "title";
+    private final String TAG_YEAR = "year";
+    private final String TAG_DATA = "data";
+    private final String TAG_RELEASE = "releaseDate";
+    private final String TAG_TOP = "top";
+    private final String TAG_POSTER_URL = "posterUrl";
+    private final String TAG_RATING = "rating";
+    private final String TAG_CAST = "cast";
+    private final String TAG_DESCRIPTION = "description";
+    private final String TAG_DETAIL_URL = "detailUrl";
+    private final String TAG_SUMMERY = "summery";
+    private final String TAG_PLOT = "plot";
+    private final String TAG_GENRE = "genres";
+    private final String TAG_VOTES = "votes";
+    private final String TAG_RUNTIME = "runtime";
+    private final String TAG_METASCORE = "metascore";
+    private final String TAG_SLATE = "slate";
+    private final String TAG_COUNTRY = "country";
+    private final String TAG_TRAILER = "trailerUrl";
+    private final String TAG_GALLERY_FULL = "gallery_full";
+    private final String TAG_DELTA = "delta";
     // titles for navdrawer items (indices must correspond to the above)
+
     private static final int[] NAVDRAWER_TITLE_RES_ID = new int[] {
             R.string.navdrawer_item_my_favorite,
             R.string.navdrawer_item_io_live,
@@ -278,67 +283,43 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     // delay to launch nav drawer item, to allow close animation to play
     private static final int NAVDRAWER_LAUNCH_DELAY = 250;
-
     // fade in and fade out durations for the main content when switching between
     // different Activities of the app through the Nav Drawer
     private static final int MAIN_CONTENT_FADEOUT_DURATION = 150;
-
     private static final int MAIN_CONTENT_FADEIN_DURATION = 250;
-
     // list of navdrawer items that were actually added to the navdrawer, in order
     private ArrayList<Integer> mNavDrawerItems = new ArrayList<Integer>();
-
     // views that correspond to each navdrawer item, null if not yet created
     private View[] mNavDrawerItemViews = null;
-
     // Primary toolbar and drawer toggle
     private Toolbar mActionBarToolbar;
-
     // handle to our sync observer (that notifies us about changes in our sync state)
     private Object mSyncObserverHandle;
-
     // variables that control the Action Bar auto hide behavior (aka "quick recall")
     private boolean mActionBarAutoHideEnabled = false;
-
     private int mActionBarAutoHideSensivity = 0;
-
     private int mActionBarAutoHideMinY = 0;
-
     private int mActionBarAutoHideSignal = 0;
-
     private boolean mActionBarShown = true;
-
     // A Runnable that we should execute when the navigation drawer finishes its closing animation
     private Runnable mDeferredOnDrawerClosedRunnable;
-
     private boolean mManualSyncRequest;
-
     private int mThemedStatusBarColor;
-
     private int mNormalStatusBarColor;
-
     private int mProgressBarTopWhenActionBarShown;
-
     private static final TypeEvaluator ARGB_EVALUATOR = new ArgbEvaluator();
-
     private ImageLoader mImageLoader;
-
     private CallbackManager callbackManager;
-
     private AccessTokenTracker accessTokenTracker;
-
     private ProfileTracker profileTracker;
-
     private BroadcastReceiver mRegistrationBroadcastReceiver;
-
     private boolean isReceiverRegistered;
-
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("0531", "onCreate");
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -354,9 +335,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         FacebookSdk.sdkInitialize(getApplicationContext());
-
         callbackManager = CallbackManager.Factory.create();
-
         LoginManager.getInstance().registerCallback(callbackManager, mCallBack);
 
         accessTokenTracker = new AccessTokenTracker() {
@@ -369,9 +348,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 accessToken = AccessToken.getCurrentAccessToken();
             }
         };
+
         // If the access token is available already assign it.
         accessToken = AccessToken.getCurrentAccessToken();
-
 
         profileTracker = new ProfileTracker() {
             @Override
@@ -381,12 +360,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 //TODO App code
             }
         };
+
         context = getApplicationContext();
         mImageLoader = new ImageLoader(this);
         mHandler = new Handler();
-
         setupWindowAnimations();
-
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         sp.registerOnSharedPreferenceChangeListener(this);
 
@@ -408,11 +386,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
         };
 
         registerReceiver();
-
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
-        boolean sentToken = sharedPreferences
-                .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
 
         if (checkPlayServices() && sentToken) {
             // Start IntentService to register this application with GCM.
@@ -497,12 +472,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
                                 PrefUtils.setCurrentFriends(FriendList, getApplicationContext());
                                 User user = PrefUtils.getCurrentUser(getApplicationContext());
+                                AccountUtils.setActiveAccount(getApplicationContext(), user.name);
                                 onAuthSuccess(user.name, true);
-                                /*AccountUtils.setActiveAccount(getApplicationContext(), user.name);
-                                    onAuthSuccess(user.name, true);
-                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                    finish();*/
-                                startActivityForVersion(new Intent(getApplicationContext(), MainActivity.class));
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 finish();
                             } else {
                                 Toast.makeText(BaseActivity.this,
@@ -535,7 +507,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                                 Log.d("FB", object.optString("email"));
                                 Log.d("FB", object.optString("gender"));
 
-//                                Log.d("FB", object.optString("birthday"));
                                 /*JSONObject object1 = object.optJSONObject("picture");
                                 Log.d("FB", String.valueOf(object1.optJSONObject("data").optString("url")));*/
 
@@ -546,10 +517,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
                                     user.gender = object.optString("gender");
                                     user.accessToken = accessToken.getToken();
                                     user.pictureUrl = "https://graph.facebook.com/" + user.facebookID + "/picture?type=large";
-
+                                    //TODO post user's name and facebookID to server then launch MainActivity
                                     PrefUtils.setCurrentUser(user, getApplicationContext());
                                     Bundle parameters = new Bundle();
-                                    parameters.putString("fields", "id,name,email,picture");
+                                    parameters.putString("fields", "id,name,email,picture,birthday,education");
                                     friendsRequest.setParameters(parameters);
                                     friendsRequest.executeAsync();
 
@@ -569,7 +540,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
             //包入你想要得到的資料 送出request
             Bundle parameters = new Bundle();
-            parameters.putString("fields", "id,name,link,email,gender,birthday,picture");
+            parameters.putString("fields", "id,name,email,gender,birthday,picture");
             meRequest.setParameters(parameters);
             meRequest.executeAsync();
         }
@@ -1364,6 +1335,22 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return stringArray;
     }
 
+    public static JSONObject [] getJsonObjectArray(JSONArray jsonArray) {
+        JSONObject[] jsonObjectsArray = null;
+        int length = jsonArray.length();
+        if (jsonArray!=null) {
+            try {
+                jsonObjectsArray = new JSONObject[length];
+                for (int i = 0; i < length; i++) {
+                    jsonObjectsArray[i] = jsonArray.getJSONObject(i);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return jsonObjectsArray;
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -1645,6 +1632,153 @@ public abstract class BaseActivity extends AppCompatActivity implements
         onActionBarAutoShowOrHide(show);
     }
 
+    public void requestDataRefresh(String Query) {
+        final CustomJSONObjectRequest jsonRequest = null;
+
+        mQueue = CustomVolleyRequestQueue.getInstance(BaseActivity.this).getRequestQueue();
+        CustomJSONObjectRequest jsonRequest_q = null;
+        String url = null;
+
+        if (Query != null) {
+            // launch query from searchview
+            try {
+                Query = URLEncoder.encode(Query, "UTF-8");
+                url= Config.HOST_NAME + "/imdb?title=" + Query + "&ascending=1";
+            } catch (UnsupportedEncodingException e) {
+                throw new AssertionError("UTF-8 is unknown");
+            }
+
+            jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        JSONArray contents = response.getJSONArray("contents");
+                        JSONObject jsonObj = new JSONObject();
+                        JSONArray data = new JSONArray();
+                        JSONObject c = contents.getJSONObject(0);
+                        JSONObject d = null;
+                        int top = 0;
+                        String title = c.getString(TAG_TITLE);
+                        String year = "";
+                        String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
+                        String delta = "0";
+                        String detailUrl = "";
+
+                        if (c.has("detailContent")) {
+                            d = c.getJSONObject("detailContent");
+                        }
+
+                        JSONObject jo = new JSONObject();
+                        //----- start dummy GalleryUrl ----
+                        jo.put("type", "full");
+                        jo.put("url", "");
+                        JSONArray galleryFullUrl = new JSONArray();
+                        JSONArray cast = new JSONArray();
+                        galleryFullUrl.put(jo);
+                        //----- end dummy GalleryUrl ----
+
+                        if (c.has(TAG_TOP)) {
+                            top = c.getInt(TAG_TOP);
+                            if (top > offSet)
+                                offSet = top;
+                        }
+
+                        if (c.has(TAG_DATA)) {
+                            data = c.getJSONArray(TAG_DATA);
+                            jsonObj = (JSONObject) data.get(1);
+                            LOGD("0811", String.valueOf(data));
+                        }
+
+                        /*if (c.has(TAG_RELEASE) && !c.has(TAG_TOP)) {
+                            year = String.valueOf(c.getInt(TAG_RELEASE));
+                            year = year.substring(4, 8);
+                        } else {
+                            year = c.getString(TAG_YEAR);
+                        }*/
+
+                        year = c.has(TAG_YEAR) ? c.getString(TAG_YEAR) : jsonObj.getString("data");
+
+                        if (c.has(TAG_DELTA)) {
+                            delta = c.getString(TAG_DELTA);
+                        }
+
+                        if (c.has(TAG_DETAIL_URL))
+                            detailUrl = c.getString(TAG_DETAIL_URL);
+
+                        String description= c.getString(TAG_DESCRIPTION);
+                        String rating = c.getString(TAG_RATING);
+
+                        if (c.has(TAG_POSTER_URL)) {
+                            posterUrl = c.getString(TAG_POSTER_URL);
+                        }
+
+                        if (c.has(TAG_CAST)) {
+                            cast = c.getJSONArray(TAG_CAST);
+                        }
+
+                        String plot = c.has(TAG_PLOT) ? c.getString(TAG_PLOT) : c.getString("story");
+                        String genre = c.has(TAG_GENRE) ? c.getString(TAG_GENRE) : "";
+                        String votes = c.has(TAG_VOTES) ? c.getString(TAG_VOTES) : "";
+                        String runTime = c.has(TAG_RUNTIME) ? c.getString(TAG_RUNTIME) : "";
+                        String metaScore = c.has(TAG_METASCORE) ? c.getString(TAG_METASCORE) : "";
+
+                        if (runTime.compareTo("") == 0) {
+                            jsonObj = new JSONObject();
+                            jsonObj = (JSONObject) data.get(4);
+                            runTime = jsonObj.getString("data");
+                        }
+
+                        if (genre.compareTo("") == 0)
+                            genre = c.getString("genre");
+
+                        String summery = d != null ? d.getString(TAG_SUMMERY) : c.getString("story");
+                        String country = d != null ? d.getString(TAG_COUNTRY) : c.getString(TAG_COUNTRY);
+
+                        if (c.has(TAG_GALLERY_FULL)) {
+                            galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
+                        }
+
+                        String trailerUrl;
+                        String slate;
+
+                        if (c.has(TAG_TRAILER))
+                            trailerUrl = c.getString(TAG_TRAILER);
+                        else
+                            trailerUrl = "N/A";
+
+                        if (d != null)
+                            slate = d.has(TAG_SLATE) ? d.getString(TAG_SLATE) : "N/A";
+                        else
+                            slate = "N/A";
+
+                        ImdbObject movie = new ImdbObject(title, String.valueOf(top), year, description,
+                                rating, posterUrl, slate, summery, plot,
+                                genre, votes, runTime, metaScore, delta, country,
+                                trailerUrl, cast.toString(), galleryFullUrl.toString(), detailUrl);
+                        Intent intent = new Intent(BaseActivity.this, MovieDetailActivity.class);
+                        if (c.has(TAG_TOP))
+                            movie.setType("imdb");
+                        else
+                            movie.setType("genre");
+                        intent.putExtra(MovieDetail.IMDB_OBJECT, movie);
+                        ActivityCompat.startActivity(BaseActivity.this, intent, null);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(BaseActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            mQueue.add(jsonRequest_q);
+            return;
+        }
+
+        mQueue.add(jsonRequest); //trigger volley request
+    }
+
     protected void enableActionBarAutoHide(final ListView listView) {
         initActionBarAutoHide();
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -1707,7 +1841,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         View item =  getLayoutInflater().inflate(R.layout.navdrawer_item, container, false);
         ImageView iconView = (ImageView) item.findViewById(R.id.icon);
         TextView titleView = (TextView) item.findViewById(R.id.title);
-        final SwitchButton mSB = (SwitchButton) item.findViewById(R.id.sb_md);
+        final SwitchButton switchButton = (SwitchButton) item.findViewById(R.id.sb_md);
 
         int iconId = itemId >= 0 && itemId < NAVDRAWER_ICON_RES_ID.length ?
                 NAVDRAWER_ICON_RES_ID[itemId] : 0;
@@ -1739,14 +1873,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
             boolean sentToken = sharedPreferences
                     .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
             if (sentToken)
-                mSB.setCheckedImmediately(true);
+                switchButton.setCheckedImmediately(true);
             else
-                mSB.setCheckedImmediately(false);
-            mSB.setVisibility(View.VISIBLE);
-            mSB.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                switchButton.setCheckedImmediately(false);
+            switchButton.setVisibility(View.VISIBLE);
+            switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (mSB.isChecked()) {
+                    if (switchButton.isChecked()) {
                         Intent intent = new Intent(getApplicationContext(), RegistrationIntentService.class);
                         startService(intent);
                     } else {

@@ -1,20 +1,32 @@
 package com.github.florent37.materialviewpager.sample.upcoming;
 
+import android.app.SearchManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.BaseColumns;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,18 +37,23 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
-import com.github.florent37.materialviewpager.sample.adapter.ImdbSwipeRecycleViewAdapter;
+import com.github.florent37.materialviewpager.sample.adapter.ImageCursorAdapter;
+import com.github.florent37.materialviewpager.sample.adapter.upComingSwipeRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.fragment.RecyclerViewFragment;
+import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
-import com.github.florent37.materialviewpager.sample.imdb.ImdbActivity;
+import com.github.florent37.materialviewpager.sample.imdb.MovieDetailActivity;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
+import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
 import com.github.florent37.materialviewpager.sample.ui.widget.MultiSwipeRefreshLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,51 +64,70 @@ import java.util.List;
 /**
  * Created by aaron on 2016/6/16.
  */
-public class upComingActivity extends ImdbActivity implements Response.Listener, Response.ErrorListener  {
+public class upComingActivity extends BaseActivity implements Response.Listener, Response.ErrorListener {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<ImdbObject> movieList;
     private RecyclerView rvMovies;
     private Toolbar toolbar;
-    private ImdbSwipeRecycleViewAdapter adapter;
+    private String HOST_NAME = Config.HOST_NAME;
+    private upComingSwipeRecycleViewAdapter adapter;
     private LinearLayoutManager linearLayoutManager;
-    private static String[] MOVIES = {};
+    private boolean mActionBarShown = true;
+    private int mProgressBarTopWhenActionBarShown;
+    private static JSONObject[] MOVIES = {};
     int curSize = 0;
+    private int offSet = 0;
     CustomJSONObjectRequest jsonRequest;
-    private SimpleCursorAdapter mAdapter;
+    private ImageCursorAdapter mAdapter;
     private RequestQueue mQueue;
     public static int [] monthList;
     // JSON Node names
-    private static final String TAG_TITLE = "title";
-    private static final String TAG_YEAR = "year";
-    private static final String TAG_RELEASE = "releaseDate";
-    private static final String TAG_TOP = "top";
-    private static final String TAG_POSTER_URL = "posterUrl";
-    private static final String TAG_RATING = "rating";
-    private static final String TAG_DESCRIPTION = "description";
-    private static final String TAG_SUMMERY = "summery";
-    private static final String TAG_PLOT = "plot";
-    private static final String TAG_GENRE = "genres";
-    private static final String TAG_VOTES = "votes";
-    private static final String TAG_RUNTIME = "runtime";
-    private static final String TAG_METASCORE = "metascore";
-    private static final String TAG_SLATE = "slate";
-    private static final String TAG_COUNTRY = "country";
-    private static final String TAG_TRAILER = "trailerUrl";
-    private static final String TAG_GALLERY_FULL = "gallery_full";
-    private static final String TAG_DELTA = "delta";
+    private final String TAG_TITLE = "title";
+    private final String TAG_YEAR = "year";
+    private final String TAG_RELEASE = "releaseDate";
+    private final String TAG_TOP = "top";
+    private final String TAG_POSTER_URL = "posterUrl";
+    private final String TAG_RATING = "rating";
+    private final String TAG_CAST = "cast";
+    private final String TAG_DESCRIPTION = "description";
+    private final String TAG_DETAIL_URL = "detailUrl";
+    private final String TAG_SUMMERY = "summery";
+    private final String TAG_PLOT = "plot";
+    private final String TAG_GENRE = "genres";
+    private final String TAG_VOTES = "votes";
+    private final String TAG_RUNTIME = "runtime";
+    private final String TAG_METASCORE = "metascore";
+    private final String TAG_SLATE = "slate";
+    private final String TAG_COUNTRY = "country";
+    private final String TAG_TRAILER = "trailerUrl";
+    private final String TAG_GALLERY_FULL = "gallery_full";
+    private final String TAG_DELTA = "delta";
+    private SearchView searchView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upcoming);
         this.toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.TRANSPARENT);
         toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setHomeButtonEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         registerHideableHeaderView(findViewById(R.id.headerbar));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window window = getWindow();
+            // Translucent status bar
+            window.setFlags(
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            // Translucent navigation bar
+            window.setFlags(
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
+
         TextView textView = new TextView(this);
         LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewPager.LayoutParams.MATCH_PARENT, getStatusBarHeight());
         textView.setBackgroundColor(Color.parseColor("#FF26C6DA"));
@@ -105,14 +141,12 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
         movieList = new ArrayList<>();
         linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(false);
-        adapter = new ImdbSwipeRecycleViewAdapter(this, movieList);
+        adapter = new upComingSwipeRecycleViewAdapter(this, movieList);
         rvMovies = (RecyclerView) findViewById(R.id.recyclerView);
         rvMovies.setLayoutManager(linearLayoutManager);
         rvMovies.setAdapter(adapter);
-
         mQueue = CustomVolleyRequestQueue.getInstance(this)
                 .getRequestQueue();
-
         rvMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -142,31 +176,114 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+
             }
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        SharedPreferences settings = getSharedPreferences("settings", 0);
+        getMenuInflater().inflate(R.menu.imdb_menu, menu);
+
+        Drawable drawable = toolbar.getOverflowIcon();
+        if (drawable != null) {
+            drawable = DrawableCompat.wrap(drawable);
+            DrawableCompat.setTint(drawable.mutate(), Color.parseColor("#FFFFFF"));
+            toolbar.setOverflowIcon(drawable);
+        }
+
+        MenuItem miniCard = menu.findItem(R.id.menu_miniCard);
+        MenuItem ascending = menu.findItem(R.id.menu_ascending);
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+        searchView.setSubmitButtonEnabled(true);
+        AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
+        mQueryTextView.setTextColor(Color.WHITE);
+        mQueryTextView.setHintTextColor(Color.WHITE);
+        mQueryTextView.setHint("movie title or cast name");
+        miniCard.setChecked(settings.getBoolean("miniCard", true));
+        ascending.setChecked(settings.getBoolean("ascending", false));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //if you want to collapse the searchview
+                requestDataRefresh(query);
+                invalidateOptionsMenu();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                giveSuggestions(query);
+                return false;
+            }
+        });
+
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return true;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
+                final String feedName = cursor.getString(1);
+                searchView.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        searchView.setQuery(feedName, true);
+                    }
+                });
+                return true;
+            }
+        });
+
+        searchView.setSuggestionsAdapter(mAdapter);
+
+        return true;
+    }
+
+    private void giveSuggestions(String query) {
+        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        try {
+            for (int i = 0; i < MOVIES.length; i++) {
+                if (MOVIES[i].getString("title").toLowerCase().contains(query.toLowerCase()))
+                    cursor.addRow(new Object[]{i, MOVIES[i].getString("title"), MOVIES[i].getString("description"), MOVIES[i].getString("posterUrl")});
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mAdapter.changeCursor(cursor);
+    }
+
     private void loadHints() {
-        final String[] from = new String[]{FILM_NAME};
-        final int[] to = new int[]{android.R.id.text1};
+        final String[] from = new String [] {FILM_NAME};
+        final int[] to = new int[] { R.id.text1};
         final CustomJSONObjectRequest jsonRequest;
-        mAdapter = new SimpleCursorAdapter(this,
-                R.layout.hint_row,
+
+        mAdapter = new ImageCursorAdapter(this,
+                R.layout.search_row,
                 null,
                 from,
                 to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                "upcoming");
 
         mQueue = CustomVolleyRequestQueue.getInstance(this)
                 .getRequestQueue();
 
-        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "/imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
+        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Log.d("0419", "title onResponse");
                     JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-                    MOVIES = getStringArray(contents);
+                    MOVIES = getJsonObjectArray(contents);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -174,10 +291,19 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(upComingActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(upComingActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
             }
         });
         mQueue.add(jsonRequest);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -269,12 +395,38 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
     };
 
     @Override
+    public void updateSwipeRefreshProgressBarTop() {
+        if (mSwipeRefreshLayout == null) {
+            return;
+        }
+
+        int progressBarStartMargin = getResources().getDimensionPixelSize(
+                R.dimen.swipe_refresh_progress_bar_start_margin);
+        int progressBarEndMargin = getResources().getDimensionPixelSize(
+                R.dimen.swipe_refresh_progress_bar_end_margin);
+        int top = mActionBarShown ? mProgressBarTopWhenActionBarShown : 0;
+        mSwipeRefreshLayout.setProgressViewOffset(false,
+                top + progressBarStartMargin, top + progressBarEndMargin);
+    }
+
+    @Override
+    protected void onRefreshingStateChanged(boolean refreshing) {
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(refreshing);
+        }
+    }
+
+    @Override
+    protected void enableDisableSwipeRefresh(boolean enable) {
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setEnabled(enable);
+        }
+    }
+
+    @Override
     public void trySetupSwipeRefresh() {
-
         mSwipeRefreshLayout.setColorSchemeResources(R.color.flat_button_text);
-
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
         Log.d("0625", String.valueOf(adapter.getItemCount()));
 
         /**
@@ -329,7 +481,14 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
 
     }
 
+    /**
+     * This method is called when swipe refresh is pulled down
+     */
     @Override
+    public void onRefresh() {
+        fetchMovies(true);
+    }
+
     public void fetchMovies(final boolean swipe) {
         // showing refresh animation before making http call
         if (swipe)
@@ -344,16 +503,16 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
         Log.d("0616", "total count: " + String.valueOf(count));
 
         if (monthList == null)
-            return; //skip fetching upon network not stable.
+            return; //skip fetching upon network not avaliable.
 
         if (count < monthList[c.get(Calendar.MONTH)]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(0, 1)) +' ' +String.valueOf(getReleaseDate(0, 30)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(0, 1) + "&release_to=" + getReleaseDate(0, 31), new JSONObject(), this, this);
+                    "/imdb?release_from=" + getReleaseDate(0, 1) + "&release_to=" + getReleaseDate(0, 30), new JSONObject(), this, this);
         } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(1, 1)) +' ' +String.valueOf(getReleaseDate(1, 31)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(1, 1) + "&release_to=" + getReleaseDate(1, 31), new JSONObject(), this, this);
+                    "/imdb?release_from=" + getReleaseDate(1, 1) + "&release_to=" + getReleaseDate(1, 30), new JSONObject(), this, this);
         } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(2, 1)) +' ' +String.valueOf(getReleaseDate(2, 31)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
@@ -361,18 +520,18 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
         } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2] + monthList[c.get(Calendar.MONTH)+3]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(3, 1)) +' ' +String.valueOf(getReleaseDate(3, 30)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(3, 1) + "&release_to=" + getReleaseDate(3, 31), new JSONObject(), this, this);
+                    "/imdb?release_from=" + getReleaseDate(3, 1) + "&release_to=" + getReleaseDate(3, 30), new JSONObject(), this, this);
         } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2] + monthList[c.get(Calendar.MONTH)+3] + monthList[c.get(Calendar.MONTH)+4]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(4, 1)) +' ' +String.valueOf(getReleaseDate(4, 31)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
                     "/imdb?release_from=" + getReleaseDate(4, 1) + "&release_to=" + getReleaseDate(4, 30), new JSONObject(), this, this);
         }
 
-        if (count > monthList[c.get(Calendar.MONTH)] +
-                monthList[c.get(Calendar.MONTH)+1] +
-                monthList[c.get(Calendar.MONTH)+2] +
-                monthList[c.get(Calendar.MONTH)+3] +
-                monthList[c.get(Calendar.MONTH)+4]) {
+        if (count > monthList[c.get(Calendar.MONTH)%12] +
+                monthList[(c.get(Calendar.MONTH)+1)%12] +
+                monthList[(c.get(Calendar.MONTH)+2)%12] +
+                monthList[(c.get(Calendar.MONTH)+3)%12] +
+                monthList[(c.get(Calendar.MONTH)+4)%12]) {
             movieList.remove(movieList.size() - 1);
             adapter.notifyItemRemoved(movieList.size());
         } else {
@@ -399,7 +558,6 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
             boolean byTitle = ((JSONObject) response).getBoolean("byTitle");
             buildImdbModel(contents, byTitle);
             mSwipeRefreshLayout.setRefreshing(false);
-
         } catch (JSONException e) {
             mSwipeRefreshLayout.setRefreshing(false);
             Toast.makeText(upComingActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
@@ -418,6 +576,7 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
             JSONObject d = c.getJSONObject("detailContent");
             int top = 0;
             String detailPosterUrl = "";
+            String detailUrl = "";
             String year = "";
             String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
             String delta = "0";
@@ -426,6 +585,7 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
             jo.put("type", "full");
             jo.put("url", "");
             JSONArray galleryFullUrl = new JSONArray();
+            JSONArray cast = new JSONArray();
             galleryFullUrl.put(jo);
             //----- end dummy GalleryUrl ----
 
@@ -446,6 +606,13 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
             if (c.has(TAG_POSTER_URL)) {
                 posterUrl = c.getString(TAG_POSTER_URL);
             }
+
+            if (c.has(TAG_CAST)) {
+                cast = c.getJSONArray(TAG_CAST);
+            }
+
+            if (c.has(TAG_DETAIL_URL))
+                detailUrl = c.getString(TAG_DETAIL_URL);
 
             String plot = c.getString(TAG_PLOT);
             String genre = c.getString(TAG_GENRE);
@@ -476,7 +643,7 @@ public class upComingActivity extends ImdbActivity implements Response.Listener,
             ImdbObject item = new ImdbObject(title, String.valueOf(top), year, description,
                     rating, posterUrl, slate, summery, plot,
                     genre, votes, runTime, metaScore, delta, country,
-                    trailerUrl, galleryFullUrl.toString());
+                    trailerUrl, cast.toString(), galleryFullUrl.toString(), detailUrl);
 
             SharedPreferences settings = getSharedPreferences("settings", 0);
             boolean ascending = settings.getBoolean("ascending", false);

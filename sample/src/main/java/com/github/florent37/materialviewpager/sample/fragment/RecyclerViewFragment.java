@@ -1,6 +1,7 @@
 package com.github.florent37.materialviewpager.sample.fragment;
 
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -140,12 +141,16 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
                     mQueue.add(jsonRequest_q);
                     return;*/
                 }
-                url = HOST_NAME + "trends";
+                url = HOST_NAME + "jpTrends";
                 adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+
                 if (adapter != null && adapter.getItemCount() > 1)
                     return;
+
                 progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
                 progressBar.setVisibility(View.VISIBLE);
+                progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.transparent_black), PorterDuff.Mode.SRC_ATOP);
+
                 if (ascending) {
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
                 } else {
@@ -155,10 +160,14 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
             case 1:
                 url = HOST_NAME + "usTrends";
                 adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+
                 if (adapter != null && adapter.getItemCount() > 1)
                     return;
+
                 progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
                 progressBar.setVisibility(View.VISIBLE);
+                progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.transparent_black), PorterDuff.Mode.SRC_ATOP);
+
                 if (ascending) {
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
                 } else {
@@ -166,28 +175,16 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
                 }
                 break;
             case 2:
-                if (Query != null) {
-                    /*// query from searchview
-                    if (isNumeric(Query))
-                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                                "/imdb?from=" + Integer.parseInt(Query) + "&to=" + Integer.parseInt(Query) + "&ascending=1", new JSONObject(), this, this);
-                    else {
-                        try {
-                            Query = URLEncoder.encode(Query, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            throw new AssertionError("UTF-8 is unknown");
-                        }
-                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb?title=" + Query + "&ascending=1", new JSONObject(), this, this);
-                    }
-                    mQueue.add(jsonRequest_q);
-                    return;*/
-                }
                 url = HOST_NAME + "twTrends";
                 adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+
                 if (adapter != null && adapter.getItemCount() > 1)
                     return;
+
                 progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
                 progressBar.setVisibility(View.VISIBLE);
+                progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.transparent_black), PorterDuff.Mode.SRC_ATOP);
+
                 if (ascending) {
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
                 } else {
@@ -197,10 +194,14 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
             case 3:
                 url = HOST_NAME + "krTrends";
                 adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+
                 if (adapter != null && adapter.getItemCount() > 1)
                     return;
+
                 progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
                 progressBar.setVisibility(View.VISIBLE);
+                progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.transparent_black), PorterDuff.Mode.SRC_ATOP);
+
                 if (ascending) {
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
                 } else {
@@ -210,10 +211,14 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
             case 4:
                 url = HOST_NAME + "frTrends";
                 adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+
                 if (adapter != null && adapter.getItemCount() > 1)
                     return;
+
                 progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
                 progressBar.setVisibility(View.VISIBLE);
+                progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.transparent_black), PorterDuff.Mode.SRC_ATOP);
+
                 if (ascending) {
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
                 } else {

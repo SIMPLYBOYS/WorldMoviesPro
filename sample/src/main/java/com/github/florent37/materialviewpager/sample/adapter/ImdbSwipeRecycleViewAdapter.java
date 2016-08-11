@@ -23,9 +23,13 @@ import com.facebook.FacebookSdk;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.github.florent37.materialviewpager.sample.R;
-import com.github.florent37.materialviewpager.sample.imdb.MovieDetail;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 import com.github.florent37.materialviewpager.sample.nytimes.Movie;
+import com.github.florent37.materialviewpager.sample.imdb.MovieDetailActivity;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -93,16 +97,29 @@ public class ImdbSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         public void bind(ImdbObject movie, String color, final ProgressBar mProgressBar) {
             String title = movie.getTitle();
+            Gson gson = new Gson();
+            ImdbObject.RatingItem ratingItem = null;
+            JsonElement jsonElement = null;
+
+            if (movie.getRating().compareTo("")!=0) {
+                JsonObject ratingInfo = new JsonParser().parse(movie.getRating()).getAsJsonObject();
+                jsonElement = ratingInfo.getAsJsonObject();
+                ratingItem = gson.fromJson(jsonElement, ImdbObject.RatingItem.class);
+                rattingView.setText(ratingItem.getScore());
+                votesView.setText(movie.getVotes());
+            }
+
             if (titleView == null)
                 return;
             titleView.setText(title);
+
             if (movie.getTop() != "0")
                 topView.setText(movie.getTop());
+
             yearView.setText(movie.getYear());
-            rattingView.setText(movie.getRatting());
-            votesView.setText(movie.getVotes());
             int delta = Math.abs(movie.getDelta());
             Log.d("0601: ", String.valueOf(delta));
+
             if (delta != 0) {
                 deltaView.setText(String.valueOf(delta));
                 arrowView.setVisibility(View.VISIBLE);
@@ -197,8 +214,9 @@ public class ImdbSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 @Override
                 public void clickOnView(View v, int position) {
                     final ImdbObject movie = movieList.get(position);
-                    Intent intent = new Intent(v.getContext(), MovieDetail.class);
-                    intent.putExtra(MovieDetail.IMDB_OBJECT, movie);
+                    Intent intent = new Intent(v.getContext(), MovieDetailActivity.class);
+                    movie.setType("imdb");
+                    intent.putExtra(MovieDetailActivity.IMDB_OBJECT, movie);
                     ActivityCompat.startActivity(activity, intent, null);
 //                    Snackbar.make(v, movie.getHeadline(), Snackbar.LENGTH_LONG).show();
                     /*View shareView = v.findViewById(R.id.share);

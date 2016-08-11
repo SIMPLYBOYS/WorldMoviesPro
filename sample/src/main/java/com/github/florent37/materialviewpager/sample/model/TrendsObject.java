@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by aaron on 2016/6/17.
  */
-public class TrendsObject implements Serializable {
+public class TrendsObject extends Object implements Serializable {
     private String title;
     private String top;
     private String detailUrl;
@@ -20,6 +20,7 @@ public class TrendsObject implements Serializable {
     private String mainInfo;
     private String rating;
     private String releaseDate;
+    private int channel;
 
     public class GalleryItem {
         private String type;
@@ -84,29 +85,6 @@ public class TrendsObject implements Serializable {
         }
     }
 
-    public class ReviewItem {
-        private String name;
-        private String avatar;
-        private String topic;
-        private String text;
-        private float point;
-        private String date;
-
-
-        public String getAvatar() { return avatar;}
-
-        public String getViewer() { return name;}
-
-        public String getDate() { return date;}
-
-        public String getTopic() { return topic;}
-
-        public String getContent() { return text;}
-
-        public float getPoint() { return point;}
-
-    }
-
     public TrendsObject(String title, String top, String detailUrl, String posterUrl, String trailerUrl,
                         String cast, String review, String staff, String data, String story, String mainInfo, String galleryUrl, String rating, String releaseDate) {
         this.title = title;
@@ -164,9 +142,13 @@ public class TrendsObject implements Serializable {
         return posterUrl;
     }
 
+    public int getChannel() { return channel; }
+
     public void setPosterUrl(String imageUrl) {
         this.posterUrl = posterUrl;
     }
+
+    public void setChannel(int channel) { this.channel = channel;}
 
     public void setTitle(String title) {
         this.title = title;

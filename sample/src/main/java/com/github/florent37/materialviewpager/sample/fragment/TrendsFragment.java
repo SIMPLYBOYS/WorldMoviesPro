@@ -28,17 +28,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by aaron on 2016/6/16.
  */
 public class TrendsFragment extends RecyclerViewFragment implements AdapterView.OnItemClickListener {
-    // JSON Node names
+    // JSON Node keys
     private static final String TAG_TITLE = "title";
     private static final String TAG_DATA = "data";
     private static final String TAG_RELEASE = "releaseDate";
@@ -50,7 +48,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     private static final String TAG_STORY = "story";
     private static final String TAG_CAST = "cast";
     private static final String TAG_REVIEW = "review";
-    private static final String TAG_GENRE = "genres";
     private static final String TAG_RATING = "rating";
     private static final String TAG_RUNTIME = "runtime";
     private static final String TAG_METASCORE = "metascore";
@@ -58,7 +55,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     private static final String TAG_COUNTRY = "country";
     private static final String TAG_TRAILER = "trailerUrl";
     private static final String TAG_STAFF = "staff";
-    private ArrayList<HashMap<String, String>> contentList;
     private int visibleThreshold = 1;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -66,7 +62,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     private LinearLayoutManager layoutManager;
     private TrendsCardRecycleViewAdapter trendsCardAdapter;
     private boolean loading;
-    private int titleIndex = 0; //default
     private int lastVisibleItem, totalItemCount, channel;
 
     // initially offset will be 0, later will be updated while parsing the json
@@ -132,9 +127,9 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             progressBar.setVisibility(View.GONE);
 
             if (byTitle) {
-                /*Intent intent = new Intent(getActivity(), MovieDetail.class);
-                intent.putExtra(MovieDetail.IMDB_OBJECT, item);
-                ActivityCompat.startActivity(getActivity(), intent, null);*/
+                Intent intent = new Intent(getActivity(), TrendsDetail.class);
+                intent.putExtra(TrendsDetail.TRENDS_OBJECT, item);
+                ActivityCompat.startActivity(getActivity(), intent, null);
             }
 
         } catch (JSONException e) {
@@ -220,6 +215,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             TrendsObject item = null;
             item = new TrendsObject(title, String.valueOf(top), detailUrl, posterUrl, trailerUrl, cast.toString(), review.toString(),
                     staff.toString(), data.toString(), story, mainInfo, gallery.toString(), rating.toString(), releaseDate);
+            item.setChannel(channel);
             if (byTitle)
                 return item; // only one item in case of query by title
             trendsCardAdapter.addItem(i, item);

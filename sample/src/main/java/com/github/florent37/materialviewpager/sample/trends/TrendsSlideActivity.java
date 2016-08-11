@@ -35,7 +35,7 @@ import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.TrendsSlideRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
-import com.github.florent37.materialviewpager.sample.imdb.MovieDetail;
+import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
 import com.github.florent37.materialviewpager.sample.model.TrendsObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -181,10 +181,13 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
             @Override
             public boolean onSuggestionClick(int position) {
                 Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
-                String feedName = cursor.getString(1);
-                Log.d("0419", "suggesion select2: " + feedName);
-                searchView.setQuery(feedName, false);
-//                searchView.clearFocus();
+                final String feedName = cursor.getString(1);
+                searchView.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        searchView.setQuery(feedName, true);
+                    }
+                });
                 return true;
             }
         });

@@ -12,6 +12,8 @@ public class BlockItem implements AsymmetricItem {
   private int columnSpan;
   private int rowSpan;
   private int position;
+  private String topic;
+  private String imageUrl;
 
   public BlockItem() {
     this(1, 1, 0);
@@ -21,6 +23,23 @@ public class BlockItem implements AsymmetricItem {
     this.columnSpan = columnSpan;
     this.rowSpan = rowSpan;
     this.position = position;
+    this.imageUrl = "";
+  }
+
+  public void setTopic(String str){
+    this.topic = str;
+  }
+
+  public String getTopic() {
+    return topic;
+  }
+
+  public void setImageUrl(String str){
+    this.imageUrl = str;
+  }
+
+  public String getImageUrl() {
+    return imageUrl;
   }
 
   public BlockItem(Parcel in) {

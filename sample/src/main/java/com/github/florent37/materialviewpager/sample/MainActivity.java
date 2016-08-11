@@ -20,8 +20,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,6 +48,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.crashlytics.android.Crashlytics;
 import com.github.florent37.materialviewpager.MaterialViewPager;
+import com.github.florent37.materialviewpager.sample.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.sample.adapter.TrendsCardRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.fragment.DefaultFragment;
 import com.github.florent37.materialviewpager.sample.fragment.RecyclerViewFragment;
@@ -74,7 +73,7 @@ import java.util.TimerTask;
 
 import io.fabric.sdk.android.Fabric;
 
-public class MainActivity extends BaseActivity implements RecyclerViewFragment.Listener, Response.Listener, Response.ErrorListener {
+public class MainActivity extends BaseActivity implements RecyclerViewFragment.Listener, Response.ErrorListener {
 
     private MaterialViewPager mViewPager;
     public static final String REQUEST_TAG = "MainVolleyActivity";
@@ -84,7 +83,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     private String HOST_NAME = Config.HOST_NAME;
     private Toolbar toolbar;
     private RequestQueue mQueue;
-    private boolean mSearchCheck;
     View headerLogo;
     ImageView headerLogoContent;
 
@@ -100,8 +98,8 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     private SharedPreferences sp;
     final int tabCount = 5; //TODO title items design
     public static final String FILM_NAME = "filmName";
-    private SimpleCursorAdapter mAdapter;
-    private static String[] MOVIES = {};
+    private ImageCursorAdapter mAdapter;
+    private static JSONObject[] MOVIES = {};
     private SearchView searchView = null;
     private MenuItem searchItem = null;
     MaterialDialog.Builder builder;
@@ -113,7 +111,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         }
         @Override
         public Fragment getItem(int position) {
-            switch (position){
+            switch (position) {
                 case 0:
                     return TrendsFragment.newInstance(position);
                 case 1:
@@ -289,6 +287,8 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 super.handleMessage(msg);
                 Random random = new Random();
                 RecyclerViewFragment fragment = showVisibleFragment();
+                if (fragment == null)
+                    return;
                 int channel = fragment.getArguments().getInt("index", 0);
                 int SlideIndex = 0;
 
@@ -344,26 +344,26 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     }
 
     private void loadHints() {
-        final String[] from = new String[]{FILM_NAME};
-        final int[] to = new int[]{android.R.id.text1};
+        final String[] from = new String [] {FILM_NAME};
+        final int[] to = new int[] { R.id.text1};
         final CustomJSONObjectRequest jsonRequest;
-        mAdapter = new SimpleCursorAdapter(this,
-                R.layout.hint_row,
+
+        mAdapter = new ImageCursorAdapter(this,
+                R.layout.search_row,
                 null,
                 from,
                 to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                "main");
 
         mQueue = CustomVolleyRequestQueue.getInstance(this)
                 .getRequestQueue();
 
-        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "/imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
+        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Log.d("0419", "title onResponse");
                     JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-                    MOVIES = getStringArray(contents);
+                    MOVIES = getJsonObjectArray(contents);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -371,7 +371,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
             }
         });
         mQueue.add(jsonRequest);
@@ -525,26 +525,18 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
+        mQueryTextView.setHint("movie title or cast name");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d("0419", "submit query text: " + query);
-                RecyclerViewFragment fragment = showVisibleFragment();
-
-//                fragment.removeAdapterModel();
-                fragment.requestDataRefresh(true, query, null);
-
                 //if you want to collapse the searchview
+                requestDataRefresh(query);
                 invalidateOptionsMenu();
-                mSearchCheck = false;
-                mSearchCheck = false;
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String query) {
-                mSearchCheck = true;
-                Log.d("0418", "query text change!");
                 giveSuggestions(query);
                 return false;
             }
@@ -559,9 +551,13 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
             @Override
             public boolean onSuggestionClick(int position) {
                 Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
-                String feedName = cursor.getString(1);
-                searchView.setQuery(feedName, false);
-//                searchView.clearFocus();
+                final String feedName = cursor.getString(1);
+                searchView.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        searchView.setQuery(feedName, true);
+                    }
+                });
                 return true;
             }
         });
@@ -572,10 +568,14 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     }
 
     private void giveSuggestions(String query) {
-        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME});
-        for (int i = 0; i < MOVIES.length; i++) {
-            if (MOVIES[i].toLowerCase().contains(query.toLowerCase()))
-                cursor.addRow(new Object[]{i, MOVIES[i]});
+        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        try {
+            for (int i = 0; i < MOVIES.length; i++) {
+                if (MOVIES[i].getString("title").toLowerCase().contains(query.toLowerCase()))
+                    cursor.addRow(new Object[]{i, MOVIES[i].getString("title"), MOVIES[i].getString("description"), MOVIES[i].getString("posterUrl")});
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         mAdapter.changeCursor(cursor);
     }
@@ -589,17 +589,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 closeNavDrawer();
             }
             dialog.show();
-        }
-    }
-
-    @Override
-    public void onResponse(Object response) {
-        try {
-            Log.d("0419", "title onResponse");
-            JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-            MOVIES = getStringArray(contents);
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 

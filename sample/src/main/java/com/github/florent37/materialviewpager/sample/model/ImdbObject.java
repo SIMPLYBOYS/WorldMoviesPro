@@ -12,8 +12,10 @@ public class ImdbObject implements Serializable {
     private String year;
     private String detailUrl;
     private String description;
-    private String ratting;
+    private String rating;
     private String posterUrl;
+    private String cast;
+    private String review;
     private String slate;
     private String summery;
     private String plot;
@@ -22,6 +24,7 @@ public class ImdbObject implements Serializable {
     private String runTime;
     private String metaScore;
     private String delta;
+    private String type;
     private String country;
     private String detailPosterUrl;
     private String trailerUrl;
@@ -40,16 +43,45 @@ public class ImdbObject implements Serializable {
         }
     }
 
-    public ImdbObject(String title, String top, String year, String description, String ratting,
+    public class CastItem {
+        private String cast;
+        private String link;
+        private String as;
+        private String avatar;
+
+        public String getCast() {
+            return cast;
+        }
+
+        public String getAs() {
+            return as;
+        }
+
+        public String getAvatar() {
+            return avatar;
+        }
+
+        public String getUrl() {
+            return link;
+        }
+    }
+
+    public class RatingItem {
+        private String score;
+        private String votes;
+        public String getScore() { return score;}
+        public String getVotes() { return votes;}
+    }
+
+    public ImdbObject(String title, String top, String year, String description, String rating,
                       String posterUrl, String slate, String summery, String plot, String genre,
-                      String votes, String runTime, String metaScore, String delta, String country, String trailerUrl, String galleryUrl) {
+                      String votes, String runTime, String metaScore, String delta, String country, String trailerUrl, String cast, String galleryUrl, String detailUrl) {
         this.title = title;
         this.top = top;
         this.description = description;
-        this.ratting = ratting;
         this.year = year;
         this.detailUrl = detailUrl;
-        this.ratting = ratting;
+        this.rating = rating;
         this.posterUrl = posterUrl;
         this.slate = slate;
         this.summery = summery;
@@ -59,11 +91,14 @@ public class ImdbObject implements Serializable {
         this.runTime = runTime;
         this.metaScore = metaScore;
         this.country = country;
+        this.cast = cast;
         this.delta = delta;
         this.detailPosterUrl = detailPosterUrl;
         this.trailerUrl = trailerUrl;
         this.galleryUrl = galleryUrl;
     }
+
+    public String getCast() { return cast;}
 
     public String getTrailerUrl() {
         return trailerUrl;
@@ -77,8 +112,8 @@ public class ImdbObject implements Serializable {
         return top;
     }
 
-    public String getRatting() {
-        return ratting;
+    public String getRating() {
+        return rating;
     }
 
     public String getYear() {
@@ -140,6 +175,10 @@ public class ImdbObject implements Serializable {
         return country;
     }
 
+    public String getReview() { return review; }
+
+    public String getType() { return type; }
+
     public String getDetailPosterUrl() {
         return detailPosterUrl;
     }
@@ -151,4 +190,6 @@ public class ImdbObject implements Serializable {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public void setType (String type) { this.type = type; }
 }

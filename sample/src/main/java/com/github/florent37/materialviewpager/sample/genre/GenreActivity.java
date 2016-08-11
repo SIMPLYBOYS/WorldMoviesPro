@@ -22,7 +22,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,60 +48,53 @@ import com.github.florent37.materialviewpager.sample.framework.AGVRecyclerViewAd
 import com.github.florent37.materialviewpager.sample.framework.AsymmetricItem;
 import com.github.florent37.materialviewpager.sample.framework.AsymmetricRecyclerView;
 import com.github.florent37.materialviewpager.sample.framework.AsymmetricRecyclerViewAdapter;
-import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
 import com.github.florent37.materialviewpager.sample.framework.SpacesItemDecoration;
 import com.github.florent37.materialviewpager.sample.framework.Utils;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONArrayRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
-import com.github.florent37.materialviewpager.sample.imdb.MovieDetailActivity;
 import com.github.florent37.materialviewpager.sample.model.BlockItem;
-import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
 import com.github.florent37.materialviewpager.sample.ui.widget.MultiSwipeRefreshLayout;
-import com.github.florent37.materialviewpager.sample.util.BlockUtils;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
+
 /**
  * Created by aaron on 2016/7/13.
  */
 public class GenreActivity extends BaseActivity implements Response.ErrorListener {
-    private static final String TAG_TITLE = "title";
-    private static final String TAG_YEAR = "year";
-    private static final String TAG_RELEASE = "releaseDate";
-    private static final String TAG_TOP = "top";
-    private static final String TAG_POSTER_URL = "posterUrl";
-    private static final String TAG_RATING = "rating";
-    private static final String TAG_DESCRIPTION = "description";
-    private static final String TAG_CAST = "cast";
-    private static final String TAG_DETAIL_URL = "detailUrl";
-    private static final String TAG_DETAIL_POSTER_URL = "poster";
-    private static final String TAG_SUMMERY = "summery";
-    private static final String TAG_PLOT = "plot";
-    private static final String TAG_GENRE = "genres";
-    private static final String TAG_VOTES = "votes";
-    private static final String TAG_RUNTIME = "runtime";
-    private static final String TAG_METASCORE = "metascore";
-    private static final String TAG_SLATE = "slate";
-    private static final String TAG_COUNTRY = "country";
-    private static final String TAG_TRAILER = "trailerUrl";
-    private static final String TAG_GALLERY_FULL = "gallery_full";
-    private static final String TAG_DELTA = "delta";
-    public static final String REQUEST_TAG = "genreRequest";
+    private final String TAG_TITLE = "title";
+    private final String TAG_YEAR = "year";
+    private final String TAG_TOP = "top";
+    private final String TAG_POSTER_URL = "posterUrl";
+    private final String TAG_RATING = "rating";
+    private final String TAG_CAST = "cast";
+    private final String TAG_DESCRIPTION = "description";
+    private final String TAG_DETAIL_URL = "detailUrl";
+    private final String TAG_SUMMERY = "summery";
+    private final String TAG_PLOT = "plot";
+    private final String TAG_GENRE = "genres";
+    private final String TAG_VOTES = "votes";
+    private final String TAG_RUNTIME = "runtime";
+    private final String TAG_METASCORE = "metascore";
+    private final String TAG_SLATE = "slate";
+    private final String TAG_COUNTRY = "country";
+    private final String TAG_TRAILER = "trailerUrl";
+    private final String TAG_GALLERY_FULL = "gallery_full";
+    private final String TAG_DELTA = "delta";
+    public final String REQUEST_TAG = "genreRequest";
     private Toolbar toolbar;
-    public static final String TAG = "genresActivity";
-    private final BlockUtils blockUtils = new BlockUtils();
+    public final String TAG = "genresActivity";
     private MenuItem searchItem;
     private SearchView searchView = null;
     private ImageCursorAdapter mAdapter;
@@ -113,7 +105,7 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
     GenreSwipeRecyclerViewAdapter genreAdapter;
     private GenreActivity activity;
     private int mViewPagerScrollState = ViewPager.SCROLL_STATE_IDLE;
-    private static JSONObject[] MOVIES = {};
+    private JSONObject[] MOVIES = {};
     private int offSet = 0;
     private ProgressBar mProgressBar;
     AsymmetricRecyclerView recyclerView;
@@ -124,6 +116,7 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LOGD("0810", "GenreActivity_onCreate");
         activity = this;
         setContentView(R.layout.activity_genre);
         toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
@@ -133,12 +126,10 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
         toolbar.setTitle(R.string.description_genre);
         toolbar.setTitleTextColor(Color.BLACK);
         genreList = new ArrayList<>();
-
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setSupportActionBar(toolbar);
         registerHideableHeaderView(findViewById(R.id.headerbar));
-
         recyclerView = (AsymmetricRecyclerView) findViewById(R.id.recyclerView);
         TextView textView = new TextView(this);
         LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewPager.LayoutParams.MATCH_PARENT, getStatusBarHeight());
@@ -183,21 +174,6 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
         mSwipeRefreshLayout.setColorSchemeResources(R.color.flat_button_text);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
-        /**
-         * Showing Swipe Refresh animation on activity create
-         * As animation won't start on onCreate, post runnable is used
-         */
-
-        /*if (adapter.getItemCount() == 0) {
-            mSwipeRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                    fetchGenres(true);
-                }
-            });
-        }*/
 
         if (mSwipeRefreshLayout instanceof MultiSwipeRefreshLayout) {
             MultiSwipeRefreshLayout mswrl = (MultiSwipeRefreshLayout) mSwipeRefreshLayout;
@@ -303,15 +279,15 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
         try {
 
             for (int i = 0; i < genreItems.length(); i++) {
-                int colSpan = Math.random() < 0.2f ? 2 : 1;
+                int colSpan = Math.random() < 0.3f ? 2 : 1;
                 // Swap the next 2 lines to have items with variable
                 // column/row span.
                 int rowSpan;
 
-                if (colSpan == 1)
+                /*if (colSpan == 1)
                     rowSpan = colSpan;
-                else
-                    rowSpan = Math.random() < 0.2f ? 2 : 1;
+                else*/
+                    rowSpan = Math.random() < 0.5f ? 2 : 1;
 //            int rowSpan = colSpan;
                 BlockItem item = new BlockItem(colSpan, rowSpan, i);
                 item.setTopic(genreItems.getJSONObject(i).getString("type"));
@@ -338,7 +314,7 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        getMenuInflater().inflate(R.menu.album_menu, menu);
+        getMenuInflater().inflate(R.menu.genre_menu, menu);
         Drawable drawable = toolbar.getOverflowIcon();
 
         if (drawable != null) {
@@ -380,9 +356,14 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
 
             @Override
             public boolean onSuggestionClick(int position) {
-                Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
-                String feedName = cursor.getString(1);
-                searchView.setQuery(feedName, false);
+                Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
+                final String feedName = cursor.getString(1);
+                searchView.post(new Runnable(){
+                    @Override
+                    public void run() {
+                        searchView.setQuery(feedName, true);
+                    }
+                });
                 return true;
             }
         });
@@ -461,123 +442,6 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
         mQueue.add(jsonRequest);
     }
 
-    public void requestDataRefresh(String Query) {
-        final CustomJSONObjectRequest jsonRequest = null;
-
-        mQueue = CustomVolleyRequestQueue.getInstance(GenreActivity.this).getRequestQueue();
-        CustomJSONObjectRequest jsonRequest_q = null;
-        String url = null;
-
-        if (Query != null) {
-            // launch query from searchview
-            try {
-                Query = URLEncoder.encode(Query, "UTF-8");
-                url= Config.HOST_NAME + "/imdb?title=" + Query + "&ascending=1";
-            } catch (UnsupportedEncodingException e) {
-                throw new AssertionError("UTF-8 is unknown");
-            }
-            jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        JSONArray contents = response.getJSONArray("contents");
-                        JSONObject c = contents.getJSONObject(0);
-                        String title = c.getString(TAG_TITLE);
-                        JSONObject d = c.getJSONObject("detailContent");
-                        int top = 0;
-                        String year = "";
-                        String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
-                        String detailUrl = "";
-                        String delta = "0";
-                        //----- start dummy GalleryUrl ----
-                        JSONObject jo = new JSONObject();
-                        jo.put("type", "full");
-                        jo.put("url", "");
-                        JSONArray galleryFullUrl = new JSONArray();
-                        JSONArray cast = new JSONArray();
-                        galleryFullUrl.put(jo);
-                        //----- end dummy GalleryUrl ----
-
-                        if (c.has(TAG_TOP)) {
-                            top = c.getInt(TAG_TOP);
-                            if (top > offSet)
-                                offSet = top;
-                        }
-
-                        year = c.getString(TAG_YEAR);
-
-                        /*if (c.has(TAG_RELEASE) && !c.has(TAG_TOP)) {
-                            year = String.valueOf(c.getInt(TAG_RELEASE));
-                            year = year.substring(4, 8);
-                        }*/
-
-                        if (c.has(TAG_DELTA)) {
-                            delta = c.getString(TAG_DELTA);
-                        }
-
-                        String description= c.getString(TAG_DESCRIPTION);
-                        String rating = c.getString(TAG_RATING);
-
-                        if (c.has(TAG_POSTER_URL)) {
-                            posterUrl = c.getString(TAG_POSTER_URL);
-                        }
-
-                        if (c.has(TAG_DETAIL_URL)) {
-                            detailUrl = c.getString(TAG_DETAIL_URL);
-                        }
-
-                        if (c.has(TAG_CAST)) {
-                            cast = c.getJSONArray(TAG_CAST);
-                        }
-
-                        String plot = c.getString(TAG_PLOT);
-                        String genre = c.getString(TAG_GENRE);
-                        String votes = c.getString(TAG_VOTES);
-                        String runTime = c.getString(TAG_RUNTIME);
-                        String metaScore = c.getString(TAG_METASCORE);
-
-                        String summery = d.getString(TAG_SUMMERY);
-                        String country = d.getString(TAG_COUNTRY);
-
-                        if (c.has(TAG_GALLERY_FULL)) {
-                            galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
-                        }
-
-                        String trailerUrl;
-                        String slate;
-
-                        if (c.has(TAG_TRAILER))
-                            trailerUrl = c.getString(TAG_TRAILER);
-                        else
-                            trailerUrl = "N/A";
-
-                        if (d.has(TAG_SLATE))
-                            slate = d.getString(TAG_SLATE);
-                        else
-                            slate = "N/A";
-
-                        ImdbObject movie = new ImdbObject(title, String.valueOf(top), year, description,
-                                rating, posterUrl, slate, summery, plot,
-                                genre, votes, runTime, metaScore, delta, country,
-                                trailerUrl, cast.toString(), galleryFullUrl.toString(), detailUrl);
-                        Intent intent = new Intent(GenreActivity.this, MovieDetailActivity.class);
-                        movie.setType("genre");
-                        intent.putExtra(MovieDetail.IMDB_OBJECT, movie);
-                        ActivityCompat.startActivity(GenreActivity.this, intent, null);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, this);
-            mQueue.add(jsonRequest_q);
-            return;
-        }
-
-        jsonRequest.setTag(REQUEST_TAG);
-
-        mQueue.add(jsonRequest); //trigger volley request
-    }
-
     class GenreSwipeRecyclerViewAdapter extends AGVRecyclerViewAdapter<ViewHolder> {
         private final List<BlockItem> items;
 
@@ -586,12 +450,10 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
         }
 
         @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            Log.d("RecyclerViewActivity", "onCreateView");
             return new ViewHolder(parent, viewType);
         }
 
         @Override public void onBindViewHolder(ViewHolder holder, int position) {
-            Log.d("RecyclerViewActivity", "onBindView position=" + position);
             holder.bind(items.get(position));
         }
 
@@ -624,7 +486,7 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
                 textView = (TextView) itemView.findViewById(R.id.textview_odd);
             }
         }
-        public void bind(BlockItem item) {
+        public void bind(final BlockItem item) {
             final int position = item.getPosition();
             textView.setText(item.getTopic());
             if (Type == 0) {
@@ -634,11 +496,10 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
                 coverView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
-                        //TODO launch GenreDetailActivity
-                        /*Intent intent = new Intent(GenreActivity.this, MovieDetailActivity.class);
-                        intent.putExtra(MovieDetail.IMDB_OBJECT, movie);
-                        ActivityCompat.startActivity(GenreActivity.this, intent, null);*/
+//                        Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(GenreActivity.this, GenreDetailActivity.class);
+                        intent.putExtra("genreType", item.getTopic());
+                        ActivityCompat.startActivity(GenreActivity.this, intent, null);
                     }
                 });
             }

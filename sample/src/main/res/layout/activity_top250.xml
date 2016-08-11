@@ -20,7 +20,7 @@
             android:id="@+id/headerbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#f5de50"
+            android:background="@color/imdb_yellow"
             android:orientation="vertical"
             android:theme="@style/ActionBarThemeOverlay">
             <include layout="@layout/toolbar_actionbar" />

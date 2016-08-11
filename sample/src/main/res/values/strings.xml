@@ -26,6 +26,7 @@
     <string name="description_album">Album</string>
     <string name="description_imdb">IMDB Top 250</string>
     <string name="description_genre">MovieGenre</string>
+    <string name="description_genre_detail">GenreDetail</string>
     <string name="description_upcoming">UpComing films</string>
     <string name="image">image</string>
 
@@ -535,6 +536,8 @@ user updates the rating. -->
     <string name="facebook_app_id">906705239447168</string>
 
     <string name="action_search">Search</string>
+
+    <string name="action_boookmark">Bookmark</string>
 
     <!-- Drawer Items -->
     <string name="drawer_item_persistent_compact_header">PersistentHeader Drawer</string>

@@ -34,6 +34,7 @@ import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.ImdbGalleryRecycleViewAdapter;
+import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
@@ -51,6 +52,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
 
 /**
  * Created by aaron on 2016/5/3.
@@ -79,6 +82,8 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
     private static final String TAG_YEAR = "year";
     private static final String TAG_DETAIL_URL = "detailUrl";
     private static final String TAG_TOP = "top";
+    private static final String TAG_DATA = "data";
+    private static final String TAG_CAST = "cast";
     private static final String TAG_POSTER_URL = "posterUrl";
     private static final String TAG_RATING = "rating";
     private static final String TAG_DESCRIPTION = "description";
@@ -90,6 +95,7 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
     private static final String TAG_RUNTIME = "runtime";
     private static final String TAG_METASCORE = "metascore";
     private static final String TAG_SLATE = "slate";
+    private static final String TAG_RELEASE = "releaseDate";
     private static final String TAG_COUNTRY = "country";
     private static final String TAG_TRAILER = "trailerUrl";
     private static final String TAG_GALLERY_FULL = "gallery_full";
@@ -352,77 +358,97 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
     }
 
     public static ImdbObject buildImdbModel(JSONArray contents) throws JSONException {
-            JSONObject c = contents.getJSONObject(0);
-            String title = c.getString(TAG_TITLE);
-            JSONObject d = c.getJSONObject("detailContent");
-            Log.d("0406", String.valueOf(d));
-            int top = c.getInt(TAG_TOP);
-            String year = c.getString(TAG_YEAR);
-            String detailUrl = c.getString(TAG_DETAIL_URL);
-            String description = c.getString(TAG_DESCRIPTION);
-            String rating = c.getString(TAG_RATING);
-            String posterUrl = c.getString(TAG_POSTER_URL);
-            String plot = c.getString(TAG_PLOT);
-            String genre = c.getString(TAG_GENRE);
-            String votes = c.getString(TAG_VOTES);
-            String runTime = c.getString(TAG_RUNTIME);
-            String metaScore = c.getString(TAG_METASCORE);
-            String summery = d.getString(TAG_SUMMERY);
-            String country = d.getString(TAG_COUNTRY);
-            String detailPosterUrl = d.getString(TAG_DETAIL_POSTER_URL);
-            JSONArray galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
-            String trailerUrl;
-            String slate;
-            String delta;
+        JSONObject jsonObj = new JSONObject();
+        JSONArray data = new JSONArray();
+        JSONObject c = contents.getJSONObject(0);
+        JSONObject d = null;
+        int top = 0;
+        String title = c.getString(TAG_TITLE);
+        String year = "";
+        String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
+        String delta = "0";
+        String detailUrl = "";
 
-            if (c.has(TAG_TRAILER))
-                trailerUrl = c.getString(TAG_TRAILER);
-            else
-                trailerUrl = "N/A";
+        if (c.has("detailContent")) {
+            d = c.getJSONObject("detailContent");
+        }
 
-            if (d.has(TAG_SLATE))
-                slate = d.getString(TAG_SLATE);
-            else
-                slate = "N/A";
+        JSONObject jo = new JSONObject();
+        //----- start dummy GalleryUrl ----
+        jo.put("type", "full");
+        jo.put("url", "");
+        JSONArray galleryFullUrl = new JSONArray();
+        JSONArray cast = new JSONArray();
+        galleryFullUrl.put(jo);
+        //----- end dummy GalleryUrl ----
 
-            if (c.has(TAG_DELTA))
-                delta = c.getString(TAG_DELTA);
-            else
-                delta = "";
+        if (c.has(TAG_TOP)) {
+            top = c.getInt(TAG_TOP);
+        }
 
-            Log.d("0407", trailerUrl);
-            HashMap<String, String> content = new HashMap<String, String>();
-            HashMap<String, String> gallery = new HashMap<String, String>();
-            content.put(TAG_TITLE, title);
-            content.put(TAG_TOP, String.valueOf(top));
-            content.put(TAG_YEAR, year);
-            content.put(TAG_DETAIL_URL, detailUrl);
-            content.put(TAG_DESCRIPTION, description);
-            content.put(TAG_RATING, rating);
-            content.put(TAG_POSTER_URL, posterUrl);
-            content.put(TAG_SLATE, slate);
-            content.put(TAG_SUMMERY, summery);
-            content.put(TAG_PLOT, plot);
-            content.put(TAG_GENRE, genre);
-            content.put(TAG_VOTES, votes);
-            content.put(TAG_RUNTIME,runTime);
-            content.put(TAG_METASCORE, metaScore);
-            content.put(TAG_DELTA, delta);
-            content.put(TAG_COUNTRY, country);
-            content.put(TAG_DETAIL_POSTER_URL, detailPosterUrl);
-            content.put(TAG_TRAILER, trailerUrl);
-            gallery.put(TAG_GALLERY_FULL, galleryFullUrl.toString());
-            contentList.add(content);
-            galleryList.add(gallery);
+        if (c.has(TAG_DATA)) {
+            data = c.getJSONArray(TAG_DATA);
+            jsonObj = (JSONObject) data.get(1);
+            LOGD("0811", String.valueOf(data));
+        }
 
-            content = contentList.get(0);
-            gallery = galleryList.get(0);
-            ImdbObject item = new ImdbObject(content.get(TAG_TITLE), content.get(TAG_TOP), content.get(TAG_YEAR), content.get(TAG_DESCRIPTION),
-                    content.get(TAG_RATING), content.get(TAG_POSTER_URL), content.get(TAG_SLATE), content.get(TAG_SUMMERY), content.get(TAG_PLOT),
-                    content.get(TAG_GENRE), content.get(TAG_VOTES), content.get(TAG_RUNTIME), content.get(TAG_METASCORE), content.get(TAG_DELTA),content.get(TAG_COUNTRY),
-                    content.get(TAG_TRAILER), gallery.get(TAG_GALLERY_FULL));
+        year = c.has(TAG_YEAR) ? c.getString(TAG_YEAR) : c.getString(TAG_RELEASE);
 
-            return item;
+        if (c.has(TAG_DETAIL_URL))
+            detailUrl = c.getString(TAG_DETAIL_URL);
+
+        String description= c.getString(TAG_DESCRIPTION);
+        String rating = c.getString(TAG_RATING);
+
+        if (c.has(TAG_POSTER_URL)) {
+            posterUrl = c.getString(TAG_POSTER_URL);
+        }
+
+        if (c.has(TAG_CAST)) {
+            cast = c.getJSONArray(TAG_CAST);
+        }
+
+        String plot = c.has(TAG_PLOT) ? c.getString(TAG_PLOT) : c.getString("story");
+        String genre = c.has(TAG_GENRE) ? c.getString(TAG_GENRE) : "";
+        String votes = c.has(TAG_VOTES) ? c.getString(TAG_VOTES) : "";
+        String runTime = c.has(TAG_RUNTIME) ? c.getString(TAG_RUNTIME) : "";
+        String metaScore = c.has(TAG_METASCORE) ? c.getString(TAG_METASCORE) : "";
+
+        if (runTime.compareTo("") == 0) {
+            jsonObj = new JSONObject();
+            jsonObj = (JSONObject) data.get(4);
+            runTime = jsonObj.getString("data");
+        }
+
+        if (genre.compareTo("") == 0)
+            genre = c.getString("genre");
+
+        String summery = d != null ? d.getString(TAG_SUMMERY) : c.getString("story");
+        String country = d != null ? d.getString(TAG_COUNTRY) : c.getString(TAG_COUNTRY);
+
+        if (c.has(TAG_GALLERY_FULL)) {
+            galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
+        }
+
+        String trailerUrl;
+        String slate;
+
+        if (c.has(TAG_TRAILER))
+            trailerUrl = c.getString(TAG_TRAILER);
+        else
+            trailerUrl = "N/A";
+
+        if (d != null)
+            slate = d.has(TAG_SLATE) ? d.getString(TAG_SLATE) : "N/A";
+        else
+            slate = "N/A";
+
+        ImdbObject movie = new ImdbObject(title, String.valueOf(top), year, description,
+                rating, posterUrl, slate, summery, plot,
+                genre, votes, runTime, metaScore, delta, country,
+                trailerUrl, cast.toString(), galleryFullUrl.toString(), detailUrl);
+
+        return movie;
     }
 
 }

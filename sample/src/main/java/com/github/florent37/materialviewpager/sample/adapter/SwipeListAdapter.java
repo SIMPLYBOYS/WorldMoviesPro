@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.github.florent37.materialviewpager.sample.R;
-import com.github.florent37.materialviewpager.sample.imdb.Movie;
+import com.github.florent37.materialviewpager.sample.model.Movie;
 
 import java.util.List;
 

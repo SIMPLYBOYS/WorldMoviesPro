@@ -1,15 +1,20 @@
 package com.github.florent37.materialviewpager.sample.nytimes;
 
+import android.app.ActivityOptions;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -25,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,10 +39,18 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.ashokvarma.bottomnavigation.BadgeItem;
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
+import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.github.florent37.materialviewpager.sample.Config;
+import com.github.florent37.materialviewpager.sample.MainActivity;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
+import com.github.florent37.materialviewpager.sample.genre.GenreActivity;
+import com.github.florent37.materialviewpager.sample.imdb.ImdbActivity;
+import com.github.florent37.materialviewpager.sample.upcoming.upComingActivity;
+import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -52,10 +66,15 @@ import im.delight.android.webview.AdvancedWebView;
 /**
  * Created by aaron on 2016/6/12.
  */
-public class nyTimesDetailActivity extends AppCompatActivity implements Response.ErrorListener  {
+public class nyTimesDetailActivity extends AppCompatActivity implements Response.ErrorListener, BottomNavigationBar.OnTabSelectedListener  {
+    protected static final int NAV_ITEM_TREND = 0;
+    protected static final int NAV_ITEM_UPCOMING = 1;
+    protected static final int NAV_ITEM_IMDB = 2;
+    protected static final int NAV_ITEM_NYTIMES = 3;
+    protected static final int NAV_ITEM_GENRE = 4;
     private ProgressBar progressBar;
     private AdvancedWebView mWebView;
-    private MenuItem searchItem, shareItem;
+    private MenuItem searchItem, shareItem, bookmarkItem;
     private SimpleCursorAdapter mAdapter;
     private SearchView searchView = null;
     private Movie movie;
@@ -66,6 +85,12 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
     public static String FILM_NAME = "filmName";
     public static String REQUEST_TAG = "reviewRequest";
     private static String[] MOVIES = {};
+    int lastSelectedPosition = 3;
+    BottomNavigationBar bottomNavigationBar;
+    BadgeItem numberBadgeItem;
+    private FloatingActionButton fab;
+    LinearLayout bookmarkActionView;
+    private ShineButton bookmarkView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +116,9 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         headLine.setText(movie.getHeadline());
         headLine.setTextIsSelectable(true);
         pictureView = (ImageView) findViewById(R.id.picture);
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
-        loadHints();
+        bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
+        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
+
         if (movie.getPicUrl() != null) {
             Picasso.with(pictureView.getContext()).load(movie.getPicUrl()).placeholder(R.drawable.placeholder)
                     .into(pictureView, new Callback() {
@@ -114,6 +139,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         }
 
         final ActionBar actionBar = getSupportActionBar();
+
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
@@ -124,12 +150,58 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
             toolbar.setTitle(movie.getHeadline());
         }
 
+        fab = (FloatingActionButton) findViewById(R.id.floating_button);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createShareAction();
+            }
+        });
+
+        int primaryDark = getResources().getColor(R.color.primary_dark_material_dark);
+        int primary = getResources().getColor(R.color.primary_material_light);
+        fab.setBackgroundTintList(ColorStateList.valueOf(primaryDark));
+        fab.setRippleColor(primary);
+        refresh();
+        loadHints();
+        bottomNavigationBar.setTabSelectedListener(this);
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+    }
+
+    private void createShareAction() {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, movie.getLink());
+        // Launch sharing dialog for image
+        startActivity(Intent.createChooser(shareIntent, "Share Review"));
+    }
+
+    private void refresh() {
+        bottomNavigationBar.clearAll();
+        numberBadgeItem = new BadgeItem()
+                .setBorderWidth(4)
+                .setBackgroundColorResource(R.color.blue)
+                .setText("" + lastSelectedPosition);
+
+        bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
+        bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
+        bottomNavigationBar
+                .addItem(new BottomNavigationItem(R.drawable.ic_trending_up, R.string.navdrawer_item_explore).setActiveColorResource(R.color.material_orange_900).setBadgeItem(numberBadgeItem))
+                .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
+                .addItem(new BottomNavigationItem(R.drawable.ic_theaters, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
+                .addItem(new BottomNavigationItem(R.drawable.nytimes, "NyTimes").setActiveColorResource(R.color.material_brown_400))
+                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_red_900))
+                .setFirstSelectedPosition(lastSelectedPosition)
+                .setBarBackgroundColor("#ff212121")
+                .initialise();
     }
 
     @Override
@@ -146,8 +218,18 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
             }
         }
 
-        shareItem = menu.findItem(R.id.action_share); // Retrieve the share menu item
+        bookmarkActionView = (LinearLayout) getLayoutInflater().inflate(R.layout.bookmark_image, null);
+        bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
+        bookmarkView.init(this);
+        bookmarkView.getLayoutParams().height=96;
+        bookmarkView.getLayoutParams().width=96;
+//        bookmarkView.setImageResource(R.drawable.ic_turned_in);
+        bookmarkView.setColorFilter(getResources().getColor(R.color.app_white));
+        bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
+        shareItem = menu.findItem(R.id.action_share);
         searchItem = menu.findItem(R.id.action_search);
+        bookmarkItem = menu.findItem(R.id.action_bookmark);
+        bookmarkItem.setActionView(bookmarkView);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -157,6 +239,19 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
         mQueryTextView.setHint("movie title or cast name");
+
+        bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(View view, boolean checked) {
+//                Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
+                Toast.makeText(nyTimesDetailActivity.this, "Bookmark "+checked+" !!!", Toast.LENGTH_SHORT).show();
+                if (checked)
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black); //TODO change more clear Icon
+                else
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                //TODO bookmark info for the user's acccount
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -191,10 +286,10 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
 
         searchView.setSuggestionsAdapter(mAdapter);
 
-
         shareActionProvider = new ShareActionProvider(this);
         MenuItemCompat.setActionProvider(shareItem, shareActionProvider);
         shareActionProvider.setShareIntent(createShareIntent());
+
         return true;
     }
 
@@ -241,7 +336,65 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         return;
     }
 
+    @Override
+    public void onTabSelected(int position) {
+        lastSelectedPosition = position;
+        if (numberBadgeItem != null) {
+            numberBadgeItem.setText(Integer.toString(position));
+        }
+        goToNavItem(position);
+    }
 
+    private void goToNavItem(int item) {
+        switch (item) {
+            case NAV_ITEM_TREND:
+                createBackStack(new Intent(this, MainActivity.class));
+                break;
+            case NAV_ITEM_UPCOMING:
+                createBackStack(new Intent(this, upComingActivity.class));
+                break;
+            case NAV_ITEM_IMDB:
+                createBackStack(new Intent(this, ImdbActivity.class));
+                break;
+            case NAV_ITEM_NYTIMES:
+                createBackStack(new Intent(this, nyTimesActivity.class));
+                break;
+            case NAV_ITEM_GENRE:
+                createBackStack(new Intent(this, GenreActivity.class));
+                break;
+        }
+    }
+
+    private void createBackStack(Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            TaskStackBuilder builder = TaskStackBuilder.create(this);
+            builder.addNextIntentWithParentStack(intent);
+            builder.startActivities();
+        } else {
+            startActivityForVersion(intent);
+            finish();
+        }
+    }
+
+    private void startActivityForVersion(Intent intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            startActivity(intent,
+                    ActivityOptions.makeSceneTransitionAnimation(
+                            nyTimesDetailActivity.this).toBundle());
+        }
+        else {
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onTabUnselected(int position) {
+    }
+
+    @Override
+    public void onTabReselected(int position) {
+        goToNavItem(position);
+    }
 
     public void requestDataRefresh(String Query) {
         final CustomJSONObjectRequest jsonRequest = null;
@@ -372,7 +525,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(nyTimesDetailActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(nyTimesDetailActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
             }
         });
         mQueue.add(jsonRequest);

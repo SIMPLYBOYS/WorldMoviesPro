@@ -123,9 +123,9 @@
             android:textSize="@dimen/text_size_xsmall"
             android:textStyle="italic"
             android:maxLines="2"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
             android:textAppearance="@style/TextAppearance.SessionTitle"
             tools:text="@string/placeholder_session_subtitle"
             app:font="Roboto-Light.ttf"/>
@@ -133,7 +133,7 @@
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="2dp">
             <TextView
                 android:id="@+id/rating"
                 android:layout_width="40dp"
@@ -141,21 +141,21 @@
                 android:textSize="10dp"
                 android:textColor="@color/red"
                 android:text="4.37點"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="2dp"
+                android:layout_marginStart="9dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true" />
 
-            <TextView
+            <com.github.florent37.materialviewpager.sample.framework.CustomTextView
                 android:id="@+id/votes"
                 android:layout_width="90dp"
                 android:layout_height="14dp"
                 android:textSize="10dp"
                 android:textColor="@color/red"
                 android:text="12345件"
-                android:layout_alignTop="@+id/rating"
+                android:layout_marginStart="24dp"
+                android:layout_alignParentTop="true"
                 android:layout_alignStart="@+id/rating"
-                android:layout_marginStart="24dp" />
+                app:font="Roboto-Light.ttf"/>
 
             <com.github.florent37.materialviewpager.sample.framework.CustomTextView
                 android:id="@+id/year"
@@ -165,7 +165,6 @@
                 android:textColor="@color/body_text_3"
                 android:text="2016年12月31日"
                 android:layout_marginLeft="20dp"
-                app:font="Roboto-Black.ttf"
                 android:layout_alignTop="@+id/votes"
                 android:layout_toEndOf="@+id/votes" />
 
