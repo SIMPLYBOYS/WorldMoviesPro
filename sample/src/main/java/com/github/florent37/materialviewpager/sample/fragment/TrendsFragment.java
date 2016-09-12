@@ -23,11 +23,13 @@ import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.TrendsCardRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.model.TrendsObject;
 import com.github.florent37.materialviewpager.sample.trends.TrendsDetail;
+import com.github.florent37.materialviewpager.sample.trends.TrendsFavoritePreference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -39,6 +41,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     // JSON Node keys
     private static final String TAG_TITLE = "title";
     private static final String TAG_DATA = "data";
+    private static final String TAG_ORIGIN_TITLE = "trailerTitle";
     private static final String TAG_RELEASE = "releaseDate";
     private static final String TAG_TOP = "top";
     private static final String TAG_POSTER_URL = "posterUrl";
@@ -57,6 +60,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     private static final String TAG_STAFF = "staff";
     private int visibleThreshold = 1;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private TrendsFavoritePreference favor;
     private RecyclerView mRecyclerView;
     private ProgressBar progressBar;
     private LinearLayoutManager layoutManager;
@@ -78,6 +82,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     public static TrendsFragment newInstance(int position) {
         TrendsFragment fragment = new TrendsFragment();
         Bundle args = new Bundle();
+        Log.d("0830", String.valueOf(position));
         args.putInt("index", position);
         fragment.setArguments(args);
         return fragment;
@@ -158,10 +163,13 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     }
 
     private TrendsObject buildTrendsModel(JSONArray contents, boolean byTitle) throws JSONException {
-        channel = this.getArguments().getInt("index", 0);
         for (int i = 0; i < contents.length(); i++) {
             JSONObject c = contents.getJSONObject(i);
-            String title = c.getString(TAG_TITLE);
+            String title;
+            if (channel != 5)
+                title= c.getString(TAG_TITLE);
+            else
+                title = c.getString(TAG_ORIGIN_TITLE);
             int top = c.getInt(TAG_TOP);;
             String releaseDate = "";
             String mainInfo = "";
@@ -200,6 +208,8 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
                 gallery = c.getJSONArray(TAG_GALLERY_FULL);
             if (c.has(TAG_DETAIL_URL))
                 detailUrl = c.getString(TAG_DETAIL_URL);
+            if (c.has(TAG_POSTER_URL))
+                posterUrl = c.getString(TAG_POSTER_URL);
             if (c.has(TAG_COUNTRY)) {
                 country = c.getString(TAG_COUNTRY);
                 JSONObject jsonObj = new JSONObject();
@@ -208,7 +218,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             }
 
             story = c.getString(TAG_STORY);
-            posterUrl = c.getString(TAG_POSTER_URL);
             trailerUrl = c.getString(TAG_TRAILER);
             rating = c.getJSONObject(TAG_RATING);
             releaseDate = c.getString(TAG_RELEASE);
@@ -216,6 +225,9 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             item = new TrendsObject(title, String.valueOf(top), detailUrl, posterUrl, trailerUrl, cast.toString(), review.toString(),
                     staff.toString(), data.toString(), story, mainInfo, gallery.toString(), rating.toString(), releaseDate);
             item.setChannel(channel);
+            if (checkBookmark(title))
+                item.setBookmark(true);
+
             if (byTitle)
                 return item; // only one item in case of query by title
             trendsCardAdapter.addItem(i, item);
@@ -228,6 +240,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recyclerview, container, false);
+        channel = this.getArguments().getInt("index", 0);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerView);
         mRecyclerView.getItemAnimator().setAddDuration(1000);
         mRecyclerView.getItemAnimator().setChangeDuration(1000);
@@ -243,8 +256,8 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
         trendsCardAdapter = getAdapter();
         trendsCardAdapter.setOnItemClickListener(this); //onItemClick
         mRecyclerView.setAdapter(trendsCardAdapter);
-
         MaterialViewPagerHelper.registerRecyclerView(getActivity(), mRecyclerView);
+        favor = new TrendsFavoritePreference();
         return rootView;
     }
 
@@ -253,6 +266,16 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
         super.onStart();
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_refresh_layout);
     }
+
+    private boolean checkBookmark(String title) {
+        ArrayList list = favor.loadFavorites(getActivity());
+
+        for (int i=0; i<list.size(); i++) {
+            if (title.compareTo((String) list.get(i)) == 0) return true;
+        }
+
+        return false;
+    };
 
     public void bindAdapter() {
         if (trendsCardAdapter == null) {

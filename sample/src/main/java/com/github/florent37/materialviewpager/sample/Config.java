@@ -12,11 +12,17 @@ public class Config {
 
     public static final String HOST_NAME = "http://ec2-52-196-226-25.ap-northeast-1.compute.amazonaws.com/";
 
-    public static final String NYTimesKey = "cfbde1033d5286c27aecd308b6b494bb:0:74862166";
+    public static final String NYTimesKey = "f063537e60c46d5a68f8d6eeb7f036cc:6:74862166";
 
     public static final String URL_NY_TIMES = "https://api.nytimes.com/svc/movies/v2/reviews/search.json?";
 
     public static final String YOUTUBE_API_KEY = "AIzaSyC1rMU-mkhoyTvBIdTnYU0dss0tU9vtK48";
+
+    public static final String CLIENT_ID = "713961bd892a424f84585a57067750bf";
+
+    public static final String CLIENT_SECRET = "7db9e0e7761a4fd5b2e4653a7229e1b4";
+
+    public static final String REDIRECT_URI = "worldmovie-login://callback";
 
     public static final String VIDEO_KEY = "mzhX2PD6Srw";
 

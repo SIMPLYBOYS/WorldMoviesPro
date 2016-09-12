@@ -39,6 +39,19 @@
                 android:scaleType="centerCrop"
                 android:visibility="visible" />
 
+            <ImageView
+                android:id="@+id/play"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_play_circle"
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                android:layout_gravity="center"
+                android:adjustViewBounds="false"
+                android:orientation="vertical"
+                android:layout_weight="0.12"
+                android:foreground="?android:selectableItemBackground"/>
+
             <ProgressBar
                 android:id="@android:id/progress"
                 android:layout_width="80dp"

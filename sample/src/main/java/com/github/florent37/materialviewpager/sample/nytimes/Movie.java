@@ -13,8 +13,10 @@ public class Movie implements Serializable {
     public String picUrl;
     public String editor;
     public String date;
+    public boolean bookmark;
+    public int channel;
 
-    public String getHeadline(){
+    public String getHeadline() {
         return headline;
     }
 
@@ -34,6 +36,20 @@ public class Movie implements Serializable {
 
     public String getEditor() { return editor; }
 
+    public void setBookmark(boolean bookmark) {
+        this.bookmark = bookmark;
+    }
+
+    public void setChannel(int channel) {
+        this.channel = channel;
+    }
+
+    public int getChannel() {
+        return channel;
+    }
+
+    public Boolean getBookmark() { return this.bookmark;}
+
     public Movie(String headline, String description, String summary_short, String link, String picUrl, String editor, String date) {
         this.headline = headline;
         this.description = description;
@@ -42,6 +58,8 @@ public class Movie implements Serializable {
         this.editor = editor;
         this.date = date;
         this.picUrl = picUrl;
+        this.bookmark = false;
+        this.channel = 0;
     }
 }
 

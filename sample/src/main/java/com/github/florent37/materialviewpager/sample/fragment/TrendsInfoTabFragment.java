@@ -3,8 +3,6 @@ package com.github.florent37.materialviewpager.sample.fragment;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
@@ -20,8 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -35,6 +31,7 @@ import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.TrendsGalleryRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.framework.CustomLightBoxActivity;
 import com.github.florent37.materialviewpager.sample.framework.CustomTextView;
+import com.github.florent37.materialviewpager.sample.framework.FlatButton;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.imdb.SlideActivity;
@@ -60,12 +57,13 @@ import java.util.List;
 /**
  * Created by aaron on 2016/6/21.
  */
-public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterView.OnItemClickListener,
-        YouTubeThumbnailView.OnInitializedListener {
+public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterView.OnItemClickListener {
 
     private ImageView thumbnailView;
     private View buttonLayout;
-    private TextView plot, genre, runtime, country, moreButton, allButton, picNum, year, studio, trailer_title;
+    private TextView plot, genre, runtime, country, picNum, year, studio, trailer_title;
+    private String REQUEST_TAG = "TrendsInfoTabFragment";
+    private FlatButton allButton;
     private CustomTextView description;
     private RecyclerView galleryRecyclerView;
     private String VIDEO_KEY;
@@ -78,8 +76,6 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
 //    ObservableScrollView nested_scrollview;
     NestedScrollView nested_scrollview;
     private TrendsObject trendsObject;
-    MaterialDialog.Builder builder;
-    MaterialDialog dialog;
 
     public static TrendsInfoTabFragment newInstance(Object object) {
         TrendsInfoTabFragment fragment = new TrendsInfoTabFragment();
@@ -90,14 +86,13 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Gson gson = new Gson();
         View view = inflater.inflate(R.layout.trends_info_fragment, container, false);
         nested_scrollview = (NestedScrollView) view.findViewById(R.id.nested_scrollview);
         trendsObject = (TrendsObject) getArguments().getSerializable("trends");
         description = (CustomTextView) view.findViewById(R.id.description);
-        trailer_title =  (TextView) view.findViewById(R.id.trailer_title);
+        trailer_title = (TextView) view.findViewById(R.id.trailer_title);
         plot = (TextView) view.findViewById(R.id.plot);
         year = (TextView) view.findViewById(R.id.year);
         genre = (TextView) view.findViewById(R.id.genre);
@@ -105,10 +100,10 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
         studio = (TextView) view.findViewById(R.id.studio);
         runtime = (TextView) view.findViewById(R.id.runtime);
         thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
-        moreButton = (TextView) view.findViewById(R.id.button_more);
-        allButton = (TextView) view.findViewById(R.id.button_all);
+        allButton = (FlatButton) view.findViewById(R.id.button_all);
         picNum = (TextView) view.findViewById(R.id.picNum);
         description.setText(trendsObject.getMainInfo());
+        allButton.setButtonColor(getResources().getColor(R.color.material_grey_400));
 
         if (trendsObject.getStory() != "")
             plot.setText(trendsObject.getStory());
@@ -117,10 +112,10 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
             parent.removeView(plot);
         }
 
-        if (trendsObject.getData().length() > 2) { //for japan trends only
+        if (trendsObject.getData().length() > 2) {
             JsonArray dataInfo = new JsonParser().parse(trendsObject.getData()).getAsJsonArray();
             JsonElement jsonElement = null;
-            TrendsObject.DataItem dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+            TrendsObject.DataItem dataItem;
 
             if (dataInfo.size() == 5) {
                 jsonElement = dataInfo.get(4);
@@ -133,7 +128,7 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
             if (dataItem.getData().indexOf(":") != -1) {
                 runtime.setText(dataItem.getData());
             } else {
-                runtime.setText("RunTime: "+dataItem.getData());
+                runtime.setText("RunTime: " + dataItem.getData());
             }
 
             if (dataInfo.size() == 5) {
@@ -148,7 +143,7 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
                 country.setText(dataItem.getData());
                 countryFlag(dataItem.getData().split(":")[1], thumbnailView);
             } else {
-                country.setText("Country: "+dataItem.getData());
+                country.setText("Country: " + dataItem.getData());
                 countryFlag(dataItem.getData(), thumbnailView);
             }
 
@@ -163,7 +158,7 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
             if (dataItem.getData().indexOf(":") != -1) {
                 year.setText(dataItem.getData());
             } else {
-                year.setText("Year: "+dataItem.getData());
+                year.setText("Year: " + dataItem.getData());
             }
 
             if (dataInfo.size() == 5) {
@@ -175,7 +170,6 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
             dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
             studio.setText(dataItem.getData());
         }
-
 
         expandableLayout = (ExpandableRelativeLayout) view.findViewById(R.id.expandableLayout);
         buttonLayout = view.findViewById(R.id.expandableButton);
@@ -221,11 +215,12 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
             JsonElement str = galleryInfo.get(i);
             TrendsObject.GalleryItem obj = gson.fromJson(str, TrendsObject.GalleryItem.class);
             list.add(obj);
-            trendsGalleryAdapter.addItem(i,obj);
+            trendsGalleryAdapter.addItem(i, obj);
         }
         //------- deserialize Gallery JSON object -------//
 
         picNum.setText(String.valueOf(list.size()));
+
         if (galleryInfo.size() > 1) {
             galleryRecyclerView.setAdapter(trendsGalleryAdapter);
             trendsGalleryAdapter.setOnItemClickListener(this);
@@ -235,21 +230,16 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
             parent.removeView(gallery);
         }
 
-        linearLayoutManager.scrollToPositionWithOffset(1,650);
-
+        linearLayoutManager.scrollToPositionWithOffset(1, 650);
         return view;
     }
 
     @Override
-    public void onInitializationSuccess(YouTubeThumbnailView view,
-                                        YouTubeThumbnailLoader loader) {
-        loader.setVideo(VIDEO_KEY);
-    }
-
-    @Override
-    public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView,
-                                        YouTubeInitializationResult youTubeInitializationResult) {
-        Toast.makeText(getContext(), "Initialization failure: Unable to play video", Toast.LENGTH_LONG).show();
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        /*if (mActionListener.getCurrentQuery() != null) {
+            outState.putString(KEY_CURRENT_QUERY, mActionListener.getCurrentQuery());
+        }*/
     }
 
     public android.animation.ObjectAnimator createRotateAnimator(final View target, final float from, final float to) {
@@ -274,9 +264,22 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
             //If there are any issues we can show an error dialog.
             result.getErrorDialog(getActivity(), 0).show();
         }
+
         VIDEO_KEY = trendsObject.getTrailerUrl().split("[?]")[1].split("[=]")[1];
         youTubeThumbnailView = (YouTubeThumbnailView) view.findViewById(R.id.imageView_thumbnail);
-        youTubeThumbnailView.initialize(Config.YOUTUBE_API_KEY, this);
+        youTubeThumbnailView.initialize(Config.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
+            @Override
+            public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView,
+                                                YouTubeInitializationResult youTubeInitializationResult) {
+                Toast.makeText(getContext(), "Initialization failure: Unable to play video", Toast.LENGTH_LONG).show();
+            };
+            @Override
+            public void onInitializationSuccess(YouTubeThumbnailView view,
+                                                YouTubeThumbnailLoader loader) {
+                loader.setVideo(VIDEO_KEY);
+            }
+
+        });
 
         youTubeThumbnailView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -287,11 +290,10 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
             }
         });
 
-        mQueue = CustomVolleyRequestQueue.getInstance(getActivity())
-                .getRequestQueue();
-
+        mQueue = CustomVolleyRequestQueue.getInstance(getActivity()).getRequestQueue();
         CustomJSONObjectRequest jsonRequest_q = null;
         String url = "http://www.youtube.com/oembed?url=https://www.youtube.com/watch?v="+ VIDEO_KEY +"&format=json";
+
         jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -308,6 +310,8 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
                 Toast.makeText(getActivity(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
             }
         });
+
+        jsonRequest_q.setTag(REQUEST_TAG);
         mQueue.add(jsonRequest_q);
 
     }
@@ -335,32 +339,6 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
         nested_scrollview.dispatchNestedPreScroll(0, toolbarHeight, null, null);
         nested_scrollview.dispatchNestedScroll(0, 0, 0, 0, new int[]{0, -toolbarHeight});
         nested_scrollview.smoothScrollTo(0, nested_scrollview.getMaxScrollAmount());
-        builder = new MaterialDialog.Builder(getContext())
-                .iconRes(R.drawable.ic_launcher)
-                .limitIconToDefaultSize() // limits the displayed icon size to 48dp
-                .title("Rottentomatoes")
-                .titleColor(Color.BLACK)
-                .backgroundColor(Color.WHITE)
-                .contentColor(Color.BLACK)
-                .content("Redirect to Rottenntomatoes.com ?")
-                .positiveText("Agree")
-                .negativeText("Disagree")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(MaterialDialog dialog, DialogAction which) {
-                        startActivityForVersion(new Intent("android.intent.action.VIEW",
-                                Uri.parse("http://www.rottentomatoes.com/search/?search=" + trendsObject.getTitle())));
-                    }
-                });
-
-        dialog = builder.build();
-        moreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.show();
-
-            }
-        });
 
         allButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -384,6 +362,13 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
         else {
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mQueue != null)
+            mQueue.cancelAll(REQUEST_TAG);
     }
 
 }

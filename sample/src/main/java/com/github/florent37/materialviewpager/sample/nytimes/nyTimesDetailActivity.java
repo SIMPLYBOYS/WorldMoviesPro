@@ -5,25 +5,21 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,11 +41,14 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.MainActivity;
 import com.github.florent37.materialviewpager.sample.R;
+import com.github.florent37.materialviewpager.sample.genre.GenreActivity;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
-import com.github.florent37.materialviewpager.sample.genre.GenreActivity;
 import com.github.florent37.materialviewpager.sample.imdb.ImdbActivity;
+import com.github.florent37.materialviewpager.sample.model.User;
 import com.github.florent37.materialviewpager.sample.upcoming.upComingActivity;
+import com.github.florent37.materialviewpager.sample.util.ParserUtils;
+import com.github.florent37.materialviewpager.sample.util.PrefUtils;
 import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -60,8 +59,11 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import im.delight.android.webview.AdvancedWebView;
+
+import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
 
 /**
  * Created by aaron on 2016/6/12.
@@ -80,6 +82,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
     private Movie movie;
     private TextView description, headLine, story, editor, publish;
     private ImageView pictureView;
+    private String HOST_NAME = Config.HOST_NAME;
     ShareActionProvider shareActionProvider;
     private RequestQueue mQueue;
     public static String FILM_NAME = "filmName";
@@ -89,6 +92,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
     BottomNavigationBar bottomNavigationBar;
     BadgeItem numberBadgeItem;
     private FloatingActionButton fab;
+    private nyTimesFavoritePreference favor;
     LinearLayout bookmarkActionView;
     private ShineButton bookmarkView = null;
 
@@ -118,6 +122,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         pictureView = (ImageView) findViewById(R.id.picture);
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
+        favor = new nyTimesFavoritePreference();
 
         if (movie.getPicUrl() != null) {
             Picasso.with(pictureView.getContext()).load(movie.getPicUrl()).placeholder(R.drawable.placeholder)
@@ -164,7 +169,6 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         fab.setBackgroundTintList(ColorStateList.valueOf(primaryDark));
         fab.setRippleColor(primary);
         refresh();
-        loadHints();
         bottomNavigationBar.setTabSelectedListener(this);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -208,17 +212,20 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        getMenuInflater().inflate(R.menu.album_menu, menu);
+        getMenuInflater().inflate(R.menu.nytimes_detail_menu, menu);
 
-        for(int i = 0; i < menu.size(); i++) {
+        for (int i = 0; i < menu.size(); i++) {
+
             Drawable drawable = menu.getItem(i).getIcon();
-            if(drawable != null) {
+
+            if (drawable != null) {
                 drawable.mutate();
                 drawable.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
             }
         }
 
         bookmarkActionView = (LinearLayout) getLayoutInflater().inflate(R.layout.bookmark_image, null);
+        LOGD("0816", String.valueOf(movie.getBookmark()));
         bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
         bookmarkView.init(this);
         bookmarkView.getLayoutParams().height=96;
@@ -226,6 +233,15 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
 //        bookmarkView.setImageResource(R.drawable.ic_turned_in);
         bookmarkView.setColorFilter(getResources().getColor(R.color.app_white));
         bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        if (movie.getBookmark()) {
+            bookmarkView.setChecked(true);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+        } else {
+            bookmarkView.setChecked(false);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+        }
+
         shareItem = menu.findItem(R.id.action_share);
         searchItem = menu.findItem(R.id.action_search);
         bookmarkItem = menu.findItem(R.id.action_bookmark);
@@ -243,13 +259,80 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(View view, boolean checked) {
-//                Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
                 Toast.makeText(nyTimesDetailActivity.this, "Bookmark "+checked+" !!!", Toast.LENGTH_SHORT).show();
-                if (checked)
-                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black); //TODO change more clear Icon
-                else
+
+                if (checked && !movie.getBookmark()) {
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+                    User user = PrefUtils.getCurrentUser(getApplicationContext());
+                    movie.setBookmark(true);
+                    String headline = movie.getHeadline().indexOf(":") != -1 ? movie.getHeadline().split(":")[1].trim() : movie.getHeadline();
+                    CustomJSONObjectRequest jsonRequest_q = null;
+                    String url = HOST_NAME + "nyTimes/"+user.facebookID;
+                    JSONObject jsonBody = new JSONObject();
+
+                    try {
+                        jsonBody.put("headline", headline);
+                        jsonBody.put("link", movie.getLink());
+                        jsonBody.put("picUrl", movie.getPicUrl());
+                        favor.addFavorite(getApplicationContext(), headline);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    jsonRequest_q = new CustomJSONObjectRequest(Request.Method.POST, url, jsonBody, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                String result = response.getString("content");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(nyTimesDetailActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    mQueue.add(jsonRequest_q);
+                } else if (!checked && movie.getBookmark()) {
                     bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
-                //TODO bookmark info for the user's acccount
+                    movie.setBookmark(false);
+                    User user = PrefUtils.getCurrentUser(getApplicationContext());
+                    String headline = movie.getHeadline().indexOf(":") != -1 ? movie.getHeadline().split(":")[1].trim() : movie.getHeadline();
+//                        String headline = movie.getHeadline();
+                    favor.removeFavorite(getApplicationContext(), headline);
+                    CustomJSONObjectRequest jsonRequest_q = null;
+                    headline = ParserUtils.encode(headline);
+                    String url = HOST_NAME + "nyTimes/"+user.facebookID+"/"+headline;
+                    JSONObject jsonBody = new JSONObject();
+
+                    /*try {
+                        jsonBody.put("headline", headline);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }*/
+
+                    jsonRequest_q = new CustomJSONObjectRequest(Request.Method.DELETE, url, jsonBody, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                String result = response.getString("content");
+                                LOGD("0813", result);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(nyTimesDetailActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    mQueue.add(jsonRequest_q);
+                }
             }
         });
 
@@ -264,7 +347,6 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
 
             @Override
             public boolean onQueryTextChange(String query) {
-                giveSuggestions(query);
                 return false;
             }
         });
@@ -315,15 +397,6 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, movie.getLink());
         return shareIntent;
-    }
-
-    private void giveSuggestions(String query) {
-        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME});
-        for (int i = 0; i < MOVIES.length; i++) {
-            if (MOVIES[i].toLowerCase().contains(query.toLowerCase()))
-                cursor.addRow(new Object[]{i, MOVIES[i]});
-        }
-        mAdapter.changeCursor(cursor);
     }
 
     @Override
@@ -425,35 +498,20 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
 
                         JSONObject movieObj = contents.getJSONObject(0);
                         String head = movieObj.getString("headline");
-                        String date = movieObj.getString("publication_date");
-                        String summery = movieObj.getString("summary_short");
-                        JSONObject link = null;
-                        JSONObject media = null;
-                        String picUrl = "";
-                        if (!movieObj.isNull("multimedia")) {
-                            media = movieObj.getJSONObject("multimedia");
-                            picUrl = media.getString("src");
-                        }
-                        link = movieObj.getJSONObject("link");
-                        String linkUrl = link.getString("url");
-                        final Movie movie = new Movie(head, date, summery, linkUrl, picUrl, null, null);
+                        String linkUrl = movieObj.getJSONObject("link").getString("url");
 
-                        /*Intent intent = new Intent(nyTimesActivity.this, WebViewActivity.class);
-                        intent.putExtra("movie", movie);
-                        ActivityCompat.startActivity(nyTimesActivity.this, intent, null);*/
-
-                        CustomJSONObjectRequest jsonRequest_inner = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "nyTimes?url=" + movie.getLink(), new JSONObject(), new Response.Listener<JSONObject>() {
+                        CustomJSONObjectRequest jsonRequest_inner = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "nyTimes?url=" + linkUrl, new JSONObject(), new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
                                     JSONArray contents = response.getJSONArray("contents");
                                     String story,imageUrl, head, description, editor, publish;
-
                                     JSONObject reviewObj = contents.getJSONObject(0);
                                     story = reviewObj.getString("story");
                                     editor = reviewObj.getString("editor");
                                     publish = reviewObj.getString("date");
                                     JSONObject imgObj = reviewObj.getJSONObject("image");
+
                                     if (imgObj.has("src")) {
                                         imageUrl = imgObj.getString("src");
                                         description = imgObj.getString("description");
@@ -462,10 +520,10 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
                                         description = null;
                                     }
 
-
-
                                     head = movie.getHeadline();
                                     Movie foo = new Movie(head, description, story, "", imageUrl, editor, publish);
+                                    if (checkBookmark(head))
+                                        foo.setBookmark(true);
                                     Intent intent = new Intent(getApplicationContext(), nyTimesDetailActivity.class);
                                     intent.putExtra("movie", foo);
                                     ActivityCompat.startActivity(nyTimesDetailActivity.this, intent, null);
@@ -474,7 +532,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
                                     e.printStackTrace();
                                 }
                             }
-                        },new Response.ErrorListener () {
+                        }, new Response.ErrorListener () {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 Toast.makeText(getApplicationContext(), "Remote Server not working!", Toast.LENGTH_LONG).show();
@@ -496,40 +554,16 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         mQueue.add(jsonRequest); //trigger volley request
     }
 
+    private boolean checkBookmark(String headline) {
+        headline = headline.indexOf(":") != -1 ? headline.split(":")[1].trim() : headline;
+        ArrayList list = favor.loadFavorites(getApplicationContext());
 
-    private void loadHints() {
-        final String[] from = new String[]{FILM_NAME};
-        final int[] to = new int[]{android.R.id.text1};
-        final CustomJSONObjectRequest jsonRequest;
-        mAdapter = new SimpleCursorAdapter(this,
-                R.layout.hint_row,
-                null,
-                from,
-                to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        for (int i=0; i<list.size(); i++) {
+            if (headline.compareTo((String) list.get(i)) == 0) return true;
+        }
 
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
-
-        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "/imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    Log.d("0419", "title onResponse");
-                    JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-                    MOVIES = getStringArray(contents);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-//                Toast.makeText(nyTimesDetailActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mQueue.add(jsonRequest);
-    }
+        return false;
+    };
 
     public static String[] getStringArray(JSONArray jsonArray) {
         String[] stringArray = null;

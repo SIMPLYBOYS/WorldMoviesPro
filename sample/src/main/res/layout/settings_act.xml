@@ -33,10 +33,10 @@
             android:clipChildren="false"
             app:shadowDrawable="@drawable/header_shadow">
 
-            <fragment android:name="com.google.samples.apps.iosched.settings.SettingsActivity$SettingsFragment"
+            <!--<fragment android:name="com.google.samples.apps.iosched.settings.SettingsActivity$SettingsFragment"
                       android:id="@+id/settings_fragment"
                       android:layout_width="match_parent"
-                      android:layout_height="match_parent" />
+                      android:layout_height="match_parent" />-->
 
         <LinearLayout style="@style/HeaderBar"
                       android:id="@+id/headerbar"
@@ -52,6 +52,7 @@
         <FrameLayout android:layout_width="match_parent"
                      android:layout_height="wrap_content"
                      android:layout_gravity="top"
+                     android:id="@+id/framelayout"
                      android:layout_marginTop="?actionBarSize">
             <include layout="@layout/deprecated_include_butter_bar" />
         </FrameLayout>

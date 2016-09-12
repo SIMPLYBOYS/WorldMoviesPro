@@ -19,9 +19,9 @@ package com.github.florent37.materialviewpager.sample.app;
 import android.app.Application;
 import android.content.Intent;
 
-import com.google.android.gms.security.ProviderInstaller;
 import com.github.florent37.materialviewpager.sample.settings.SettingsUtils;
 import com.github.florent37.materialviewpager.sample.util.AnalyticsHelper;
+import com.google.android.gms.security.ProviderInstaller;
 
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGE;
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGW;

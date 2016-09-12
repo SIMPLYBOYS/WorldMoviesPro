@@ -68,14 +68,14 @@
                 android:text="Story"
                 android:textColor="@color/material_blue_A100"
                 app:font="Roboto-Black.ttf"
-                android:id="@+id/view2" />
+                android:id="@+id/story" />
 
             <View
                 android:id="@+id/expandableButton"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:background="@drawable/triangle"
-                android:layout_alignBottom="@+id/view2"
+                android:layout_alignBottom="@+id/story"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
         </RelativeLayout>

@@ -2,21 +2,17 @@ package com.github.florent37.materialviewpager.sample.nytimes;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -63,48 +59,28 @@ import java.util.Set;
  */
 public class nyTimesActivity extends BaseActivity implements Response.ErrorListener {
     private Toolbar toolbar;
-
     private int mViewPagerScrollState = ViewPager.SCROLL_STATE_IDLE;
-
     private List<Movie> movieList;
-
     private RecyclerView rvMovies;
-
     public static final String TAG = "nyTimesActivity";
-
     public static final String FILM_NAME = "filmName";
-
     private RequestQueue mQueue;
-
     private NyTimesSwipeRecycleViewAdapter rAdapter;
-
     private SimpleCursorAdapter mAdapter;
-
     private LinearLayoutManager linearLayoutManager;
-
     private MenuItem searchItem;
-
     private SearchView searchView = null;
-
-    private SharedPreferences sp;
-
     int curSize = 0;
-
-    public static final String REQUEST_TAG = "reviewRequest";
-
+    public final String REQUEST_TAG = "reviewRequest";
     private boolean mActionBarShown = true;
-
-    private static String[] MOVIES = {};
-
+    private String[] MOVIES = {};
     private int mProgressBarTopWhenActionBarShown;
-
     // initially offset will be 0, later will be updated while parsing the json
     private int offSet = 0;
-
     // SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
     private Set<MovieRecycleFragment> mMovieRecycleFragments = new HashSet<MovieRecycleFragment>();
+    private nyTimesFavoritePreference favor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +91,7 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         toolbar.setTitle("NY Movies Review");
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
+        favor = new nyTimesFavoritePreference();
         registerHideableHeaderView(findViewById(R.id.headerbar));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -136,7 +113,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         // 获得根视图并把TextView加进去。
         ViewGroup view = (ViewGroup) getWindow().getDecorView();
         view.addView(textView);
-        loadHints();
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_movie_layout);
         movieList = new ArrayList<>();
         linearLayoutManager = new LinearLayoutManager(this);
@@ -271,7 +247,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
 
             @Override
             public boolean onQueryTextChange(String query) {
-                giveSuggestions(query);
                 return false;
             }
         });
@@ -295,15 +270,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         return true;
     }
 
-    private void giveSuggestions(String query) {
-        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME});
-        for (int i = 0; i < MOVIES.length; i++) {
-            if (MOVIES[i].toLowerCase().contains(query.toLowerCase()))
-                cursor.addRow(new Object[]{i, MOVIES[i]});
-        }
-        mAdapter.changeCursor(cursor);
-    }
-
     /**
      * Fetching movies json by making http call
      */
@@ -317,11 +283,10 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
             rAdapter.notifyItemInserted(movieList.size() - 1);
         }
 
-        Log.d("0612","offSet: " + offSet);
         // appending offset to url
         String url = Config.URL_NY_TIMES + "offset=" + offSet + "&api-key=" + Config.NYTimesKey;
-
         CustomJSONObjectRequest jsonRequest_q = null;
+
         jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -339,20 +304,25 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                         JSONObject link = null;
                         JSONObject media = null;
                         String picUrl = "";
+
                         if (!movieObj.isNull("multimedia")) {
                             media = movieObj.getJSONObject("multimedia");
                             picUrl = media.getString("src");
                         }
+
                         link = movieObj.getJSONObject("link");
                         String linkUrl = link.getString("url");
                         Movie m = new Movie(head, date, summery, linkUrl, picUrl, null, null);
+                        if (checkBookmark(head))
+                            m.setBookmark(true);
                         curSize = rAdapter.getItemCount();
                         movieList.add(movieList.size(), m);
-                        if (rAdapter != null) {
+                        if (rAdapter != null)
                             rAdapter.notifyItemInserted(movieList.size());
-                        }
+
                     }
                     rAdapter.setLoaded();
+
                     /*if(rAdapter != null) {
                         rAdapter.notifyItemRangeInserted(curSize, movieList.size()-1);
                     }*/
@@ -370,13 +340,35 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
             public void onErrorResponse(VolleyError error) {
                 if (swipe)
                     mSwipeRefreshLayout.setRefreshing(false);
-                Log.d("0606", String.valueOf(error.getMessage()));
                 Toast.makeText(nyTimesActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
             }
         });
         mQueue.add(jsonRequest_q);
     }
 
+    private boolean checkBookmark(String headline) {
+        headline = headline.indexOf(":") != -1 ? headline.split(":")[1].trim() : headline;
+        ArrayList list = favor.loadFavorites(getApplicationContext());
+
+        for (int i=0; i<list.size(); i++) {
+            if (headline.compareTo((String) list.get(i)) == 0) return true;
+        }
+
+        return false;
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        /*movieList.clear();
+        rvMovies.setAdapter(rAdapter);
+        offSet = 0;
+        rAdapter.notifyDataSetChanged();
+        fetchMovies(true);
+        LOGD("0816", "onResume");*/
+    }
+
+    @Override
     public void requestDataRefresh(String Query) {
         final CustomJSONObjectRequest jsonRequest = null;
 
@@ -416,20 +408,19 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                             picUrl = media.getString("src");
                         }
                         link = movieObj.getJSONObject("link");
-                        String linkUrl = link.getString("url");
+                        final String linkUrl = link.getString("url");
                         final Movie movie = new Movie(head, date, summery, linkUrl, picUrl, null, null);
 
                         /*Intent intent = new Intent(nyTimesActivity.this, WebViewActivity.class);
                         intent.putExtra("movie", movie);
                         ActivityCompat.startActivity(nyTimesActivity.this, intent, null);*/
 
-                        CustomJSONObjectRequest jsonRequest_inner = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "nyTimes?url=" + movie.getLink(), new JSONObject(), new Response.Listener<JSONObject>() {
+                        CustomJSONObjectRequest jsonRequest_inner = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "nyTimes?url=" + linkUrl, new JSONObject(), new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
                                     JSONArray contents = response.getJSONArray("contents");
                                     String story,imageUrl, head, description, editor, date;
-
                                     JSONObject reviewObj = contents.getJSONObject(0);
                                     story = reviewObj.getString("story");
                                     JSONObject imgObj = reviewObj.getJSONObject("image");
@@ -445,7 +436,9 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                                     }
 
                                     head = movie.getHeadline();
-                                    Movie foo = new Movie(head, description, story, "", imageUrl, editor, date);
+                                    Movie foo = new Movie(head, description, story, linkUrl, imageUrl, editor, date);
+                                    if (checkBookmark(head))
+                                        foo.setBookmark(true);
                                     Intent intent = new Intent(getApplicationContext(), nyTimesDetailActivity.class);
                                     intent.putExtra("movie", foo);
                                     ActivityCompat.startActivity(nyTimesActivity.this, intent, null);
@@ -461,7 +454,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                             }
                         });
                         mQueue.add(jsonRequest_inner);
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -563,40 +555,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         }
     }
 
-    private void loadHints() {
-        final String[] from = new String[]{FILM_NAME};
-        final int[] to = new int[]{android.R.id.text1};
-        final CustomJSONObjectRequest jsonRequest;
-        mAdapter = new SimpleCursorAdapter(this,
-                R.layout.hint_row,
-                null,
-                from,
-                to,
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
-
-        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "/imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    Log.d("0419", "title onResponse");
-                    JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-                    MOVIES = getStringArray(contents);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(nyTimesActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mQueue.add(jsonRequest);
-    }
-
     private void startActivityForVersion(Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             startActivity(intent,
@@ -606,17 +564,5 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         else {
             startActivity(intent);
         }
-    }
-
-    public static String[] getStringArray(JSONArray jsonArray) {
-        String[] stringArray = null;
-        int length = jsonArray.length();
-        if (jsonArray!=null) {
-            stringArray = new String[length];
-            for(int i=0;i<length;i++){
-                stringArray[i]= jsonArray.optString(i);
-            }
-        }
-        return stringArray;
     }
 }

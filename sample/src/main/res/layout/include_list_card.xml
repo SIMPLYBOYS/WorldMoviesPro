@@ -11,7 +11,7 @@
 
     <include layout="@layout/detail_gallery"/>
 
-    <include layout="@layout/detail_imdb_chart"/>
+    <!--<include layout="@layout/detail_imdb_chart"/>-->
 
     <!--<include layout="@layout/detail_imdb_plot" />-->
 

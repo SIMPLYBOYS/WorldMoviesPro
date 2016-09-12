@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
@@ -30,14 +31,12 @@ import java.util.List;
  */
 public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRecycleViewAdapter.ContentViewHolder> {
 
-    final List<ImdbObject> mContentItems;
-
-    static final int TYPE_HEADER = 0;
-    static final int TYPE_CELL = 1;
-    final Context context;
-
+    private final List<ImdbObject> mContentItems;
+    private final int TYPE_HEADER = 0;
+    private final int TYPE_CELL = 1;
+    private static String VIDEO_KEY;
+    private final Context context;
     private AdapterView.OnItemClickListener mOnItemClickListener;
-
     private ProgressBar mProgressBar;
 
     //the constants value of the header view
@@ -107,7 +106,6 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
         private ImdbCardRecycleViewAdapter mAdapter;
         private ImdbObject imdbObject;
 
-
         public ContentViewHolder(View itemView, ImdbCardRecycleViewAdapter adapter) {
             super(itemView);
             int tag = (Integer) itemView.getTag();
@@ -136,7 +134,7 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
             mAdapter.onItemHolderClick(this);;
         }
 
-        public void bind(ImdbObject imdbObject, final ProgressBar mProgressBar) {
+        public void bind(final ImdbObject imdbObject, final ProgressBar mProgressBar, final Context context) {
             String title = imdbObject.getTitle();
             this.imdbObject = imdbObject;
             Gson gson = new Gson();
@@ -151,7 +149,7 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
             topView.setText(imdbObject.getTop());
             yearView.setText(imdbObject.getYear());
             rattingView.setText(ratingItem.getScore());
-            votesView.setText(imdbObject.getVotes());
+            votesView.setText(ratingItem.getVotes());
             int delta = Math.abs(imdbObject.getDelta());
             Log.d("0601: ", String.valueOf(delta));
 
@@ -180,6 +178,16 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
                             mProgressBar.setVisibility(View.GONE);
                         }
                     });
+            posterView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    /*Intent lightBoxIntent = new Intent(v.getContext(), CustomLightBoxActivity.class);
+                    VIDEO_KEY = imdbObject.getTrailerUrl().split("[?]")[1].split("[=]")[1];
+                    lightBoxIntent.putExtra(CustomLightBoxActivity.KEY_VIDEO_ID, VIDEO_KEY);
+                    context.startActivity(lightBoxIntent);*/
+                    Toast.makeText(context, "yes this icon could click!", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -273,7 +281,7 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
                     final String title = imdbObject.getTitle();
                     Log.d("0327", String.valueOf(position) + " title:" + title);
                     mProgressBar.setVisibility(View.VISIBLE);
-                    holder.bind(imdbObject, mProgressBar);
+                    holder.bind(imdbObject, mProgressBar, context);
                 }
                 break;
         }

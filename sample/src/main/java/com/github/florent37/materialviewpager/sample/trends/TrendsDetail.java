@@ -61,17 +61,21 @@ import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.sample.fragment.TrendsCastTabFragment;
 import com.github.florent37.materialviewpager.sample.fragment.TrendsInfoTabFragment;
+import com.github.florent37.materialviewpager.sample.fragment.TrendsMusicTabFragment;
 import com.github.florent37.materialviewpager.sample.fragment.TrendsReviewTabFragment;
+import com.github.florent37.materialviewpager.sample.genre.GenreActivity;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.imdb.AlbumActivity;
-import com.github.florent37.materialviewpager.sample.genre.GenreActivity;
 import com.github.florent37.materialviewpager.sample.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 import com.github.florent37.materialviewpager.sample.model.TrendsObject;
+import com.github.florent37.materialviewpager.sample.model.User;
 import com.github.florent37.materialviewpager.sample.nytimes.nyTimesActivity;
 import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
 import com.github.florent37.materialviewpager.sample.upcoming.upComingActivity;
+import com.github.florent37.materialviewpager.sample.util.BuildModelUtils;
+import com.github.florent37.materialviewpager.sample.util.PrefUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -100,6 +104,8 @@ import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewLineChartView;
 
+import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
+
 /**
  * Created by aaron on 2016/6/18.
  */
@@ -117,6 +123,7 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
     protected static final int NAV_ITEM_IMDB = 2;
     protected static final int NAV_ITEM_NYTIMES = 3;
     protected static final int NAV_ITEM_GENRE = 4;
+    private TrendsFavoritePreference favor;
     private int mTransitionsCount = 0;
     private String HOST_NAME = Config.HOST_NAME;
     private static int TRANSITIONS_TO_SWITCH = 1;
@@ -197,9 +204,10 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
             list.add(obj);
         }
         //------- deserialize Gallery JSON object -------//
-        refresh();
+        refresh(); //refresh bottomView
         loadHints();
         bottomNavigationBar.setTabSelectedListener(this);
+        favor = new TrendsFavoritePreference();
     }
 
     @Override
@@ -283,7 +291,9 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
         adapter.addFrag(TrendsInfoTabFragment.newInstance(trendsObject), "Info");
         adapter.addFrag(TrendsCastTabFragment.newInstance(trendsObject), "Cast");
         adapter.addFrag(TrendsReviewTabFragment.newInstance(trendsObject), "Review");
+        adapter.addFrag(TrendsMusicTabFragment.newInstance(trendsObject), "Music");
         viewPager.setAdapter(adapter);
+
         /*viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -386,7 +396,7 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
     @Override
     public void onTransitionEnd(Transition transition) {
         mTransitionsCount++;
-        if (list.size() < 1)
+        if (list.size() < 2)
             return;
         if (mTransitionsCount == TRANSITIONS_TO_SWITCH) {
             Random random = new Random();
@@ -439,7 +449,6 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-
         getMenuInflater().inflate(R.menu.trends_menu, menu);
 
         for(int i = 0; i < menu.size(); i++) {
@@ -468,16 +477,91 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
 
+        if (trendsObject.getBookmark()) {
+            bookmarkView.setChecked(true);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+        } else {
+            bookmarkView.setChecked(false);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+        }
+
         bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(View view, boolean checked) {
 //                Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
                 Toast.makeText(TrendsDetail.this, "Bookmark "+checked+" !!!", Toast.LENGTH_SHORT).show();
-                if (checked)
-                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
-                else
+                bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+
+                if (checked && !trendsObject.getBookmark()) {
+                    User user = PrefUtils.getCurrentUser(getApplicationContext());
+                    trendsObject.setBookmark(true);
+                    CustomJSONObjectRequest jsonRequest_q = null;
+                    String url = HOST_NAME + "trends/"+user.facebookID;
+                    JSONObject jsonBody = new JSONObject();
+
+                    try {
+                        jsonBody.put("title", trendsObject.getTitle());
+                        jsonBody.put("link", trendsObject.getDetailUrl());
+                        jsonBody.put("picUrl", trendsObject.getPosterUrl());
+                        jsonBody.put("channel", trendsObject.getChannel());
+                        favor.addFavorite(getApplicationContext(), trendsObject.getTitle());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    jsonRequest_q = new CustomJSONObjectRequest(Request.Method.POST, url, jsonBody, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                String result = response.getString("content");
+                                LOGD("0831", result);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(TrendsDetail.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    mQueue.add(jsonRequest_q);
+                } else if (!checked && trendsObject.getBookmark()) {
+                    User user = PrefUtils.getCurrentUser(getApplicationContext());
                     bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
-                //TODO bookmark info for the user's acccount
+                    trendsObject.setBookmark(false);
+                    favor.removeFavorite(getApplicationContext(), trendsObject.getTitle());
+                    CustomJSONObjectRequest jsonRequest_q = null;
+                    String Query;
+
+                    try {
+                        Query = URLEncoder.encode(trendsObject.getTitle(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        throw new AssertionError("UTF-8 is unknown");
+                    }
+
+                    String url = HOST_NAME + "trends/"+user.facebookID+"/"+Query;
+
+                    jsonRequest_q = new CustomJSONObjectRequest(Request.Method.DELETE, url, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                String result = response.getString("content");
+                                LOGD("0813", result);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(TrendsDetail.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    mQueue.add(jsonRequest_q);
+                }
             }
         });
 
@@ -616,7 +700,7 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
                     try {
                         JSONArray contents = response.getJSONArray("contents");
                         Log.d("0504", "title onResponse" + contents);
-                        ImdbObject item = AlbumActivity.buildImdbModel(contents); //TODO build trendmodel method
+                        ImdbObject item = BuildModelUtils.buildImdbModel(contents); //TODO build trendmodel method
                         Intent intent = new Intent(TrendsDetail.this, TrendsDetail.class);
                         intent.putExtra(TrendsDetail.TRENDS_OBJECT, item);
                         ActivityCompat.startActivity(TrendsDetail.this, intent, null);

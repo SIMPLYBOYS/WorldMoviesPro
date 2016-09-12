@@ -1,14 +1,19 @@
+
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-//apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
 
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
+        maven { url "https://jitpack.io" }
+        jcenter()
     }
 
     dependencies {
         classpath 'io.fabric.tools:gradle:1.+'
+        classpath "com.android.tools.build:gradle:${ANDROID_GRADLE_PLUGIN_VERSION}"
+        classpath "com.jakewharton.sdkmanager:gradle-plugin:${SDKMANAGER_GRADLE_PLUGIN_VERSION}"
     }
 }
 
@@ -18,7 +23,7 @@ android {
 
     defaultConfig {
         applicationId "com.github.florent37.materialviewpager.sample"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion project.ANDROID_BUILD_TARGET_SDK_VERSION
         versionCode 4
         versionName "1.0"
@@ -60,12 +65,19 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-
     compile "com.android.support:appcompat-v7:${android_support_lib_version}"
     compile "com.android.support:cardview-v7:${android_support_lib_version}"
     compile "com.android.support:design:${android_support_lib_version}"
+    compile "com.android.support:support-v4:${android_support_lib_version}"
     compile "com.android.support:support-v13:${android_support_lib_version}"
     compile "com.android.support:palette-v7:${android_support_lib_version}"
 
@@ -85,7 +97,6 @@ dependencies {
     compile "com.google.android.gms:play-services-gcm:${google_play_services_client_library_version}"
     compile "com.google.android.gms:play-services-base:${google_play_services_client_library_version}"
     compile "com.google.android.gms:play-services-appindexing:${google_play_services_client_library_version}"
-    compile "com.google.android.gms:play-services:${google_play_services_client_library_version}"
     // JSON utility library.
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.google.guava:guava:18.0'
@@ -106,7 +117,6 @@ dependencies {
     compile 'com.joooonho:selectableroundedimageview:1.0.1'
 
     compile 'com.flaviofaria:kenburnsview:1.0.7'
-    compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.android.support:multidex:1.0.0'
     /*compile 'com.mikepenz:iconics-core:2.5.9@aar'
     compile 'com.mikepenz:google-material-typeface:2.2.0.1@aar'
@@ -114,12 +124,18 @@ dependencies {
     compile 'com.github.aakira:expandable-layout:1.4.2@aar'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
-
-    compile('com.mikepenz:aboutlibraries:5.5.8@aar') {
-        transitive = true
-        exclude module: "fastadapter"
-    }
-
+    compile 'com.yqritc:recyclerview-flexibledivider:1.3.0'
+    compile 'com.roger.catloadinglibrary:catloadinglibrary:1.0.1'
+    compile 'com.sackcentury:shinebutton:0.1.2'
+    compile 'com.ashokvarma.android:bottom-navigation-bar:1.3.0'
+    compile 'com.kyleduo.switchbutton:library:1.4.1'
+    compile 'com.github.delight-im:Android-AdvancedWebView:v2.1.0'
+    compile 'de.hdodenhof:circleimageview:1.3.0'
+    // This library handles authentication and authorization
+    compile 'com.spotify.sdk:spotify-auth:1.0.0-beta13@aar'
+    // This library handles music playback
+    compile 'com.spotify.sdk:spotify-player:1.0.0-beta13@aar'
+    compile project(':spotify-api')
 //    compile project(':materialviewpager')
 //    compile project(':materialviewpagercontroller')
 }

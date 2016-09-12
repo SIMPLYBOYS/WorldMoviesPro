@@ -67,8 +67,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
-
 /**
  * Created by aaron on 2016/7/13.
  */
@@ -116,7 +114,6 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LOGD("0810", "GenreActivity_onCreate");
         activity = this;
         setContentView(R.layout.activity_genre);
         toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
@@ -131,16 +128,13 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
         setSupportActionBar(toolbar);
         registerHideableHeaderView(findViewById(R.id.headerbar));
         recyclerView = (AsymmetricRecyclerView) findViewById(R.id.recyclerView);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_movie_layout);
         TextView textView = new TextView(this);
         LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewPager.LayoutParams.MATCH_PARENT, getStatusBarHeight());
-        textView.setBackgroundColor(Color.parseColor("#ff29b6f6"));//TODO string
+        textView.setBackgroundColor(Color.parseColor("#ff29b6f6"));
         textView.setLayoutParams(lParams);
-
-        // 获得根视图并把TextView加进去。
         ViewGroup view = (ViewGroup) getWindow().getDecorView();
         view.addView(textView);
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_movie_layout);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
@@ -277,18 +271,17 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
 
     private void buildGenreModel(JSONArray genreItems) {
         try {
-
             for (int i = 0; i < genreItems.length(); i++) {
-                int colSpan = Math.random() < 0.3f ? 2 : 1;
+                int colSpan = Math.random() < 0.2f ? 2 : 1;
                 // Swap the next 2 lines to have items with variable
                 // column/row span.
-                int rowSpan;
+//                int rowSpan;
 
                 /*if (colSpan == 1)
                     rowSpan = colSpan;
-                else*/
-                    rowSpan = Math.random() < 0.5f ? 2 : 1;
-//            int rowSpan = colSpan;
+                else
+                    rowSpan = Math.random() < 0.5f ? 2 : 1;*/
+                int rowSpan = Math.random() < 0.2f ? 2 : 1;
                 BlockItem item = new BlockItem(colSpan, rowSpan, i);
                 item.setTopic(genreItems.getJSONObject(i).getString("type"));
 
@@ -302,7 +295,7 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
             //        recyclerView.setBackgroundColor(Color.BLACK);
             recyclerView.setRequestedColumnCount(3);
             recyclerView.setDebugging(false);
-            recyclerView.setRequestedHorizontalSpacing(Utils.dpToPx(GenreActivity.this, 1));
+            recyclerView.setRequestedHorizontalSpacing(Utils.dpToPx(GenreActivity.this, 3));
             recyclerView.addItemDecoration(new SpacesItemDecoration(getResources().getDimensionPixelSize(R.dimen.recycler_padding)));
             recyclerView.setAdapter(new AsymmetricRecyclerViewAdapter<>(GenreActivity.this, recyclerView, genreAdapter));
         } catch (JSONException e) {

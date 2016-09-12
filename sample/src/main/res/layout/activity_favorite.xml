@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="bottom"
-                app:tabIndicatorColor="@color/colorAccent" />
+                app:tabIndicatorColor="@color/material_blue_300" />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

@@ -179,6 +179,18 @@ package="com.github.florent37.materialviewpager.sample">
     </activity>
 
     <activity
+        android:name=".settings.SettingsActivity"
+        android:label="@string/navdrawer_item_settings"
+        android:parentActivityName=".MainActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.ActionBar.Transparent"
+        android:exported="false">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".MainActivity" />
+    </activity>
+
+    <activity
         android:name=".upcoming.upComingActivity"
         android:label="@string/description_upcoming"
         android:parentActivityName=".MainActivity"
@@ -225,6 +237,10 @@ package="com.github.florent37.materialviewpager.sample">
         android:theme="@android:style/Theme.Translucent.NoTitleBar"
         android:label="@string/app_name" />
 
+    <activity
+        android:name="com.spotify.sdk.android.authentication.LoginActivity"
+        android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
     <service
         android:name=".sync.SyncService"
         android:exported="true"
@@ -237,6 +253,8 @@ package="com.github.florent37.materialviewpager.sample">
             android:name="android.content.SyncAdapter"
             android:resource="@xml/syncadapter" />
     </service>
+
+    <service android:name=".service.PlayerService"/>
 
         <!-- [START gcm_receiver] -->
         <receiver

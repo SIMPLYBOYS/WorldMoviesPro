@@ -23,9 +23,10 @@ import com.facebook.FacebookSdk;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.github.florent37.materialviewpager.sample.R;
+import com.github.florent37.materialviewpager.sample.framework.CustomLightBoxActivity;
+import com.github.florent37.materialviewpager.sample.imdb.MovieDetailActivity;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 import com.github.florent37.materialviewpager.sample.nytimes.Movie;
-import com.github.florent37.materialviewpager.sample.imdb.MovieDetailActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -41,12 +42,13 @@ import im.delight.android.webview.AdvancedWebView;
  * Created by aaron on 2016/6/13.
  */
 public class ImdbSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Activity activity;
+    private static Activity activity;
     List<ImdbObject> movieList;
     private String[] bgColors;
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
     public static int visibleThreshold = 2;
+    private static String VIDEO_KEY;
     public static int lastVisibleItem, totalItemCount;
     public static boolean loading;
     public static boolean swipe;
@@ -95,35 +97,35 @@ public class ImdbSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVi
             void clickOnView(View v, int position);
         }
 
-        public void bind(ImdbObject movie, String color, final ProgressBar mProgressBar) {
-            String title = movie.getTitle();
+        public void bind(final ImdbObject imdbObject, String color, final ProgressBar mProgressBar) {
+            String title = imdbObject.getTitle();
             Gson gson = new Gson();
             ImdbObject.RatingItem ratingItem = null;
             JsonElement jsonElement = null;
 
-            if (movie.getRating().compareTo("")!=0) {
-                JsonObject ratingInfo = new JsonParser().parse(movie.getRating()).getAsJsonObject();
+            if (imdbObject.getRating().compareTo("")!=0) {
+                JsonObject ratingInfo = new JsonParser().parse(imdbObject.getRating()).getAsJsonObject();
                 jsonElement = ratingInfo.getAsJsonObject();
                 ratingItem = gson.fromJson(jsonElement, ImdbObject.RatingItem.class);
                 rattingView.setText(ratingItem.getScore());
-                votesView.setText(movie.getVotes());
+                votesView.setText(imdbObject.getVotes());
             }
 
             if (titleView == null)
                 return;
             titleView.setText(title);
 
-            if (movie.getTop() != "0")
-                topView.setText(movie.getTop());
+            if (imdbObject.getTop() != "0")
+                topView.setText(imdbObject.getTop());
 
-            yearView.setText(movie.getYear());
-            int delta = Math.abs(movie.getDelta());
+            yearView.setText(imdbObject.getYear());
+            int delta = Math.abs(imdbObject.getDelta());
             Log.d("0601: ", String.valueOf(delta));
 
             if (delta != 0) {
                 deltaView.setText(String.valueOf(delta));
                 arrowView.setVisibility(View.VISIBLE);
-                if (movie.getDelta() > 0)
+                if (imdbObject.getDelta() > 0)
                     arrowView.setImageResource(R.drawable.ic_trending_up);
                 else
                     arrowView.setImageResource(R.drawable.ic_trending_down);
@@ -132,8 +134,8 @@ public class ImdbSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 arrowView.setVisibility(View.GONE);
             }
 
-            desciptionView.setText(movie.getDescription());
-            Picasso.with(posterView.getContext()).load(movie.getPosterUrl()).placeholder(R.drawable.placeholder).centerCrop().fit()
+            desciptionView.setText(imdbObject.getDescription());
+            Picasso.with(posterView.getContext()).load(imdbObject.getPosterUrl()).placeholder(R.drawable.placeholder).centerCrop().fit()
                     .into(posterView, new Callback() {
                         @Override
                         public void onSuccess() {
@@ -145,6 +147,15 @@ public class ImdbSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVi
                             mProgressBar.setVisibility(View.GONE);
                         }
                     });
+            posterView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent lightBoxIntent = new Intent(v.getContext(), CustomLightBoxActivity.class);
+                    VIDEO_KEY = imdbObject.getTrailerUrl().split("[?]")[1].split("[=]")[1];
+                    lightBoxIntent.putExtra(CustomLightBoxActivity.KEY_VIDEO_ID, VIDEO_KEY);
+                    activity.startActivity(lightBoxIntent);
+                }
+            });
         }
     }
 

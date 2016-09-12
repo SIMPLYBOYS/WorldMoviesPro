@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,37 +10,24 @@
     app:cardMaxElevation="@dimen/cardMaxElevation"
     app:cardPreventCornerOverlap="true"
     app:cardElevation="@dimen/card_elevation">
-
-    <com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/explore_io_clickable_item"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="vertical"
-        android:foreground="?android:selectableItemBackground">
-
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ProgressBar
+            android:id="@android:id/progress"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+        <com.github.florent37.materialviewpager.sample.ui.widget.ProportionalImageView
+            android:id="@+id/picture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <ProgressBar
-                android:id="@android:id/progress"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
-            <com.github.florent37.materialviewpager.sample.ui.widget.ProportionalImageView
-                android:id="@+id/picture"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/placeholder"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:adjustViewBounds="false"
-                android:visibility="visible" />
-        </RelativeLayout>
-    </com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout>
+            android:src="@drawable/placeholder"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:adjustViewBounds="false"
+            android:visibility="visible" />
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

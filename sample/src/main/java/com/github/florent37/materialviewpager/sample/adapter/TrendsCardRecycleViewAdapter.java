@@ -1,6 +1,7 @@
 package com.github.florent37.materialviewpager.sample.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.florent37.materialviewpager.sample.R;
+import com.github.florent37.materialviewpager.sample.framework.CustomLightBoxActivity;
 import com.github.florent37.materialviewpager.sample.model.TrendsObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -29,21 +31,17 @@ import java.util.List;
  * Created by aaron on 2016/6/17.
  */
 public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCardRecycleViewAdapter.ContentViewHolder> {
-    final List<TrendsObject> mContentItems;
-
-    static final int TYPE_HEADER = 0;
-    static final int TYPE_CELL = 1;
-    final Context context;
-
+    private final List<TrendsObject> mContentItems;
+    private final int TYPE_HEADER = 0;
+    private final int TYPE_CELL = 1;
+    private static String VIDEO_KEY;
+    private final Context context;
     private AdapterView.OnItemClickListener mOnItemClickListener;
-
     private ProgressBar mProgressBar;
 
     //the constants value of the header view
     static final int TYPE_PLACEHOLDER = Integer.MIN_VALUE;
-
     private boolean loading;
-
     //the size taken by the header
     private int mPlaceholderSize = 1; //default value
 
@@ -131,7 +129,7 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
             mAdapter.onItemHolderClick(this);;
         }
 
-        public void bind(TrendsObject trendsObject, final ProgressBar mProgressBar) {
+        public void bind(final TrendsObject trendsObject, final ProgressBar mProgressBar, final Context context) {
                     String title = trendsObject.getTitle();
                     this.trendsObject = trendsObject;
                     if (titleView == null)
@@ -154,9 +152,11 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                     /*------- rating -------*/
                     jsonElement = ratingInfo.getAsJsonObject();
                     ratingItem = gson.fromJson(jsonElement, TrendsObject.RatingItem.class);
-                    rattingView.setText(ratingItem.getScore() + " / ");
+                    rattingView.setText(ratingItem.getScore());
                     if (ratingItem.getVotes() != null)
                         votesView.setText(ratingItem.getVotes());
+                    else
+                        votesView.setVisibility(View.GONE);
 
                     /*yearView.setText(tObject.getYear());
                     rattingView.setText(tObject.getRatting());
@@ -209,6 +209,16 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                                     mProgressBar.setVisibility(View.GONE);
                                 }
                             });
+
+                    posterView.setOnClickListener(new View.OnClickListener() {
+                       @Override
+                       public void onClick(View v) {
+                           Intent lightBoxIntent = new Intent(v.getContext(), CustomLightBoxActivity.class);
+                           VIDEO_KEY = trendsObject.getTrailerUrl().split("[?]")[1].split("[=]")[1];
+                           lightBoxIntent.putExtra(CustomLightBoxActivity.KEY_VIDEO_ID, VIDEO_KEY);
+                           context.startActivity(lightBoxIntent);
+                       }
+                    });
         }
     }
 
@@ -251,10 +261,8 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
         SharedPreferences settings = context.getSharedPreferences("settings", 0);
         Boolean cardType = settings.getBoolean("miniCard", false);
 
-        Log.d("0216", "viewType: " + viewType);
         switch (viewType) {
             case TYPE_PLACEHOLDER: {
-                Log.d("0320", "PAGER PLACEHOLDER");
                 if (cardType)
                     root = inflater.inflate(R.layout.material_view_pager_mini_placeholder, container, false);
                 else
@@ -265,7 +273,6 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                 return new ContentViewHolder(root, this);
             }
             case TYPE_HEADER: {
-                Log.d("0320", "TOP HEADER");
                 if (cardType)
                     root = inflater.inflate(R.layout.trends_small_card, container, false);
                 else
@@ -275,7 +282,6 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                 return new ContentViewHolder(root, this);
             }
             case TYPE_CELL: {
-                Log.d("0320", "TOP CELL");
                 if (cardType)
                     root = inflater.inflate(R.layout.trends_small_card, container, false);
                 else
@@ -302,7 +308,7 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                     final String title = trendsObject.getTitle();
                     Log.d("0327", String.valueOf(position) + " title:" + title);
                     mProgressBar.setVisibility(View.VISIBLE);
-                    holder.bind(trendsObject, mProgressBar);
+                    holder.bind(trendsObject, mProgressBar, context);
                 }
                 break;
         }

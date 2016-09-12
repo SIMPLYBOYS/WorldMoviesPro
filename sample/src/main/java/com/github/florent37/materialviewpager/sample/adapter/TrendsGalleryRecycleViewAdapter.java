@@ -29,14 +29,11 @@ public class TrendsGalleryRecycleViewAdapter extends RecyclerView.Adapter<Trends
 
     private ProgressBar mProgressBar;
 
-    private TrendsObject trendsObject;
-
     public boolean inAlbum;
 
     public TrendsGalleryRecycleViewAdapter(TrendsObject trendsObject, boolean album) {
         mItems = new ArrayList<TrendsObject.GalleryItem>();
         inAlbum = album;
-        this.trendsObject = trendsObject;
     }
 
     /*
@@ -111,7 +108,7 @@ public class TrendsGalleryRecycleViewAdapter extends RecyclerView.Adapter<Trends
 
     private void onItemHolderClick(GalleryItemHolder itemHolder) {
         if (mOnItemClickListener != null) {
-            mOnItemClickListener.onItemClick(null, itemHolder.itemView,
+            mOnItemClickListener.onItemClick(null, itemHolder.pictureView,
                     itemHolder.getAdapterPosition(), itemHolder.getItemId());
         }
     }

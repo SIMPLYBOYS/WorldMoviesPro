@@ -3,6 +3,7 @@ package com.github.florent37.materialviewpager.sample.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -36,11 +37,13 @@ public class ImageCursorAdapter extends SimpleCursorAdapter {
         int titleCol, descriptionCol, posterCol;
 
         if (v == null) {
+            Log.d("0906", "view is null");
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.search_row, null);
         }
 
         if (cursor != null) {
+            Log.d("0906", "view is not null");
             titleCol = cursor.getColumnIndex("filmName");
             descriptionCol = cursor.getColumnIndex("filmDescription");
             posterCol = cursor.getColumnIndex("filmPoster");
@@ -57,6 +60,8 @@ public class ImageCursorAdapter extends SimpleCursorAdapter {
 
         TextView description = (TextView) v.findViewById(R.id.descriptioin);
         description.setText(descriptionStr);
+
+        Log.d("0906", type);
 
         if (type == "genre") {
             v.setBackgroundColor(context.getResources().getColor(R.color.material_blue_300));

@@ -22,7 +22,7 @@ import android.preference.PreferenceManager;
 
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.util.UIUtils;
-//import com.github.florent37.materialviewpager.sample.welcome.WelcomeActivity;
+import com.github.florent37.materialviewpager.sample.welcome.WelcomeActivity;
 
 import java.util.TimeZone;
 
@@ -375,7 +375,7 @@ public class SettingsUtils {
      */
     public static void markSyncAttemptedNow(final Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-//        sp.edit().putLong(PREF_LAST_SYNC_ATTEMPTED, UIUtils.getCurrentTime(context)).apply();
+        sp.edit().putLong(PREF_LAST_SYNC_ATTEMPTED, UIUtils.getCurrentTime(context)).apply();
     }
 
     /**
@@ -395,7 +395,7 @@ public class SettingsUtils {
      */
     public static void markSyncSucceededNow(final Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-//        sp.edit().putLong(PREF_LAST_SYNC_SUCCEEDED, UIUtils.getCurrentTime(context)).apply();
+        sp.edit().putLong(PREF_LAST_SYNC_SUCCEEDED, UIUtils.getCurrentTime(context)).apply();
     }
 
     /**

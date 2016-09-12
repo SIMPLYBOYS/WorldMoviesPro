@@ -27,6 +27,9 @@ public class InfoTabFragment extends Fragment {
             case "Japan":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.japan).into(thumbnailView);
                 break;
+            case "中國香港":
+                Picasso.with(thumbnailView.getContext()).load(R.drawable.hong_kong).into(thumbnailView);
+                break;
             case "Brazil":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.brazil).into(thumbnailView);
                 break;
@@ -40,6 +43,7 @@ public class InfoTabFragment extends Fragment {
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.newzealand).into(thumbnailView);
                 break;
             case "한국":
+            case "Korea":
             case "South Korea":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.korea).into(thumbnailView);
                 break;
@@ -57,6 +61,9 @@ public class InfoTabFragment extends Fragment {
                 break;
             case "Spain":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.es).into(thumbnailView);
+                break;
+            case "Turkey":
+                Picasso.with(thumbnailView.getContext()).load(R.drawable.turkey).into(thumbnailView);
                 break;
             case "Sweden":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.sweden).into(thumbnailView);
@@ -83,6 +90,7 @@ public class InfoTabFragment extends Fragment {
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.hong_kong).into(thumbnailView);
                 break;
             case "China":
+            case "中國大陸":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.china).into(thumbnailView);
                 break;
             case "Denmark":
@@ -90,6 +98,9 @@ public class InfoTabFragment extends Fragment {
                 break;
             case "Taiwan":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.taiwan).into(thumbnailView);
+                break;
+            case "Russia":
+                Picasso.with(thumbnailView.getContext()).load(R.drawable.ru).into(thumbnailView);
                 break;
             case "Américain":
             case "미국":

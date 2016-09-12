@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -41,6 +43,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.sackcentury.shinebuttonlib.ShineButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,6 +66,9 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
     private RecyclerView myRecyclerView;
     private LinearLayoutManager linearLayoutManager;
     private TrendsSlideRecycleViewAdapter trendsSlideAdapter;
+    private MenuItem bookmarkItem = null;
+    LinearLayout bookmarkActionView;
+    private ShineButton bookmarkView = null;
     private List<TrendsObject.GalleryItem> list = null;
     private MenuItem searchItem, shareItem;
     private SearchView searchView = null;
@@ -143,15 +149,45 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
             }
         }
 
+        bookmarkActionView = (LinearLayout) getLayoutInflater().inflate(R.layout.bookmark_image, null);
+        bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
+        bookmarkView.init(this);
+        bookmarkView.getLayoutParams().height=96;
+        bookmarkView.getLayoutParams().width=96;
+        bookmarkView.setColorFilter(getResources().getColor(R.color.app_white));
+        bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
         // Retrieve the share menu item
         shareItem = menu.findItem(R.id.action_share);
         searchItem = menu.findItem(R.id.action_search);
+        bookmarkItem = menu.findItem(R.id.action_bookmark);
+        bookmarkItem.setActionView(bookmarkView);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
+
+        if (trendsObject.getBookmark()) {
+            bookmarkView.setChecked(true);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+        } else {
+            bookmarkView.setChecked(false);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+        }
+
+        bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(View view, boolean checked) {
+//                Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
+                Toast.makeText(TrendsSlideActivity.this, "Bookmark "+checked+" !!!", Toast.LENGTH_SHORT).show();
+                if (checked)
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+                else
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                //TODO bookmark info for the user's acccount
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

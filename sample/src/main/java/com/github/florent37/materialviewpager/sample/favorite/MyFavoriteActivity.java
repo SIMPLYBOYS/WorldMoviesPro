@@ -21,13 +21,13 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.github.florent37.materialviewpager.sample.MainActivity;
 import com.github.florent37.materialviewpager.sample.R;
+import com.github.florent37.materialviewpager.sample.fragment.FavoriteInfoTabFragment;
 import com.github.florent37.materialviewpager.sample.fragment.TabFragment;
 import com.github.florent37.materialviewpager.sample.genre.GenreActivity;
 import com.github.florent37.materialviewpager.sample.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.sample.model.User;
 import com.github.florent37.materialviewpager.sample.nytimes.nyTimesActivity;
 import com.github.florent37.materialviewpager.sample.upcoming.upComingActivity;
-import com.github.florent37.materialviewpager.sample.util.PrefUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -36,12 +36,13 @@ import java.util.List;
 /**
  * Created by aaron on 2016/6/21.
  */
-public class MyFavoriteActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener{
+public class MyFavoriteActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener {
     private TextView userName;
     private ImageView userImage;
-    int lastSelectedPosition = 0;
-    BottomNavigationBar bottomNavigationBar;
-    BadgeItem numberBadgeItem;
+    private User user;
+    private int lastSelectedPosition = 0;
+    private BottomNavigationBar bottomNavigationBar;
+    private BadgeItem numberBadgeItem;
     protected static final int NAV_ITEM_TREND = 0;
     protected static final int NAV_ITEM_UPCOMING = 1;
     protected static final int NAV_ITEM_IMDB = 2;
@@ -51,13 +52,13 @@ public class MyFavoriteActivity extends AppCompatActivity implements BottomNavig
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
+        user = (User) getIntent().getSerializableExtra("user");;
         setupToolbar();
         setupViewPager();
         setupCollapsingToolbar();
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         userName = (TextView) findViewById(R.id.name);
         userImage = (ImageView) findViewById(R.id.avatar);
-        User user = PrefUtils.getCurrentUser(getApplicationContext());
         userName.setText(user.name);
         Picasso.with(userImage.getContext()).load(user.pictureUrl).placeholder(R.drawable.person_image_empty)
                 .fit()
@@ -65,6 +66,7 @@ public class MyFavoriteActivity extends AppCompatActivity implements BottomNavig
                 .into(userImage);
         refresh();
         bottomNavigationBar.setTabSelectedListener(this);
+
     }
 
     private void refresh() {
@@ -78,7 +80,6 @@ public class MyFavoriteActivity extends AppCompatActivity implements BottomNavig
 
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
-
         bottomNavigationBar
                 .addItem(new BottomNavigationItem(R.drawable.ic_trending_up, R.string.navdrawer_item_explore).setActiveColorResource(R.color.material_orange_900).setBadgeItem(numberBadgeItem))
                 .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
@@ -92,14 +93,12 @@ public class MyFavoriteActivity extends AppCompatActivity implements BottomNavig
     private void setupCollapsingToolbar() {
         final CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(
                 R.id.collapse_toolbar);
-
         collapsingToolbar.setTitleEnabled(false);
     }
 
     private void setupViewPager() {
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
@@ -113,7 +112,7 @@ public class MyFavoriteActivity extends AppCompatActivity implements BottomNavig
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(new TabFragment(), "Collection");
+        adapter.addFrag(FavoriteInfoTabFragment.newInstance(user), "Collection");
         adapter.addFrag(new TabFragment(), "Fans");
         adapter.addFrag(new TabFragment(), "Following");
 

@@ -22,6 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -37,10 +39,12 @@ import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectReques
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
+import com.github.florent37.materialviewpager.sample.util.BuildModelUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.sackcentury.shinebuttonlib.ShineButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +56,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
+
 /**
  * Created by aaron on 2016/5/3.
  */
@@ -62,10 +68,13 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
     private final String IMDB_OBJECT = "IMDB_OBJECT";
     private ImdbObject imdbObject;
     private RecyclerView myRecyclerView;
+    LinearLayout bookmarkActionView;
+    private ShineButton bookmarkView = null;
     private LinearLayoutManager linearLayoutManager;
     private ImdbSlideRecycleViewAdapter imdbSlideAdapter;
     private List<ImdbObject.GalleryItem> list = null;
     private MenuItem searchItem, shareItem;
+    private MenuItem bookmarkItem = null;
     private SearchView searchView = null;
     public static final String FILM_NAME = "filmName";
     public static final String FILM_DESCRIPTION = "filmDescription";
@@ -146,15 +155,55 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
             }
         }
 
+        bookmarkActionView = (LinearLayout) getLayoutInflater().inflate(R.layout.bookmark_image, null);
+        bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
+        bookmarkView.init(this);
+        bookmarkView.getLayoutParams().height=96;
+        bookmarkView.getLayoutParams().width=96;
+        bookmarkView.setColorFilter(getResources().getColor(R.color.app_white));
+        bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
         // Retrieve the share menu item
         shareItem = menu.findItem(R.id.action_share);
         searchItem = menu.findItem(R.id.action_search);
+        bookmarkItem = menu.findItem(R.id.action_bookmark);
+        bookmarkItem.setActionView(bookmarkView);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
+
+        if (imdbObject.getBookmark()) {
+            bookmarkView.setChecked(true);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+        } else {
+            bookmarkView.setChecked(false);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+        }
+
+        bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(View view, boolean checked) {
+//                Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
+                Toast.makeText(SlideActivity.this, "Bookmark "+checked+" !!!", Toast.LENGTH_SHORT).show();
+
+                if (checked) {
+                    /*JsonArray dataInfo = new JsonParser().parse(imdbObject.getData()).getAsJsonArray();
+                    JsonElement jsonElement = null;
+                    Gson gson = new Gson();
+                    String country;
+                    jsonElement = dataInfo.size() == 5 ? dataInfo.get(2) : dataInfo.get(1);
+                    TrendsObject.DataItem dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+                    country = dataItem.getData().indexOf(":") != -1 ? dataItem.getData().split(":")[1] : dataItem.getData();*/
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+                    LOGD("0812", imdbObject.getTitle());
+                } else {
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                    //TODO bookmark info for the user's acccount
+                }
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -270,7 +319,7 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
                         galleryList = new ArrayList<HashMap<String, String>>();
                         JSONArray contents = response.getJSONArray("contents");
                         Log.d("0504", "title onResponse" + contents);
-                        ImdbObject item = AlbumActivity.buildImdbModel(contents);
+                        ImdbObject item = BuildModelUtils.buildImdbModel(contents);
                         Intent intent = new Intent(SlideActivity.this, MovieDetail.class);
                         intent.putExtra(MovieDetail.IMDB_OBJECT, item);
                         ActivityCompat.startActivity(SlideActivity.this, intent, null);

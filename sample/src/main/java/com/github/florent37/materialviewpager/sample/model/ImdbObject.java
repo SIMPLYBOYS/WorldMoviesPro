@@ -29,6 +29,7 @@ public class ImdbObject implements Serializable {
     private String detailPosterUrl;
     private String trailerUrl;
     private String galleryUrl;
+    private boolean bookmark;
 
     public class GalleryItem {
         private String type;
@@ -66,6 +67,12 @@ public class ImdbObject implements Serializable {
         }
     }
 
+    public void setBookmark(boolean bookmark) {
+        this.bookmark = bookmark;
+    }
+
+    public Boolean getBookmark() { return this.bookmark;}
+
     public class RatingItem {
         private String score;
         private String votes;
@@ -96,6 +103,7 @@ public class ImdbObject implements Serializable {
         this.detailPosterUrl = detailPosterUrl;
         this.trailerUrl = trailerUrl;
         this.galleryUrl = galleryUrl;
+        this.bookmark = false;
     }
 
     public String getCast() { return cast;}

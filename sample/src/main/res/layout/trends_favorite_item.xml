@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/explore_io_card_container"
+    android:layout_width="140dp"
+    android:layout_height="180dp"
+    android:orientation="horizontal"
+    app:cardCornerRadius="2dp"
+    app:cardUseCompatPadding="false">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/picture"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:adjustViewBounds="true"
+            android:visibility="visible" />
+        <ProgressBar
+            android:id="@android:id/progress"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center" />
+        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+            android:id="@+id/movie_title"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:textSize="14dp"
+            android:visibility="invisible"
+            app:font="Roboto-Bold.ttf"
+            android:text="111111111111111111112222222222222222222222223333333333333333333333333444444444444444555555555"
+            android:textColor="@color/app_white"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginBottom="65dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

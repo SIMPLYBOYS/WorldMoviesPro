@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fbutton="http://schemas.android.com/tools"
+    style="@style/Widget.CardContent"
+    android:id="@+id/gallery_container"
+    android:gravity="center_vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <com.github.florent37.materialviewpager.sample.framework.FlatButton
+            android:id="@+id/nytimes_all"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="left|top"
+            android:text="See All"
+            android:textSize="10dp"
+            fbutton:cornerRadius="15dp"
+            fbutton:shadowEnabled="true"
+            fbutton:shadowHeight="6dp"
+            android:textColor="@android:color/white"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true" />
+        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+            android:id="@+id/nytimes_picNum"
+            android:layout_width="35dp"
+            android:layout_height="16dp"
+            android:text="  10"
+            android:textSize="10dp"
+            android:textColor="@color/app_body_text_2"
+            android:paddingTop="0dp"
+            app:font="Roboto-Bold.ttf"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="36dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/nytimes_picNumView" />
+        <com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView
+            android:layout_width="55dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="1dp"
+            app:aspectRatio="@dimen/aspect_16_9"
+            android:id="@+id/nytimes_picNumView">
+            <ImageView
+                android:id="@+id/nytimes_media"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerInside"/>
+        </com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/nytimes_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
+

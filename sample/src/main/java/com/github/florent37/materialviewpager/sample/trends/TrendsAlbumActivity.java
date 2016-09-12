@@ -25,6 +25,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -42,6 +44,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.sackcentury.shinebuttonlib.ShineButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,6 +69,9 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
     private TrendsGalleryRecycleViewAdapter trendsGalleryAdapter;
     private List<TrendsObject.GalleryItem> list = null;
     private MenuItem searchItem, shareItem;
+    private MenuItem bookmarkItem = null;
+    LinearLayout bookmarkActionView;
+    private ShineButton bookmarkView = null;
     private SearchView searchView = null;
     public static final String FILM_NAME = "filmName";
     private SimpleCursorAdapter mAdapter;
@@ -127,20 +133,28 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
         myRecyclerView.getItemAnimator().setMoveDuration(1000);
         myRecyclerView.getItemAnimator().setRemoveDuration(1000);
         trendsGalleryAdapter = new TrendsGalleryRecycleViewAdapter(trendsObject, true);
-        staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        myRecyclerView.setLayoutManager(staggeredGridLayoutManager);
 
         //------- deserialize Gallery JSON object -------//
         Gson gson = new Gson();
         JsonArray jsonArray = new JsonParser().parse(trendsObject.getGalleryUrl()).getAsJsonArray();
         list = new ArrayList<TrendsObject.GalleryItem>();
+
         for (int i = 0; i < jsonArray.size(); i++) {
             JsonElement str = jsonArray.get(i);
             TrendsObject.GalleryItem obj = gson.fromJson(str, TrendsObject.GalleryItem.class);
             list.add(obj);
             trendsGalleryAdapter.addItem(i,obj);
         }
+
+        if (trendsGalleryAdapter.getItemCount() < 20) {
+            staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        } else if (trendsGalleryAdapter.getItemCount() < 40) {
+            staggeredGridLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+        } else {
+            staggeredGridLayoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
+        }
         //------- deserialize Gallery JSON object -------//
+        myRecyclerView.setLayoutManager(staggeredGridLayoutManager);
         myRecyclerView.setAdapter(trendsGalleryAdapter);
         trendsGalleryAdapter.setOnItemClickListener(this);
         loadHints(); //chaching for search hint
@@ -160,14 +174,44 @@ public class TrendsAlbumActivity extends AppCompatActivity implements AdapterVie
             }
         }
 
+        bookmarkActionView = (LinearLayout) getLayoutInflater().inflate(R.layout.bookmark_image, null);
+        bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
+        bookmarkView.init(this);
+        bookmarkView.getLayoutParams().height=96;
+        bookmarkView.getLayoutParams().width=96;
+        bookmarkView.setColorFilter(getResources().getColor(R.color.app_white));
+        bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
         shareItem = menu.findItem(R.id.action_share); // Retrieve the share menu item
         searchItem = menu.findItem(R.id.action_search);
+        bookmarkItem = menu.findItem(R.id.action_bookmark);
+        bookmarkItem.setActionView(bookmarkView);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
+
+        if (trendsObject.getBookmark()) {
+            bookmarkView.setChecked(true);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+        } else {
+            bookmarkView.setChecked(false);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+        }
+
+        bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(View view, boolean checked) {
+//                Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
+                Toast.makeText(TrendsAlbumActivity.this, "Bookmark "+checked+" !!!", Toast.LENGTH_SHORT).show();
+                if (checked)
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+                else
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                //TODO bookmark info for the user's acccount
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

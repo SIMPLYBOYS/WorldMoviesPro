@@ -5,9 +5,15 @@ package com.github.florent37.materialviewpager.sample.util;
  */
 import android.content.ContentProvider;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.text.format.Time;
 
+import junit.framework.Assert;
+
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -53,5 +59,44 @@ public class ParserUtils {
             recycle.append(strings.get(i));
         }
         return recycle.toString();
+    }
+
+    public static String encode(@NonNull String uriString) {
+        if (TextUtils.isEmpty(uriString)) {
+            Assert.fail("Uri string cannot be empty!");
+            return uriString;
+        }
+        // getQueryParameterNames is not exist then cannot iterate on queries
+        if (Build.VERSION.SDK_INT < 11) {
+            return uriString;
+        }
+
+        // Check if uri has valid characters
+        // See https://tools.ietf.org/html/rfc3986
+        Pattern allowedUrlCharacters = Pattern.compile("([A-Za-z0-9_.~:/?\\#\\[\\]@!$&'()*+,;" +
+                "=-]|%[0-9a-fA-F]{2})+");
+        Matcher matcher = allowedUrlCharacters.matcher(uriString);
+        String validUri = null;
+        if (matcher.find()) {
+            validUri = matcher.group();
+        }
+        if (TextUtils.isEmpty(validUri) || uriString.length() == validUri.length()) {
+            return uriString;
+        }
+
+        // The uriString is not encoded. Then recreate the uri and encode it this time
+        Uri uri = Uri.parse(uriString);
+        Uri.Builder uriBuilder = new Uri.Builder()
+                .scheme(uri.getScheme())
+                .authority(uri.getAuthority());
+        for (String path : uri.getPathSegments()) {
+            uriBuilder.appendPath(path);
+        }
+        for (String key : uri.getQueryParameterNames()) {
+            uriBuilder.appendQueryParameter(key, uri.getQueryParameter(key));
+        }
+        String correctUrl = uriBuilder.build().toString();
+
+        return correctUrl;
     }
 }

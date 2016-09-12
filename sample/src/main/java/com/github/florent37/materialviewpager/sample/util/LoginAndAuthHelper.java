@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.github.florent37.materialviewpager.sample.settings.SettingsUtils;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
@@ -40,7 +41,6 @@ import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.model.people.PersonBuffer;
-import com.github.florent37.materialviewpager.sample.settings.SettingsUtils;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -50,8 +50,6 @@ import java.util.List;
 
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGE;
-import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGI;
-import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGV;
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGW;
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.makeLogTag;
 

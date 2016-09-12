@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -14,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -53,6 +53,7 @@ import com.github.florent37.materialviewpager.sample.adapter.TrendsCardRecycleVi
 import com.github.florent37.materialviewpager.sample.fragment.DefaultFragment;
 import com.github.florent37.materialviewpager.sample.fragment.RecyclerViewFragment;
 import com.github.florent37.materialviewpager.sample.fragment.TrendsFragment;
+import com.github.florent37.materialviewpager.sample.http.CustomJSONArrayRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.model.TrendsObject;
@@ -63,7 +64,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -73,19 +76,21 @@ import java.util.TimerTask;
 
 import io.fabric.sdk.android.Fabric;
 
+import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
+
 public class MainActivity extends BaseActivity implements RecyclerViewFragment.Listener, Response.ErrorListener {
 
     private MaterialViewPager mViewPager;
     public static final String REQUEST_TAG = "MainVolleyActivity";
-    private Context mContext;
     private SwipeRefreshLayout mSwipeRefreshLayout;// SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
     private boolean mActionBarShown = true;
+    CustomJSONArrayRequest jsonRequest;
     private String HOST_NAME = Config.HOST_NAME;
     private Toolbar toolbar;
     private RequestQueue mQueue;
     View headerLogo;
     ImageView headerLogoContent;
-
+    private long mExitTime = 0;
     private int mProgressBarTopWhenActionBarShown;
     private int mViewPagerScrollState = ViewPager.SCROLL_STATE_IDLE;
     private Set<RecyclerViewFragment> mMyRecyclerViewFragments = new HashSet<RecyclerViewFragment>();
@@ -96,8 +101,10 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     private int SlideIndex;
     private FragmentStatePagerAdapter pagerAdapter;
     private SharedPreferences sp;
-    final int tabCount = 5; //TODO title items design
+    final int tabCount = 6;
     public static final String FILM_NAME = "filmName";
+    String[] from = new String [] {FILM_NAME};
+    int[] to = new int[] { R.id.text1};
     private ImageCursorAdapter mAdapter;
     private static JSONObject[] MOVIES = {};
     private SearchView searchView = null;
@@ -122,6 +129,8 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                     return TrendsFragment.newInstance(position);
                 case 4:
                     return TrendsFragment.newInstance(position);
+                case 5:
+                    return TrendsFragment.newInstance(position);
                 default:
                     return DefaultFragment.newInstance(position);
             }
@@ -145,6 +154,8 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                     return getResources().getString(R.string.Korea);
                 case 4:
                     return getResources().getString(R.string.France);
+                case 5:
+                    return getResources().getString(R.string.China);
                 default:
                     return "Page " + position;
             }
@@ -182,13 +193,18 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                         break;
                     case 3:
                         imageUrl = "http://graduate.carleton.ca/wp-content/uploads/prog-banner-masters-international-affairs-juris-doctor.jpg";
-                        color = getResources().getColor(R.color.green_teal);
+                        color = getResources().getColor(R.color.material_grey_500);
                         newDrawable = getResources().getDrawable(R.drawable.korea_circle);
                         break;
                     case 4:
-                        imageUrl = "http://graduate.carleton.ca/wp-content/uploads/prog-banner-masters-international-affairs-juris-doctor.jpg";
-                        color = getResources().getColor(R.color.green_teal);
+                        imageUrl = "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
+                        color = getResources().getColor(R.color.material_lime_500);
                         newDrawable = getResources().getDrawable(R.drawable.france_circle);
+                        break;
+                    case 5:
+                        imageUrl = "http://graduate.carleton.ca/wp-content/uploads/prog-banner-masters-international-affairs-juris-doctor.jpg";
+                        color = getResources().getColor(R.color.material_red_A400);
+                        newDrawable = getResources().getDrawable(R.drawable.china_circle);
                         break;
                 }
 
@@ -219,12 +235,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
 
         setContentView(R.layout.activity_main);
         getOverflowMenu();
-        mContext = this;
-
-        /*ContentResolver mContentResolver = mContext.getContentResolver();
-
-        ContentProviderClient provider = mContentResolver.acquireContentProviderClient("com.github.florent37.materialviewpager.sample");
-        Log.d("0224", "provider: " + provider);*/
 
         if (!BuildConfig.DEBUG)
             Fabric.with(this, new Crashlytics());
@@ -252,7 +262,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         mViewPager.getViewPager().setAdapter(pagerAdapter);
         mViewPager.getViewPager().setOffscreenPageLimit(mViewPager.getViewPager().getAdapter().getCount());
         mViewPager.getPagerTitleStrip().setViewPager(mViewPager.getViewPager());
-        sp = getSharedPreferences("CURRENT_PAGE", Context.MODE_PRIVATE);
+        sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Log.d("0328", "current_page: " + readCurrentPagePref());
         mViewPager.getViewPager().setCurrentItem(readCurrentPagePref(), true);
         View logo = findViewById(R.id.headerLogo);
@@ -293,26 +303,20 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 int SlideIndex = 0;
 
                 switch (channel) {
-                    case 0:
+                    default:
                         TrendsCardRecycleViewAdapter trendsAdapter = (TrendsCardRecycleViewAdapter)fragment.setupRecyclerAdapter();
 
                         if (trendsAdapter == null)
                             return;
+
                         List<TrendsObject> mContentItems = trendsAdapter.getItem();
-                        Log.d("0419", String.valueOf(mContentItems.size()));
+                        LOGD("0419", String.valueOf(mContentItems.size()));
 
                         if (mContentItems.size() == 0)
                             return;
 
                         SlideIndex = random.nextInt(mContentItems.size());
-                        /*if (mContentItems.get(SlideIndex).getSlate().equals("N/A"))
-                            mViewPager.setImageUrl(mContentItems.get(SlideIndex).getPosterUrl(), 250);
-                        else
-                            mViewPager.setImageUrl(mContentItems.get(SlideIndex).getSlate(), 250);*/
-                        break;
-                    default:
-//                        DefaultCardRecycleViewAdapter adapter_2 = (DefaultCardRecycleViewAdapter)fragment.setupRecyclerAdapter();
-                        //Do nothing
+                        mViewPager.setImageUrl(mContentItems.get(SlideIndex).getPosterUrl(), 750);
                         break;
                 }
             }
@@ -330,7 +334,9 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
 
         //------------ End of Timer -------------//
 
-        loadHints(); //chaching for search hint
+//        loadHints(); //chaching for search hint
+        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
+        mAdapter = new ImageCursorAdapter(this, R.layout.search_row, null, from, to, "main");
         overridePendingTransition(0, 0);
     }
 
@@ -355,8 +361,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 to,
                 "main");
 
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
+        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
 
         jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
@@ -371,9 +376,11 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Remote Server connect fail from MainActivity!", Toast.LENGTH_SHORT).show();
             }
         });
+
+        jsonRequest.setTag(REQUEST_TAG);
         mQueue.add(jsonRequest);
     }
 
@@ -387,6 +394,14 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             return false;
+        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                Toast.makeText(MainActivity.this, "再按一次退出WorldMoviePro", Toast.LENGTH_SHORT).show();
+                mExitTime = System.currentTimeMillis();
+            } else {
+                finish();
+            }
+            return true;
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -424,7 +439,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     }
 
     private void getOverflowMenu() {
-        try{
+        try {
             ViewConfiguration config = ViewConfiguration.get(this);
             Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
             if(menuKeyField != null){
@@ -465,8 +480,8 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     @Override
     public void trySetupSwipeRefresh() {
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-
         mSwipeRefreshLayout.setColorSchemeResources(R.color.flat_button_text);
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -523,9 +538,11 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         ascending.setChecked(settings.getBoolean("ascending", false));
 
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
+        mQueryTextView.setThreshold(1);
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
         mQueryTextView.setHint("movie title or cast name");
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -550,7 +567,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
 
             @Override
             public boolean onSuggestionClick(int position) {
-                Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
+                Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
                 final String feedName = cursor.getString(1);
                 searchView.post(new Runnable(){
                     @Override
@@ -569,15 +586,38 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
 
     private void giveSuggestions(String query) {
         final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        String url;
         try {
-            for (int i = 0; i < MOVIES.length; i++) {
-                if (MOVIES[i].getString("title").toLowerCase().contains(query.toLowerCase()))
-                    cursor.addRow(new Object[]{i, MOVIES[i].getString("title"), MOVIES[i].getString("description"), MOVIES[i].getString("posterUrl")});
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            url = Config.HOST_NAME + "search/2/" + URLEncoder.encode(query, "UTF-8");;
+        }  catch (UnsupportedEncodingException e) {
+            throw new AssertionError("UTF-8 is unknown");
         }
-        mAdapter.changeCursor(cursor);
+        Log.d("0905", url);
+        jsonRequest = new CustomJSONArrayRequest(url, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                JSONArray contents = ((JSONArray) response);
+                Log.d("0905", String.valueOf(contents));
+                MOVIES = getJsonObjectArray(contents);
+                String posterUrl;
+                try {
+                    for (int i = 0; i < MOVIES.length; i++) {
+                        JSONObject obj = MOVIES[i].getJSONObject("_source");
+                        posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
+                        cursor.addRow(new Object[]{i, obj.getString("title"), "", posterUrl});
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mAdapter.changeCursor(cursor);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mQueue.add(jsonRequest);
     }
 
     @Override
@@ -588,7 +628,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
             if (isNavDrawerOpen()) {
                 closeNavDrawer();
             }
-            dialog.show();
+//            dialog.show();
         }
     }
 
@@ -729,20 +769,20 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
 
     @Override
     public void onFragmentAttached(RecyclerViewFragment fragment) {
-        Log.d("0311", "onFragmentAttached: ");
+        LOGD("0311", "onFragmentAttached: ");
         mMyRecyclerViewFragments.add(fragment);
     }
 
     @Override
     public void onFragmentDetached(RecyclerViewFragment fragment) {
-        Log.d("0311", "onFragmentDetached: ");
+        LOGD("0311", "onFragmentDetached: ");
         mMyRecyclerViewFragments.remove(fragment);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("0224", "onResume");
+
         if (tTimer == null) {
             tTimer = new Timer();
             tTimer.schedule(tTask, GET_DATA_INTERVAL, GET_DATA_INTERVAL);

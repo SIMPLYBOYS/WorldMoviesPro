@@ -16,9 +16,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
@@ -94,8 +96,10 @@ public class ImdbReviewTabFragment extends Fragment implements Response.ErrorLis
 
                 if (!rAdapter.loading && rAdapter.totalItemCount <= (rAdapter.lastVisibleItem + rAdapter.visibleThreshold)) {
                     // End has been reached
-                    fetchReviews();
-                    rAdapter.loading = true;
+                    if (maxSize == 0 || rAdapter.totalItemCount < maxSize) {
+                        fetchReviews();
+                        rAdapter.loading = true;
+                    }
                 }
             }
 
@@ -160,7 +164,8 @@ public class ImdbReviewTabFragment extends Fragment implements Response.ErrorLis
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    reviewItems.remove(reviewItems.size() - 1);
+                    if (reviewItems.size() > 0)
+                        reviewItems.remove(reviewItems.size() - 1);
                     rAdapter.notifyItemRemoved(reviewItems.size());
                     JSONArray contents = response.getJSONArray("review");
                     maxSize = response.getInt("size");
@@ -199,6 +204,8 @@ public class ImdbReviewTabFragment extends Fragment implements Response.ErrorLis
 //                Toast.makeText(getActivity(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
             }
         });
+        RetryPolicy policy = new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsonRequest_q.setRetryPolicy(policy);
         mQueue.add(jsonRequest_q);
     }
 

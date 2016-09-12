@@ -3,15 +3,12 @@ package com.github.florent37.materialviewpager.sample.fragment;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -36,13 +32,13 @@ import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.ImdbGalleryRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.framework.CustomLightBoxActivity;
 import com.github.florent37.materialviewpager.sample.framework.CustomTextView;
+import com.github.florent37.materialviewpager.sample.framework.FlatButton;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.imdb.AlbumActivity;
 import com.github.florent37.materialviewpager.sample.imdb.MovieDetailActivity;
 import com.github.florent37.materialviewpager.sample.imdb.SlideActivity;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
-import com.github.florent37.materialviewpager.sample.trends.TrendsSlideActivity;
 import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
@@ -52,28 +48,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-
-import lecho.lib.hellocharts.formatter.SimpleLineChartValueFormatter;
-import lecho.lib.hellocharts.gesture.ZoomType;
-import lecho.lib.hellocharts.listener.ViewportChangeListener;
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.AxisValue;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.ValueShape;
-import lecho.lib.hellocharts.model.Viewport;
-import lecho.lib.hellocharts.util.ChartUtils;
-import lecho.lib.hellocharts.view.LineChartView;
-import lecho.lib.hellocharts.view.PreviewLineChartView;
 
 /**
  * Created by aaron on 2016/7/28.
@@ -82,8 +61,13 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         YouTubeThumbnailView.OnInitializedListener {
 
     private ImageView thumbnailView;
+    private ImdbInfoTabFragment infoTabFragment;
+    private String REQUEST_TAG = "ImdbInfoTabFragment";
     private View buttonLayout;
-    private TextView plot, metascrore, genre, runtime, country, moreButton, allButton, picNum, year, studio, trailer_title;
+    private Activity mActivity;
+    private TextView plot, metascrore, genre, runtime, country, picNum, year, studio, trailer_title;
+    private String CLIENT_ID;
+    private FlatButton moreButton, allButton;
     private CustomTextView description;
     private RecyclerView galleryRecyclerView;
     private String VIDEO_KEY;
@@ -99,12 +83,6 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
     private ImdbObject imdbObject;
     MaterialDialog.Builder builder;
     MaterialDialog dialog;
-    private LineChartView ratingChart, positionChart;
-    private PreviewLineChartView ratingPreview, positionPreView;
-    private LineChartData ratingData, positionData;
-    private LineChartData ratingPreviewData, positionPreviewData;
-    private String HOST_NAME = Config.HOST_NAME;
-    private final String TAG_RECORDS = "records";
 
     public static ImdbInfoTabFragment newInstance(Object object) {
         ImdbInfoTabFragment fragment = new ImdbInfoTabFragment();
@@ -115,10 +93,12 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        infoTabFragment = this;
         Gson gson = new Gson();
+        mActivity = getActivity();
         View view = inflater.inflate(R.layout.imdb_info_fragment, container, false);
+        CLIENT_ID = Config.CLIENT_ID;
         nested_scrollview = (NestedScrollView) view.findViewById(R.id.nested_scrollview);
         imdbObject = (ImdbObject) getArguments().getSerializable("imdb");
         description = (CustomTextView) view.findViewById(R.id.description);
@@ -131,10 +111,10 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         runtime = (TextView) view.findViewById(R.id.runtime);
         metascrore = (TextView) view.findViewById(R.id.metascrore);
         thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
-        moreButton = (TextView) view.findViewById(R.id.button_more);
-        allButton = (TextView) view.findViewById(R.id.button_all);
+        allButton = (FlatButton) view.findViewById(R.id.button_all);
         picNum = (TextView) view.findViewById(R.id.picNum);
         description.setText(imdbObject.getPlot());
+        allButton.setButtonColor(getResources().getColor(R.color.material_grey_400));
 
         if (imdbObject.getPlot() != "")
             plot.setText(imdbObject.getSummery());
@@ -142,21 +122,12 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         if (!imdbObject.getMetaScore().equals("null"))
             metascrore.setText("MetaScore: "+imdbObject.getMetaScore());
 
-        if (imdbObject.getType().compareTo("imdb")!=0) {
-            View chart = view.findViewById(R.id.chart_layout);
-            ViewGroup parent = (ViewGroup) chart.getParent();
-            parent.removeView(chart);
-        } else {
-            fetchRecords(imdbObject.getTitle());
-        }
-
         runtime.setText("RunTime: "+imdbObject.getRunTime());
         country.setText("Country: "+imdbObject.getCountry().split(",")[0]);
         countryFlag(imdbObject.getCountry().split(",")[0], thumbnailView);
         year.setText("ReleaseYear: "+imdbObject.getYear());
         genre.setText("Genre: "+imdbObject.getGenre());
 //        studio.setText(dataItem.getData());
-
         expandableLayout = (ExpandableRelativeLayout) view.findViewById(R.id.expandableLayout);
         buttonLayout = view.findViewById(R.id.expandableButton);
 
@@ -182,7 +153,6 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         });
 
         setupYoutube(view);
-
         //------- Gallery RecyclerView -------//
         galleryRecyclerView = (RecyclerView) view.findViewById(R.id.gallery_recyclerview);
         galleryRecyclerView.getItemAnimator().setAddDuration(1000);
@@ -193,19 +163,20 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         galleryRecyclerView.setLayoutManager(linearLayoutManager);
         //------- Gallery RecyclerView -------//
-
         //------- deserialize Gallery JSON object -------//
         JsonArray galleryInfo = new JsonParser().parse(imdbObject.getGalleryUrl()).getAsJsonArray();
         list = new ArrayList<ImdbObject.GalleryItem>();
+
         for (int i = 0; i < galleryInfo.size(); i++) {
             JsonElement str = galleryInfo.get(i);
             ImdbObject.GalleryItem obj = gson.fromJson(str, ImdbObject.GalleryItem.class);
             list.add(obj);
             imdbGalleryAdapter.addItem(i,obj);
         }
-        //------- deserialize Gallery JSON object -------//
 
+        //------- deserialize Gallery JSON object -------//
         picNum.setText(String.valueOf(list.size()));
+
         if (galleryInfo.size() > 1) {
             galleryRecyclerView.setAdapter(imdbGalleryAdapter);
             imdbGalleryAdapter.setOnItemClickListener(this);
@@ -216,13 +187,11 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         }
 
         linearLayoutManager.scrollToPositionWithOffset(1,650);
-
         return view;
     }
 
     @Override
-    public void onInitializationSuccess(YouTubeThumbnailView view,
-                                        YouTubeThumbnailLoader loader) {
+    public void onInitializationSuccess(YouTubeThumbnailView view, YouTubeThumbnailLoader loader) {
         loader.setVideo(VIDEO_KEY);
     }
 
@@ -254,24 +223,26 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
             //If there are any issues we can show an error dialog.
             result.getErrorDialog(getActivity(), 0).show();
         }
-        Log.d("0801", imdbObject.getTrailerUrl());
-        VIDEO_KEY = imdbObject.getTrailerUrl().split("[?]")[1].split("[=]")[1];
-        youTubeThumbnailView = (YouTubeThumbnailView) view.findViewById(R.id.imageView_thumbnail);
-        youTubeThumbnailView.initialize(Config.YOUTUBE_API_KEY, this);
-        youTubeThumbnailView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent lightBoxIntent = new Intent(v.getContext(), CustomLightBoxActivity.class);
-                lightBoxIntent.putExtra(CustomLightBoxActivity.KEY_VIDEO_ID, VIDEO_KEY);
-                startActivity(lightBoxIntent);
-            }
-        });
 
-        mQueue = CustomVolleyRequestQueue.getInstance(getActivity())
-                .getRequestQueue();
+        if (imdbObject.getTrailerUrl().compareTo("N/A") != 0) {
+            VIDEO_KEY = imdbObject.getTrailerUrl().split("[?]")[1].split("[=]")[1];
+            youTubeThumbnailView = (YouTubeThumbnailView) view.findViewById(R.id.imageView_thumbnail);
+            youTubeThumbnailView.initialize(Config.YOUTUBE_API_KEY, this);
 
+            youTubeThumbnailView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent lightBoxIntent = new Intent(v.getContext(), CustomLightBoxActivity.class);
+                    lightBoxIntent.putExtra(CustomLightBoxActivity.KEY_VIDEO_ID, VIDEO_KEY);
+                    startActivity(lightBoxIntent);
+                }
+            });
+        }
+
+        mQueue = CustomVolleyRequestQueue.getInstance(getActivity()).getRequestQueue();
         CustomJSONObjectRequest jsonRequest_q = null;
         String url = "http://www.youtube.com/oembed?url=https://www.youtube.com/watch?v="+ VIDEO_KEY +"&format=json";
+
         jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -288,107 +259,17 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
                 Toast.makeText(getActivity(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
             }
         });
+
+        jsonRequest_q.setTag(REQUEST_TAG);
+
         mQueue.add(jsonRequest_q);
 
-    }
-
-    private void fetchRecords(String title) {
-        if (mQueue == null)
-            mQueue = CustomVolleyRequestQueue.getInstance(getActivity()).getRequestQueue();
-
-        CustomJSONObjectRequest jsonRequest_q = null;
-
-        if (title != null) {
-            // launch query from searchview
-            try {
-                title = URLEncoder.encode(title, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new AssertionError("UTF-8 is unknown");
-            }
-
-            jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "imdb_records?title=" + title + "&ascending=1", new JSONObject(), new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-
-                        JSONObject c = contents.getJSONObject(0);
-                        Log.d("0514", String.valueOf(c));
-                        JSONArray records = c.getJSONArray(TAG_RECORDS);
-
-                        View view = getView();
-
-                        ratingChart = (LineChartView) view.findViewById(R.id.ratingChart);
-                        positionChart = (LineChartView) view.findViewById(R.id.postitionChart);
-                        ratingPreview = (PreviewLineChartView) view.findViewById(R.id.rating_preview);
-                        positionPreView = (PreviewLineChartView) view.findViewById(R.id.position_preview);
-                        generateData(records);
-                        ratingChart.setLineChartData(ratingData);
-                        positionChart.setLineChartData(positionData);
-
-                        // Disable zoom/scroll for previewed chart, visible chart ranges depends on preview chart viewport so
-                        // zoom/scroll is unnecessary.
-                        ratingChart.setZoomEnabled(false);
-                        ratingChart.setScrollEnabled(false);
-                        ratingPreview.setLineChartData(ratingPreviewData);
-                        ratingPreview.setViewportChangeListener(new ViewportListener());
-                        ratingPreview.setZoomType(ZoomType.HORIZONTAL_AND_VERTICAL);
-                        previewX(ratingChart, ratingPreview, false);
-
-                        positionChart.setZoomEnabled(false);
-                        positionChart.setScrollEnabled(false);
-                        positionPreView.setLineChartData(positionPreviewData);
-                        positionPreView.setViewportChangeListener(new ViewportListener());
-                        positionPreView.setZoomType(ZoomType.HORIZONTAL_AND_VERTICAL);
-                        previewX(positionChart, positionPreView, false);
-
-                    } catch (JSONException e) {
-                        Toast.makeText(getActivity(), "Remote Server error!", Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
-                }
-            } );
-            mQueue.add(jsonRequest_q);
-            return;
-        }
-    }
-
-    /**
-     * Viewport listener for preview chart(lower one). in {@link #onViewportChanged(Viewport)} method change
-     * viewport of upper chart.
-     */
-    private class ViewportListener implements ViewportChangeListener {
-
-        @Override
-        public void onViewportChanged(Viewport newViewport) {
-            // don't use animation, it is unnecessary when using preview chart.
-            ratingChart.setCurrentViewport(newViewport);
-            positionChart.setCurrentViewport(newViewport);
-        }
-
-    }
-
-    private void previewX(LineChartView chart, PreviewLineChartView previewChart, boolean animate) {
-        Viewport tempViewport = new Viewport(chart.getMaximumViewport());
-        float dx = tempViewport.width() / 4;
-        tempViewport.inset(dx, 0);
-        if (animate) {
-            previewChart.setCurrentViewportWithAnimation(tempViewport);
-        } else {
-            previewChart.setCurrentViewport(tempViewport);
-        }
-        previewChart.setZoomType(ZoomType.HORIZONTAL);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Toast.makeText(getActivity(), "Clicked: " + position, Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(view.getContext(), TrendsSlideActivity.class);
+        Intent intent = new Intent(view.getContext(), SlideActivity.class);
         intent.putExtra(MovieDetailActivity.IMDB_OBJECT, imdbObject);
         intent.putExtra(SlideActivity.PIC_POSITION, position);
         startActivityForVersion(intent);
@@ -397,6 +278,9 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mQueue != null)
+            mQueue.cancelAll(REQUEST_TAG);
+        youTubeThumbnailView.destroyDrawingCache();
     }
 
     /**
@@ -413,32 +297,6 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         nested_scrollview.dispatchNestedPreScroll(0, toolbarHeight, null, null);
         nested_scrollview.dispatchNestedScroll(0, 0, 0, 0, new int[]{0, -toolbarHeight});
         nested_scrollview.smoothScrollTo(0, nested_scrollview.getMaxScrollAmount());
-        builder = new MaterialDialog.Builder(getContext())
-                .iconRes(R.drawable.ic_launcher)
-                .limitIconToDefaultSize() // limits the displayed icon size to 48dp
-                .title("Rottentomatoes")
-                .titleColor(Color.BLACK)
-                .backgroundColor(Color.WHITE)
-                .contentColor(Color.BLACK)
-                .content("Redirect to Rottenntomatoes.com ?")
-                .positiveText("Agree")
-                .negativeText("Disagree")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(MaterialDialog dialog, DialogAction which) {
-                        startActivityForVersion(new Intent("android.intent.action.VIEW",
-                                Uri.parse("http://www.rottentomatoes.com/search/?search=" + imdbObject.getTitle())));
-                    }
-                });
-
-        dialog = builder.build();
-        moreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.show();
-
-            }
-        });
 
         allButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -461,109 +319,6 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         }
         else {
             startActivity(intent);
-        }
-    }
-
-    private void generateData(JSONArray records) {
-        try {
-
-            Line line;
-            List<PointValue> values;
-            List<Line> lines = new ArrayList<Line>();
-
-            //---------- Position line ----------//
-            values = new ArrayList<PointValue>();
-            for (int i = 0; i < records.length(); ++i) {
-                // Some random height values, add +200 to make line a little more natural
-                JSONObject jsonItem = (JSONObject) records.getJSONObject(i);
-
-                int position = Integer.parseInt(jsonItem.getString("position"));
-                Log.d("0511", new PointValue(i, position).toString());
-                values.add(new PointValue(i, position));
-            }
-
-            line = new Line(values);
-            line.setColor(Color.BLACK);
-            line.setShape(ValueShape.CIRCLE);
-            line.setHasLabelsOnlyForSelected(true);
-            line.setHasPoints(true);
-            line.setFilled(true);
-            line.setStrokeWidth(1);
-            lines.add(line);
-
-            positionData = new LineChartData(lines);
-            //---------- Position line ----------//
-
-            //---------- Rating line -----------//
-            values = new ArrayList<PointValue>();
-            for (int i = 0; i < records.length(); ++i) {
-                JSONObject jsonItem = records.getJSONObject(i);
-                float rating = Float.parseFloat(jsonItem.getString("rating"));
-                Log.d("0510", new PointValue(i, rating).toString());
-                values.add(new PointValue(i, rating));
-            }
-
-            line = new Line(values);
-            lines = new ArrayList<Line>();
-            line.setShape(ValueShape.SQUARE);
-            line.setColor(ChartUtils.COLOR_RED);
-            line.setHasLabelsOnlyForSelected(true);
-            line.setFormatter(new SimpleLineChartValueFormatter(1));
-            line.setCubic(false);
-            line.setFilled(true);
-            line.setHasPoints(true);
-            line.setStrokeWidth(1);
-            lines.add(line);
-
-            // Data and axes
-            ratingData = new LineChartData(lines);
-            //---------- Rating line -----------//
-
-            List<AxisValue> axisXValues = new ArrayList<AxisValue>();
-
-            // Distance axis(bottom X) with formatter that will ad [km] to values, remember to modify max label charts
-            // value.
-            for (int i = 0; i <records.length(); ++i) {
-                JSONObject jsonItem = records.getJSONObject(i);
-                String year = jsonItem.getString("year");
-                String month = jsonItem.getString("month");
-                String date = jsonItem.getString("date");
-                axisXValues.add(new AxisValue(i).setLabel(year+"-"+month+"-"+date));
-            }
-
-            Axis distanceAxis = new Axis(axisXValues);
-            distanceAxis.setName("Year");
-            distanceAxis.setTextColor(ChartUtils.COLOR_ORANGE);
-            distanceAxis.setMaxLabelChars(8);
-            distanceAxis.setHasLines(true);
-            distanceAxis.setHasTiltedLabels(true);
-
-            ratingData.setAxisXBottom(distanceAxis);
-            positionData.setAxisXBottom(distanceAxis);
-
-            List<AxisValue> axisValues = new ArrayList<AxisValue>();
-            for (int i = 1; i <= 10; i += 1) {
-                axisValues.add(new AxisValue(i).setLabel(String.valueOf(i)));
-            }
-
-            ratingData.setAxisYLeft(new Axis(axisValues).setName("Rating").setMaxLabelChars(3).setTextColor(ChartUtils.COLOR_RED)
-                    .setHasLines(true).setInside(false));
-
-            axisValues = new ArrayList<AxisValue>();
-            for (int j = 1; j <= 250; j += 1) {
-                axisValues.add(new AxisValue(j).setLabel(String.valueOf(j)));
-            }
-            positionData.setAxisYLeft(new Axis(axisValues).setName("Position").setMaxLabelChars(3).setTextColor(Color.BLACK)
-                    .setHasLines(true).setInside(false));
-
-            ratingPreviewData = new LineChartData(ratingData);
-            ratingPreviewData.setAxisXBottom(distanceAxis);
-            positionPreviewData = new LineChartData(positionData);
-            positionPreviewData.setAxisXBottom(distanceAxis);
-
-        } catch (JSONException e) {
-            Toast.makeText(getActivity(), "Remote Server data format error!", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
         }
     }
 }

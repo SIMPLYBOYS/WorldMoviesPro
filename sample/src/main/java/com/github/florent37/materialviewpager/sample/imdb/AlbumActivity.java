@@ -1,5 +1,6 @@
 package com.github.florent37.materialviewpager.sample.imdb;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -25,6 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -38,10 +41,13 @@ import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
+import com.github.florent37.materialviewpager.sample.trends.TrendsFavoritePreference;
+import com.github.florent37.materialviewpager.sample.util.BuildModelUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.sackcentury.shinebuttonlib.ShineButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,8 +73,11 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
     private RecyclerView myRecyclerView;
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
     private ImdbGalleryRecycleViewAdapter imdbGalleryAdapter;
+    LinearLayout bookmarkActionView;
+    private ShineButton bookmarkView = null;
     private List<ImdbObject.GalleryItem> list = null;
     private MenuItem searchItem, shareItem;
+    private MenuItem bookmarkItem = null;
     private SearchView searchView = null;
     public static final String FILM_NAME = "filmName";
     private SimpleCursorAdapter mAdapter;
@@ -83,6 +92,9 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
     private static final String TAG_DETAIL_URL = "detailUrl";
     private static final String TAG_TOP = "top";
     private static final String TAG_DATA = "data";
+    private static final String TAG_INFO = "mainInfo";
+    private static final String TAG_STAFF = "staff";
+    private static final String TAG_REVIEW = "review";
     private static final String TAG_CAST = "cast";
     private static final String TAG_POSTER_URL = "posterUrl";
     private static final String TAG_RATING = "rating";
@@ -97,9 +109,12 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
     private static final String TAG_SLATE = "slate";
     private static final String TAG_RELEASE = "releaseDate";
     private static final String TAG_COUNTRY = "country";
+    private static final String TAG_STORY = "story";
     private static final String TAG_TRAILER = "trailerUrl";
     private static final String TAG_GALLERY_FULL = "gallery_full";
     private static final String TAG_DELTA = "delta";
+    private static TrendsFavoritePreference favor;
+    private static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +148,7 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
         myRecyclerView.getItemAnimator().setMoveDuration(1000);
         myRecyclerView.getItemAnimator().setRemoveDuration(1000);
         imdbGalleryAdapter = new ImdbGalleryRecycleViewAdapter(imdbObject, true);
-        staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        staggeredGridLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
         myRecyclerView.setLayoutManager(staggeredGridLayoutManager);
 
         //------- deserialize Gallery JSON object -------//
@@ -166,14 +181,54 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
             }
         }
 
+        bookmarkActionView = (LinearLayout) getLayoutInflater().inflate(R.layout.bookmark_image, null);
+        bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
+        bookmarkView.init(this);
+        bookmarkView.getLayoutParams().height=96;
+        bookmarkView.getLayoutParams().width=96;
+        bookmarkView.setColorFilter(getResources().getColor(R.color.app_white));
+        bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
         shareItem = menu.findItem(R.id.action_share); // Retrieve the share menu item
         searchItem = menu.findItem(R.id.action_search);
+        bookmarkItem = menu.findItem(R.id.action_bookmark);
+        bookmarkItem.setActionView(bookmarkView);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
+
+        if (imdbObject.getBookmark()) {
+            bookmarkView.setChecked(true);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+        } else {
+            bookmarkView.setChecked(false);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+        }
+
+        bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(View view, boolean checked) {
+//                Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
+                Toast.makeText(AlbumActivity.this, "Bookmark "+checked+" !!!", Toast.LENGTH_SHORT).show();
+
+                if (checked) {
+                    /*JsonArray dataInfo = new JsonParser().parse(imdbObject.getData()).getAsJsonArray();
+                    JsonElement jsonElement = null;
+                    Gson gson = new Gson();
+                    String country;
+                    jsonElement = dataInfo.size() == 5 ? dataInfo.get(2) : dataInfo.get(1);
+                    TrendsObject.DataItem dataItem = gson.fromJson(jsonElement, TrendsObject.DataItem.class);
+                    country = dataItem.getData().indexOf(":") != -1 ? dataItem.getData().split(":")[1] : dataItem.getData();*/
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+                    LOGD("0812", imdbObject.getTitle());
+                } else {
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                    //TODO bookmark info for the user's acccount
+                }
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -261,7 +316,7 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
                     try {
                         JSONArray contents = response.getJSONArray("contents");
                         Log.d("0504", "title onResponse" + contents);
-                        ImdbObject item = buildImdbModel(contents);
+                        ImdbObject item = BuildModelUtils.buildImdbModel(contents);
                         Intent intent = new Intent(AlbumActivity.this, MovieDetail.class);
                         intent.putExtra(MovieDetail.IMDB_OBJECT, item);
                         ActivityCompat.startActivity(AlbumActivity.this, intent, null);
@@ -356,99 +411,4 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
         shareIntent.putExtra(Intent.EXTRA_TEXT, imdbObject.getDetailUrl());
         return shareIntent;
     }
-
-    public static ImdbObject buildImdbModel(JSONArray contents) throws JSONException {
-        JSONObject jsonObj = new JSONObject();
-        JSONArray data = new JSONArray();
-        JSONObject c = contents.getJSONObject(0);
-        JSONObject d = null;
-        int top = 0;
-        String title = c.getString(TAG_TITLE);
-        String year = "";
-        String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
-        String delta = "0";
-        String detailUrl = "";
-
-        if (c.has("detailContent")) {
-            d = c.getJSONObject("detailContent");
-        }
-
-        JSONObject jo = new JSONObject();
-        //----- start dummy GalleryUrl ----
-        jo.put("type", "full");
-        jo.put("url", "");
-        JSONArray galleryFullUrl = new JSONArray();
-        JSONArray cast = new JSONArray();
-        galleryFullUrl.put(jo);
-        //----- end dummy GalleryUrl ----
-
-        if (c.has(TAG_TOP)) {
-            top = c.getInt(TAG_TOP);
-        }
-
-        if (c.has(TAG_DATA)) {
-            data = c.getJSONArray(TAG_DATA);
-            jsonObj = (JSONObject) data.get(1);
-            LOGD("0811", String.valueOf(data));
-        }
-
-        year = c.has(TAG_YEAR) ? c.getString(TAG_YEAR) : c.getString(TAG_RELEASE);
-
-        if (c.has(TAG_DETAIL_URL))
-            detailUrl = c.getString(TAG_DETAIL_URL);
-
-        String description= c.getString(TAG_DESCRIPTION);
-        String rating = c.getString(TAG_RATING);
-
-        if (c.has(TAG_POSTER_URL)) {
-            posterUrl = c.getString(TAG_POSTER_URL);
-        }
-
-        if (c.has(TAG_CAST)) {
-            cast = c.getJSONArray(TAG_CAST);
-        }
-
-        String plot = c.has(TAG_PLOT) ? c.getString(TAG_PLOT) : c.getString("story");
-        String genre = c.has(TAG_GENRE) ? c.getString(TAG_GENRE) : "";
-        String votes = c.has(TAG_VOTES) ? c.getString(TAG_VOTES) : "";
-        String runTime = c.has(TAG_RUNTIME) ? c.getString(TAG_RUNTIME) : "";
-        String metaScore = c.has(TAG_METASCORE) ? c.getString(TAG_METASCORE) : "";
-
-        if (runTime.compareTo("") == 0) {
-            jsonObj = new JSONObject();
-            jsonObj = (JSONObject) data.get(4);
-            runTime = jsonObj.getString("data");
-        }
-
-        if (genre.compareTo("") == 0)
-            genre = c.getString("genre");
-
-        String summery = d != null ? d.getString(TAG_SUMMERY) : c.getString("story");
-        String country = d != null ? d.getString(TAG_COUNTRY) : c.getString(TAG_COUNTRY);
-
-        if (c.has(TAG_GALLERY_FULL)) {
-            galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
-        }
-
-        String trailerUrl;
-        String slate;
-
-        if (c.has(TAG_TRAILER))
-            trailerUrl = c.getString(TAG_TRAILER);
-        else
-            trailerUrl = "N/A";
-
-        if (d != null)
-            slate = d.has(TAG_SLATE) ? d.getString(TAG_SLATE) : "N/A";
-        else
-            slate = "N/A";
-
-        ImdbObject movie = new ImdbObject(title, String.valueOf(top), year, description,
-                rating, posterUrl, slate, summery, plot,
-                genre, votes, runTime, metaScore, delta, country,
-                trailerUrl, cast.toString(), galleryFullUrl.toString(), detailUrl);
-
-        return movie;
-    }
-
 }

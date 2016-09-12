@@ -1,7 +1,6 @@
 package com.github.florent37.materialviewpager.sample.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,8 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
 
 /**
  * Created by aaron on 2016/5/2.
@@ -95,7 +96,7 @@ public class ImdbGalleryRecycleViewAdapter extends RecyclerView.Adapter<ImdbGall
         ImdbObject.GalleryItem item = mItems.get(position - mPlaceholderSize);
         if (item!= null) {
             final String Url = item.getUrl();
-            Log.d("0502", String.valueOf(position) + " Url:" + Url);
+            LOGD("0502", String.valueOf(position) + " Url:" + Url);
             if (!Url.isEmpty()) {
                 mProgressBar.setVisibility(View.VISIBLE);
                 itemHolder.bind(itemHolder, item, mProgressBar);
@@ -148,7 +149,6 @@ public class ImdbGalleryRecycleViewAdapter extends RecyclerView.Adapter<ImdbGall
                             }
                         });
             } else {
-
                 Picasso.with(pictureView.getContext()).load(item.getUrl()).placeholder(R.drawable.placeholder)
                         .fit()
                         .centerCrop()

@@ -21,6 +21,7 @@ public class TrendsObject extends Object implements Serializable {
     private String rating;
     private String releaseDate;
     private int channel;
+    private boolean bookmark;
 
     public class GalleryItem {
         private String type;
@@ -85,6 +86,12 @@ public class TrendsObject extends Object implements Serializable {
         }
     }
 
+    public void setBookmark(boolean bookmark) {
+        this.bookmark = bookmark;
+    }
+
+    public Boolean getBookmark() { return this.bookmark;}
+
     public TrendsObject(String title, String top, String detailUrl, String posterUrl, String trailerUrl,
                         String cast, String review, String staff, String data, String story, String mainInfo, String galleryUrl, String rating, String releaseDate) {
         this.title = title;
@@ -102,6 +109,7 @@ public class TrendsObject extends Object implements Serializable {
         this.mainInfo = mainInfo;
         this.rating = rating;
         this.releaseDate = releaseDate;
+        this.bookmark = false;
     }
 
     public String getTrailerUrl() {

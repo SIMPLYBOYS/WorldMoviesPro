@@ -1,7 +1,6 @@
 package com.github.florent37.materialviewpager.sample.upcoming;
 
 import android.app.SearchManager;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -10,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -40,10 +38,8 @@ import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.sample.adapter.upComingSwipeRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.fragment.RecyclerViewFragment;
-import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
-import com.github.florent37.materialviewpager.sample.imdb.MovieDetailActivity;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
 import com.github.florent37.materialviewpager.sample.ui.widget.MultiSwipeRefreshLayout;
@@ -52,8 +48,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -505,26 +499,28 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         if (monthList == null)
             return; //skip fetching upon network not avaliable.
 
-        if (count < monthList[c.get(Calendar.MONTH)]) {
-            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(0, 1)) +' ' +String.valueOf(getReleaseDate(0, 30)));
+        int start = c.get(Calendar.MONTH)%12;
+
+        if (count < monthList[start]) {
+            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 0, 1)) +' ' +String.valueOf(getReleaseDate(start, 0, 30)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(0, 1) + "&release_to=" + getReleaseDate(0, 30), new JSONObject(), this, this);
-        } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1]) {
-            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(1, 1)) +' ' +String.valueOf(getReleaseDate(1, 31)));
+                    "/imdb?release_from=" + getReleaseDate(start, 0, 1) + "&release_to=" + getReleaseDate(start, 0, 30), new JSONObject(), this, this);
+        } else if (count < monthList[c.get(Calendar.MONTH)%12] + monthList[(c.get(Calendar.MONTH)+1)%12]) {
+            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 1, 1)) +' ' +String.valueOf(getReleaseDate(start, 1, 31)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(1, 1) + "&release_to=" + getReleaseDate(1, 30), new JSONObject(), this, this);
-        } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2]) {
-            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(2, 1)) +' ' +String.valueOf(getReleaseDate(2, 31)));
+                    "/imdb?release_from=" + getReleaseDate(start, 1, 1) + "&release_to=" + getReleaseDate(start, 1, 30), new JSONObject(), this, this);
+        } else if (count < monthList[c.get(Calendar.MONTH)%12] + monthList[(c.get(Calendar.MONTH)+1)%12] + monthList[(c.get(Calendar.MONTH)%12+2)%12]) {
+            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 2, 1)) +' ' +String.valueOf(getReleaseDate(start, 2, 31)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(2, 1) + "&release_to=" + getReleaseDate(2, 30), new JSONObject(), this, this);
-        } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2] + monthList[c.get(Calendar.MONTH)+3]) {
-            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(3, 1)) +' ' +String.valueOf(getReleaseDate(3, 30)));
+                    "/imdb?release_from=" + getReleaseDate(start, 2, 1) + "&release_to=" + getReleaseDate(start, 2, 30), new JSONObject(), this, this);
+        } else if (count < monthList[c.get(Calendar.MONTH)%12] + monthList[(c.get(Calendar.MONTH)+1)%12] + monthList[(c.get(Calendar.MONTH)+2)%12] + monthList[(c.get(Calendar.MONTH)%12+3)%12]) {
+            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 3, 1)) +' ' +String.valueOf(getReleaseDate(start, 3, 30)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(3, 1) + "&release_to=" + getReleaseDate(3, 30), new JSONObject(), this, this);
-        } else if (count < monthList[c.get(Calendar.MONTH)] + monthList[c.get(Calendar.MONTH)+1] + monthList[c.get(Calendar.MONTH)+2] + monthList[c.get(Calendar.MONTH)+3] + monthList[c.get(Calendar.MONTH)+4]) {
-            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(4, 1)) +' ' +String.valueOf(getReleaseDate(4, 31)));
+                    "/imdb?release_from=" + getReleaseDate(start, 3, 1) + "&release_to=" + getReleaseDate(start, 3, 30), new JSONObject(), this, this);
+        } else if (count < monthList[c.get(Calendar.MONTH)%12] + monthList[(c.get(Calendar.MONTH)%12+1)%12] + monthList[(c.get(Calendar.MONTH)+2)%12] + monthList[(c.get(Calendar.MONTH)+3)%12] + monthList[(c.get(Calendar.MONTH)+4)%12]) {
+            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 4, 1)) +' ' +String.valueOf(getReleaseDate(start, 4, 31)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(4, 1) + "&release_to=" + getReleaseDate(4, 30), new JSONObject(), this, this);
+                    "/imdb?release_from=" + getReleaseDate(start, 4, 1) + "&release_to=" + getReleaseDate(start, 4, 30), new JSONObject(), this, this);
         }
 
         if (count > monthList[c.get(Calendar.MONTH)%12] +
@@ -539,14 +535,15 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         }
     }
 
-    private int getReleaseDate(int roll, int day) {
+    private int getReleaseDate(int start, int roll, int day) {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
         c.roll(Calendar.MONTH, roll);
         c.set(Calendar.DAY_OF_MONTH, day);
         String str = df.format(c.getTime());
         String [] parts = TextUtils.split(str, "/");
-        Log.d("0606", TextUtils.join("", parts));
+        if (start+roll >=12)
+            parts[0] = "2017";
         return Integer.parseInt(TextUtils.join("", parts));
     }
 
@@ -580,6 +577,7 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             String year = "";
             String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
             String delta = "0";
+            String votes = "0";
             //----- start dummy GalleryUrl ----
             JSONObject jo = new JSONObject();
             jo.put("type", "full");
@@ -616,16 +614,16 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
 
             String plot = c.getString(TAG_PLOT);
             String genre = c.getString(TAG_GENRE);
-            String votes = c.getString(TAG_VOTES);
             String runTime = c.getString(TAG_RUNTIME);
             String metaScore = c.getString(TAG_METASCORE);
-
             String summery = d.getString(TAG_SUMMERY);
             String country = d.getString(TAG_COUNTRY);
 
-            if (c.has(TAG_GALLERY_FULL)) {
+            if (c.has(TAG_VOTES))
+                votes = c.getString(TAG_VOTES);
+
+            if (c.has(TAG_GALLERY_FULL))
                 galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
-            }
 
             String trailerUrl;
             String slate;

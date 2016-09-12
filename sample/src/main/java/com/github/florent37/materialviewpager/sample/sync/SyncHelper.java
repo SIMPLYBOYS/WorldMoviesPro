@@ -20,10 +20,7 @@ package com.github.florent37.materialviewpager.sample.sync;
  */
 
 import android.accounts.Account;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SyncResult;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -32,31 +29,15 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import android.accounts.Account;
-import android.content.*;
-import android.net.ConnectivityManager;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.util.Log;
-
-import com.github.florent37.materialviewpager.sample.BuildConfig;
-import com.github.florent37.materialviewpager.sample.Config;
-
 import com.github.florent37.materialviewpager.sample.service.DataBootstrapService;
 
 //import com.github.florent37.materialviewpager.sample.feedback.FeedbackApiHelper;
 //import com.github.florent37.materialviewpager.sample.feedback.FeedbackSyncHelper;
-import com.github.florent37.materialviewpager.sample.provider.ScheduleContract;
-import com.github.florent37.materialviewpager.sample.service.DataBootstrapService;
 //import com.github.florent37.materialviewpager.sample.service.SessionAlarmService;
 //import com.github.florent37.materialviewpager.sample.service.SessionCalendarService;
-import com.github.florent37.materialviewpager.sample.settings.SettingsUtils;
 //import com.github.florent37.materialviewpager.sample.sync.userdata.AbstractUserDataSyncHelper;
 //import com.github.florent37.materialviewpager.sample.sync.userdata.UserDataSyncHelperFactory;
 import com.github.florent37.materialviewpager.sample.util.AccountUtils;
-import com.github.florent37.materialviewpager.sample.util.UIUtils;
-
-import java.io.IOException;
 
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.*;
 

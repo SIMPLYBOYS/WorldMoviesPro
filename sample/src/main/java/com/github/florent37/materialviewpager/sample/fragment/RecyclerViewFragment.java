@@ -15,9 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.TestRecyclerViewAdapter;
@@ -225,6 +227,23 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
                     jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=-1", new JSONObject(), this, this);
                 }
                 break;
+            case 5:
+                url = HOST_NAME + "cnTrends";
+                adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
+
+                if (adapter != null && adapter.getItemCount() > 1)
+                    return;
+
+                progressBar = (ProgressBar) getActivity().findViewById(R.id.progressBar);
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.transparent_black), PorterDuff.Mode.SRC_ATOP);
+
+                if (ascending) {
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=1", new JSONObject(), this, this);
+                } else {
+                    jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url + "?ascending=-1", new JSONObject(), this, this);
+                }
+                break;
             default:
                 jsonRequest = new CustomJSONObjectRequest(Request.Method.GET
                         , HOST_NAME + "content/" + String.valueOf(channel), new JSONObject(), this, this);
@@ -234,6 +253,8 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
         if (Refresh)
             mSwipeRefreshLayout.setRefreshing(true);
 
+        RetryPolicy policy = new DefaultRetryPolicy(8000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsonRequest.setRetryPolicy(policy);
         mQueue.add(jsonRequest); //trigger volley request
     }
 

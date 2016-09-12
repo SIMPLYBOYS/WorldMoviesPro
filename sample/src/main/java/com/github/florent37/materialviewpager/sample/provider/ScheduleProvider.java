@@ -33,7 +33,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.github.florent37.materialviewpager.sample.Config;
-//import com.google.samples.apps.iosched.appwidget.ScheduleWidgetProvider;
 import com.github.florent37.materialviewpager.sample.provider.ScheduleContract.Announcements;
 import com.github.florent37.materialviewpager.sample.provider.ScheduleContract.Blocks;
 import com.github.florent37.materialviewpager.sample.provider.ScheduleContract.Feedback;
@@ -71,6 +70,8 @@ import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGE;
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGV;
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.makeLogTag;
+
+//import com.google.samples.apps.iosched.appwidget.ScheduleWidgetProvider;
 
 /**
  * {@link ContentProvider} that stores {@link ScheduleContract} data. Data is

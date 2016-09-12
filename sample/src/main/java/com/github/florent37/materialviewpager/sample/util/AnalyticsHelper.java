@@ -20,13 +20,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.github.florent37.materialviewpager.sample.BuildConfig;
+import com.github.florent37.materialviewpager.sample.R;
+import com.github.florent37.materialviewpager.sample.settings.SettingsUtils;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.github.florent37.materialviewpager.sample.BuildConfig;
-import com.github.florent37.materialviewpager.sample.R;
-import com.github.florent37.materialviewpager.sample.settings.ConfMessageCardUtils;
-import com.github.florent37.materialviewpager.sample.settings.SettingsUtils;
 
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
 
@@ -216,11 +215,6 @@ public class AnalyticsHelper {
                         sendEventWithCustomDimension(category, getAction(prefs, key), label,
                                 SLOT_ATTENDING_DIMENSION,
                                 attendeeType);
-                    } else if (key.equals(ConfMessageCardUtils.PREF_CONF_MESSAGE_CARDS_ENABLED)) {
-                        String label = "Conference Notification Cards";
-                        // ANALYTICS EVENT:  Updated "Conference Notification Cards" setting.
-                        // Contains: The checkbox state of this setting.
-                        sendEvent(category, getAction(prefs, key), label);
                     } else if (key.equals(SettingsUtils.PREF_SYNC_CALENDAR)) {
                         String label = "Sync with Google Calendar";
                         // ANALYTICS EVENT:  Updated "Sync with Google Calendar" setting.

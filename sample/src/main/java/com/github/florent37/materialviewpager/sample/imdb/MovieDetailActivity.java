@@ -59,7 +59,9 @@ import com.github.florent37.materialviewpager.sample.MainActivity;
 import com.github.florent37.materialviewpager.sample.R;
 import com.github.florent37.materialviewpager.sample.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.sample.fragment.ImdbCastTabFragment;
+import com.github.florent37.materialviewpager.sample.fragment.ImdbChartTabFragment;
 import com.github.florent37.materialviewpager.sample.fragment.ImdbInfoTabFragment;
+import com.github.florent37.materialviewpager.sample.fragment.ImdbMusicTabFragment;
 import com.github.florent37.materialviewpager.sample.fragment.ImdbReviewTabFragment;
 import com.github.florent37.materialviewpager.sample.framework.MovieDetail;
 import com.github.florent37.materialviewpager.sample.genre.GenreActivity;
@@ -69,6 +71,7 @@ import com.github.florent37.materialviewpager.sample.model.ImdbObject;
 import com.github.florent37.materialviewpager.sample.nytimes.nyTimesActivity;
 import com.github.florent37.materialviewpager.sample.ui.BaseActivity;
 import com.github.florent37.materialviewpager.sample.upcoming.upComingActivity;
+import com.github.florent37.materialviewpager.sample.util.BuildModelUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -96,6 +99,8 @@ import lecho.lib.hellocharts.gesture.ZoomType;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewLineChartView;
+
+import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
 
 /**
  * Created by aaron on 2016/7/28.
@@ -180,6 +185,11 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
 //        collapsingToolbar.setTitle(trendsObject.getTitle());
         title.setText(imdbObject.getTitle());
         type = imdbObject.getType();
+
+        if (type.compareTo("upcoming") == 0)
+            lastSelectedPosition = 1;
+        else if (type.compareTo("imdb") == 0)
+            lastSelectedPosition = 2;
 
         //------- deserialize Gallery JSON object -------//
         JsonArray galleryInfo = new JsonParser().parse(imdbObject.getGalleryUrl()).getAsJsonArray();
@@ -279,6 +289,9 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         adapter.addFrag(ImdbInfoTabFragment.newInstance(imdbObject), "Info");
         adapter.addFrag(ImdbCastTabFragment.newInstance(imdbObject), "Cast");
         adapter.addFrag(ImdbReviewTabFragment.newInstance(imdbObject), "Review");
+        adapter.addFrag(ImdbMusicTabFragment.newInstance(imdbObject), "Music");
+        if (imdbObject.getType().compareTo("imdb") == 0)
+            adapter.addFrag(ImdbChartTabFragment.newInstance(imdbObject), "Chart");
         viewPager.setAdapter(adapter);
     }
 
@@ -360,7 +373,7 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
     @Override
     public void onTransitionEnd(Transition transition) {
         mTransitionsCount++;
-        if (list.size() < 1)
+        if (list.size() < 2)
             return;
         if (mTransitionsCount == TRANSITIONS_TO_SWITCH) {
             Random random = new Random();
@@ -412,13 +425,12 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
 
         getMenuInflater().inflate(R.menu.trends_menu, menu);
 
         for(int i = 0; i < menu.size(); i++) {
             Drawable drawable = menu.getItem(i).getIcon();
-            if(drawable != null) {
+            if (drawable != null) {
                 drawable.mutate();
                 drawable.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
             }
@@ -442,16 +454,27 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         mQueryTextView.setTextColor(Color.WHITE);
         mQueryTextView.setHintTextColor(Color.WHITE);
 
+        if (imdbObject.getBookmark()) {
+            bookmarkView.setChecked(true);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+        } else {
+            bookmarkView.setChecked(false);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+        }
+
         bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(View view, boolean checked) {
 //                Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
                 Toast.makeText(MovieDetailActivity.this, "Bookmark "+checked+" !!!", Toast.LENGTH_SHORT).show();
-                if (checked)
+                if (checked) {
                     bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
-                else
+                    LOGD("0812", imdbObject.getTitle() + " " + imdbObject.getPosterUrl());
+                    //TODO bookmark
+                } else {
                     bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
-                //TODO bookmark info for the user's acccount
+                    //TODO cancel bookmark
+                }
             }
         });
 
@@ -500,6 +523,7 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         MenuItemCompat.setActionProvider(shareItem, shareActionProvider);
         shareActionProvider.setShareIntent(createShareIntent());
         return true;
+
     }
 
     private void loadHints() {
@@ -572,7 +596,7 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
                     try {
                         JSONArray contents = response.getJSONArray("contents");
                         JSONObject c = contents.getJSONObject(0);
-                        ImdbObject movie = AlbumActivity.buildImdbModel(contents);
+                        ImdbObject movie = BuildModelUtils.buildImdbModel(contents);
                         if (c.has(TAG_TOP))
                             movie.setType("imdb");
                         else

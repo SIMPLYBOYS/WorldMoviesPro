@@ -9,16 +9,17 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
@@ -74,7 +75,7 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         trendsObject = (TrendsObject) getArguments().getSerializable("trends");
-        reviewItems = new ArrayList<> ();
+        reviewItems = new ArrayList<>();
         rAdapter = new TrendsReviewRecycleViewAdapter(getActivity(), reviewItems);
         movieReview = (RecyclerView) inflater.inflate(
                 R.layout.fragment_recyclerview, container, false);
@@ -82,7 +83,6 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
         movieReview.setLayoutManager(linearLayoutManager);
         movieReview.setAdapter(rAdapter);
         movieReview.addItemDecoration(new HorizontalDividerItemDecoration.Builder(movieReview.getContext()).build());
-
         mQueue = CustomVolleyRequestQueue.getInstance(getActivity())
                 .getRequestQueue();
 
@@ -157,7 +157,7 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
         rAdapter.notifyItemInserted(reviewItems.size() - 1);
         String title = trendsObject.getTitle();
         int channel = trendsObject.getChannel();
-        if (channel !=1) {
+        if (channel != 1) {
             try {
                 title = URLEncoder.encode(title, "UTF-8");
             } catch (UnsupportedEncodingException e) {
@@ -168,17 +168,16 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
         }
 
         String url = Config.HOST_NAME + getChannel(channel) + "?title=" + title + "&ascending=1&start=" + offSet;
-        Log.d("0725", "url: " + url);
         CustomJSONObjectRequest jsonRequest_q = null;
         jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    reviewItems.remove(reviewItems.size() - 1);
+                    if (reviewItems.size() > 0)
+                        reviewItems.remove(reviewItems.size() - 1);
                     rAdapter.notifyItemRemoved(reviewItems.size());
                     JSONArray contents = response.getJSONArray("review");
                     maxSize = response.getInt("size");
-                    Log.d("0725", String.valueOf(maxSize));
                     for (int i = 0; i < contents.length(); i++) {
                         JSONObject reviewObj = contents.getJSONObject(i);
                         String avatar = reviewObj.getString("avatar");
@@ -208,11 +207,12 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("0606", String.valueOf(error.getMessage()));
                 Toast.makeText(getActivity(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
             }
         });
 
+        RetryPolicy policy = new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsonRequest_q.setRetryPolicy(policy);
         mQueue.add(jsonRequest_q);
     }
 
@@ -221,7 +221,7 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
         Toast.makeText(getContext(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
     }
 
-    private String getChannel (int position) {
+    private String getChannel(int position) {
         switch (position) {
             case 0:
                 return "jpTrendsReview";
@@ -233,8 +233,10 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
                 return "krTrendsReview";
             case 4:
                 return "frTrendsReview";
+            case 5:
+                return "cnTrendsReview";
             default:
-                return "jpTrendsReview";
+                return "twTrendsReview";
         }
     }
 }

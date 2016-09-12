@@ -45,6 +45,7 @@ import com.github.florent37.materialviewpager.sample.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.sample.adapter.ImdbSwipeRecycleViewAdapter;
 import com.github.florent37.materialviewpager.sample.fragment.MovieRecycleFragment;
 import com.github.florent37.materialviewpager.sample.fragment.RecyclerViewFragment;
+import com.github.florent37.materialviewpager.sample.http.CustomJSONArrayRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.sample.model.ImdbObject;
@@ -61,8 +62,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGD;
 
 /**
  * Created by aaron on 2016/3/21.
@@ -117,6 +116,9 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     private ImageCursorAdapter mAdapter;
     public static final String FILM_NAME = "filmName";
     private static JSONObject[] MOVIES = {};
+    String[] from = new String [] {FILM_NAME};
+    int[] to = new int[] { R.id.text1};
+    CustomJSONArrayRequest jsonRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +150,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         // 获得根视图并把TextView加进去。
         ViewGroup view = (ViewGroup) getWindow().getDecorView();
         view.addView(textView);
-        loadHints();
+        mAdapter = new ImageCursorAdapter(this, R.layout.search_row, null, from, to, "imdb");
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_movie_layout);
         movieList = new ArrayList<>();
         linearLayoutManager = new LinearLayoutManager(this);
@@ -157,9 +159,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         rvMovies = (RecyclerView) findViewById(R.id.recyclerView);
         rvMovies.setLayoutManager(linearLayoutManager);
         rvMovies.setAdapter(adapter);
-
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
+        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
 
         rvMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -209,7 +209,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     public void trySetupSwipeRefresh() {
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.flat_button_text);
-
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
         /**
@@ -234,20 +233,12 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
 
     }
 
-    private void loadHints() {
+    private void loadHints() { //deprecated this function by search api
         final String[] from = new String [] {FILM_NAME};
         final int[] to = new int[] { R.id.text1};
         final CustomJSONObjectRequest jsonRequest;
-
-        mAdapter = new ImageCursorAdapter(this,
-                R.layout.search_row,
-                null,
-                from,
-                to,
-                "imdb");
-
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
+        mAdapter = new ImageCursorAdapter(this, R.layout.search_row, null, from, to, "imdb");
+        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
 
         jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
@@ -266,6 +257,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                 Toast.makeText(ImdbActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
             }
         });
+
         mQueue.add(jsonRequest);
     }
 
@@ -347,7 +339,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
             adapter.notifyItemInserted(movieList.size() - 1);
         }
 
-        Log.d("0309","offSet: " + offSet);
         // appending offset to url
         int start = linearLayoutManager.getItemCount()-1;
         int end = start + PAGE_UNIT; //6 default 6 cards per page
@@ -375,6 +366,8 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                         String detailPosterUrl = "";
                         String detailUrl = "";
                         String year = "";
+                        String votes = "";
+                        String plot = "";
                         String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
                         String delta = "0";
                         //----- start dummy GalleryUrl ----
@@ -411,17 +404,19 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                         if (c.has(TAG_CAST))
                             cast = c.getJSONArray(TAG_CAST);
 
-                        String plot = c.getString(TAG_PLOT);
+                        if (c.has(TAG_PLOT))
+                            plot = c.getString(TAG_PLOT);
+
+                        if (c.has(TAG_VOTES))
+                            votes = c.getString(TAG_VOTES);
+
                         String genre = c.has(TAG_GENRE) ? c.getString(TAG_GENRE) : "";
-                        String votes = c.getString(TAG_VOTES);
                         String runTime = c.has(TAG_RUNTIME) ? c.getString(TAG_RUNTIME) : "";
                         String metaScore = c.getString(TAG_METASCORE);
                         String summery = d.getString(TAG_SUMMERY);
                         String country = d.getString(TAG_COUNTRY);
 
                         if (runTime.compareTo("") == 0 && data.length()>0) {
-                            jsonObj = new JSONObject();
-                            LOGD("0811", String.valueOf(data.length()));
                             jsonObj = (JSONObject) data.get(4);
                             runTime = jsonObj.getString("data");
                         }
@@ -469,7 +464,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
             public void onErrorResponse(VolleyError error) {
                 if (swipe)
                     mSwipeRefreshLayout.setRefreshing(false);
-                Log.d("0606", String.valueOf(error.getMessage()));
                 Toast.makeText(ImdbActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -504,6 +498,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
+        mQueryTextView.setThreshold(1);
         mQueryTextView.setTextColor(getResources().getColor(R.color.material_grey_500));
         mQueryTextView.setHintTextColor(getResources().getColor(R.color.material_grey_500));
         mQueryTextView.setHint("movie title or cast name");
@@ -521,7 +516,8 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
 
             @Override
             public boolean onQueryTextChange(String query) {
-                giveSuggestions(query);
+                if (!query.trim().isEmpty())
+                    giveSuggestions(query);
                 return false;
             }
         });
@@ -534,7 +530,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
 
             @Override
             public boolean onSuggestionClick(int position) {
-                Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
+                Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
                 final String feedName = cursor.getString(1);
                 searchView.post(new Runnable(){
                     @Override
@@ -584,17 +580,34 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         return super.onPrepareOptionsMenu(menu);
     }
 
-    private void giveSuggestions(String query) {
+    private void giveSuggestions(final String query) {
+
         final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
-        try {
-            for (int i = 0; i < MOVIES.length; i++) {
-                if (MOVIES[i].getString("title").toLowerCase().contains(query.toLowerCase()))
-                    cursor.addRow(new Object[]{i, MOVIES[i].getString("title"), MOVIES[i].getString("description"), MOVIES[i].getString("posterUrl")});
+
+        jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "search/99/"+ query.replaceAll(" ", "%20"), new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                    JSONArray contents = ((JSONArray) response);
+                    MOVIES = getJsonObjectArray(contents);
+                    String posterUrl;
+                    try {
+                        for (int i = 0; i < MOVIES.length; i++) {
+                            JSONObject obj = MOVIES[i].getJSONObject("_source");
+                            posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
+                            cursor.addRow(new Object[]{i, obj.getString("title"), obj.getString("description"), posterUrl});
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mAdapter.changeCursor(cursor);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        mAdapter.changeCursor(cursor);
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(ImdbActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mQueue.add(jsonRequest);
     }
 
     @Override
@@ -619,7 +632,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         if (mViewPagerScrollState == ViewPager.SCROLL_STATE_DRAGGING) {
             return true;
         }
-
 
         /*for( Map.Entry<Integer,Fragment> entry : mFragmentCache.entrySet()){
             Integer key = entry.getKey();

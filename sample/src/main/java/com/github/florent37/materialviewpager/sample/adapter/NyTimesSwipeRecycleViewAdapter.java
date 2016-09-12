@@ -1,12 +1,9 @@
 package com.github.florent37.materialviewpager.sample.adapter;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,10 +24,15 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.github.florent37.materialviewpager.sample.Config;
 import com.github.florent37.materialviewpager.sample.R;
+import com.github.florent37.materialviewpager.sample.http.CustomJSONArrayRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.sample.http.CustomVolleyRequestQueue;
+import com.github.florent37.materialviewpager.sample.model.User;
 import com.github.florent37.materialviewpager.sample.nytimes.Movie;
+import com.github.florent37.materialviewpager.sample.nytimes.nyTimesFavoritePreference;
 import com.github.florent37.materialviewpager.sample.nytimes.nyTimesDetailActivity;
+import com.github.florent37.materialviewpager.sample.util.ParserUtils;
+import com.github.florent37.materialviewpager.sample.util.PrefUtils;
 import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Picasso;
 
@@ -38,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,14 +48,18 @@ import java.util.List;
  */
 public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Activity activity;
-    List<Movie> movieList;
+    private List<Movie> movieList;
     private String[] bgColors;
+    private String HOST_NAME = Config.HOST_NAME;
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
-    public static int visibleThreshold = 2;
-    public static int lastVisibleItem, totalItemCount;
-    public static boolean loading;
     private RequestQueue mQueue;
+//    private final CustomJSONArrayRequest jsonRequest;
+    public int visibleThreshold = 2;
+    public int lastVisibleItem, totalItemCount;
+    public boolean loading;
+    private nyTimesFavoritePreference favor;
+
     CustomJSONObjectRequest jsonRequest_q = null;
 
     public static class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -63,7 +70,7 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
         private ImageView moreButton;
         private ImageView photoView;
         private ImageView shareView;
-        private ImageView bookmarkView;
+        private ShineButton bookmarkView;
 
         public UserViewHolder(View itemView, MyViewHolderClick listener) {
             super(itemView);
@@ -74,7 +81,7 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
             photoView = (ImageView) itemView.findViewById(R.id.media);
             shareView = (ImageView) itemView.findViewById(R.id.share);
             moreButton = (ImageView) itemView.findViewById(R.id.button_more);
-            bookmarkView = (ImageView) itemView.findViewById(R.id.bookmark);
+            bookmarkView = (ShineButton) itemView.findViewById(R.id.bookmark);
             Picasso.with(photoView.getContext()).load(R.drawable.placeholder).into(photoView);
             itemView.setOnClickListener(this);
         }
@@ -89,17 +96,26 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
         }
 
         public void bind(Movie movie, String color) {
+            shareView.setColorFilter(shareView.getContext().getResources().getColor(R.color.navdrawer_icon_tint));
             headline.setText(String.valueOf(movie.getHeadline()));
             summary.setText(movie.getSummary_short());
             date.setText(movie.getPublication_date());
+
             if (movie.getPicUrl()!= "") {
                 Picasso.with(photoView.getContext()).load(movie.getPicUrl()).placeholder(R.drawable.placeholder).centerCrop().fit()
                         .into(photoView);
             }
-            shareView.setColorFilter(shareView.getContext().getResources().getColor(R.color.navdrawer_icon_tint));
-            bookmarkView.setColorFilter(shareView.getContext().getResources().getColor(R.color.navdrawer_icon_tint));
 
-//            headline.setBackgroundColor(Color.parseColor(color));
+            if (movie.getBookmark()) {
+//                Toast.makeText(activity.getApplicationContext(), "Yes, the profile is clickable", Toast.LENGTH_SHORT).show();
+                bookmarkView.setChecked(true);
+                bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
+//                bookmarkView.setColorFilter(shareView.getContext().getResources().getColor(R.color.navdrawer_icon_tint));
+            } else {
+                bookmarkView.setChecked(false);
+                bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                bookmarkView.setColorFilter(shareView.getContext().getResources().getColor(R.color.navdrawer_icon_tint));
+            }
         }
     }
 
@@ -112,12 +128,36 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
         }
     }
 
-    public NyTimesSwipeRecycleViewAdapter(Activity activity, List<Movie> movieList) {
+    public NyTimesSwipeRecycleViewAdapter(final Activity activity, List<Movie> movieList) {
         this.activity = activity;
         this.movieList = movieList;
         this.bgColors = activity.getApplicationContext().getResources().getStringArray(R.array.movie_serial_bg);
-        mQueue = CustomVolleyRequestQueue.getInstance(activity)
-                .getRequestQueue();
+        mQueue = CustomVolleyRequestQueue.getInstance(activity).getRequestQueue();
+        User user = PrefUtils.getCurrentUser(activity.getApplicationContext());
+        favor = new nyTimesFavoritePreference();
+
+        if (favor.loadFavorites(activity.getApplicationContext()) == null){
+            CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "my_nyTimes/"+user.facebookID, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    JSONArray contents = ((JSONArray) response);
+                    try {
+                        for (int i = 0; i < contents.length(); i++) {
+                            JSONObject movieObj = contents.getJSONObject(i);
+                            favor.addFavorite(activity.getApplicationContext(), movieObj.getString("headline"));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(activity, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            mQueue.add(jsonRequest);
+        }
     }
 
     @Override
@@ -172,22 +212,12 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
         return null;
     }
 
-    private void startActivityForVersion(Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.startActivity(intent,
-                    ActivityOptions.makeSceneTransitionAnimation(
-                            activity).toBundle());
-        }
-        else {
-            activity.startActivity(intent);
-        }
-    }
-
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof UserViewHolder) {
             Log.d("0322", "onBindViewHolder: " + position);
             UserViewHolder myHolder = (UserViewHolder) viewHolder;
+            String headline;
             final Movie movie = movieList.get(position);
             final ShineButton bookmarkView = (ShineButton) ((UserViewHolder) viewHolder).bookmarkView.findViewById(R.id.bookmark);
             String color = bgColors[position % bgColors.length];
@@ -197,17 +227,89 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
             moreView.init(activity);
             bookmarkView.init(activity);
             shareView.init(activity);
+            ArrayList list = favor.loadFavorites(activity.getApplicationContext());
+
+            /*for (int i=0; i<list.size(); i++) {
+                favor.removeFavorite(activity.getApplicationContext(), (String) list.get(i));
+            }*/
+
             bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(View view, boolean checked) {
-                    Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
-                    if (checked)
+//                    Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
+                    if (checked && !movie.getBookmark()) {
                         bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
-                    else
+                        User user = PrefUtils.getCurrentUser(activity.getApplicationContext());
+                        movie.setBookmark(true);
+                        String headline = movie.getHeadline().indexOf(":") != -1 ? movie.getHeadline().split(":")[1].trim() : movie.getHeadline();
+                        CustomJSONObjectRequest jsonRequest_q = null;
+                        String url = HOST_NAME + "nyTimes/"+user.facebookID;
+                        JSONObject jsonBody = new JSONObject();
+
+                        try {
+                            jsonBody.put("headline", headline);
+                            jsonBody.put("link", movie.getLink());
+                            jsonBody.put("picUrl", movie.getPicUrl());
+                            favor.addFavorite(activity.getApplicationContext(), headline);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.POST, url, jsonBody, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    String result = response.getString("content");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(activity, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        mQueue.add(jsonRequest_q);
+                    } else if (!checked && movie.getBookmark()) {
                         bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
-                    //TODO bookmark info for the user's acccount
+                        User user = PrefUtils.getCurrentUser(activity.getApplicationContext());
+                        String headline = movie.getHeadline().indexOf(":") != -1 ? movie.getHeadline().split(":")[1].trim() : movie.getHeadline();
+//                        String headline = movie.getHeadline();
+                        favor.removeFavorite(activity.getApplicationContext(), headline);
+                        CustomJSONObjectRequest jsonRequest_q = null;
+                        headline = ParserUtils.encode(headline);
+                        String url = HOST_NAME + "nyTimes/"+user.facebookID+headline;
+                        JSONObject jsonBody = new JSONObject();
+
+                        try {
+                            jsonBody.put("headline", headline);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.DELETE, url, jsonBody, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    String result = response.getString("content");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(activity, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        mQueue.add(jsonRequest_q);
+                    }
                 }
             });
+
             shareView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -223,9 +325,8 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                JSONArray contents = response.getJSONArray("contents");
                                 String story,imageUrl, head, description, editor, date, url;
-
+                                JSONArray contents = response.getJSONArray("contents");
                                 JSONObject reviewObj = contents.getJSONObject(0);
                                 story = reviewObj.getString("story");
                                 editor = reviewObj.getString("editor");
@@ -242,28 +343,12 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
                                 }
 
                                 head = movie.getHeadline();
-                                Movie foo = new Movie(head, description, story, url, imageUrl, editor ,date);
+                                Movie movie = new Movie(head, description, story, url, imageUrl, editor ,date);
+                                if (checkBookmark(head))
+                                    movie.setBookmark(true);
                                 Intent intent = new Intent(activity, nyTimesDetailActivity.class);
-                                intent.putExtra("movie", foo);
+                                intent.putExtra("movie", movie);
                                 ActivityCompat.startActivity(activity, intent, null);
-
-                                        /*JSONObject movieObj = contents.getJSONObject(0);
-                                        String head = movieObj.getString("headline");
-                                        String date = movieObj.getString("publication_date");
-                                        String summery = movieObj.getString("summary_short");
-                                        JSONObject link = null;
-                                        JSONObject media = null;
-                                        String picUrl = "";
-                                        if (!movieObj.isNull("multimedia")) {
-                                            media = movieObj.getJSONObject("multimedia");
-                                            picUrl = media.getString("src");
-                                        }
-                                        link = movieObj.getJSONObject("link");
-                                        String linkUrl = link.getString("url");
-                                        Movie movie = new Movie(head, date, summery, linkUrl, picUrl);*/
-                                        /*Intent intent = new Intent(nyTimesActivity.this, WebViewActivity.class);
-                                        intent.putExtra("movie", movie);
-                                        ActivityCompat.startActivity(nyTimesActivity.this, intent, null);*/
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -276,11 +361,9 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
                         }
                     });
                     mQueue.add(jsonRequest_q);
-                            /*Intent intent = new Intent(v.getContext(), WebViewActivity.class); //TODO nyTimesDetail
-                            intent.putExtra("movie", movie);
-                            startActivityForVersion(intent);*/
                 }
             };
+
             myHolder.bind(movie, color);
             moreView.setOnClickListener(listener);
             photoView.setOnClickListener(listener);
@@ -288,6 +371,29 @@ public class NyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
             ProgressViewHolder progressViewHolder = (ProgressViewHolder) viewHolder;
             progressViewHolder.progressBar.setIndeterminate(true);
         }
+    }
+
+    private boolean checkBookmark(String headline) {
+        headline = headline.indexOf(":") != -1 ? headline.split(":")[1].trim() : headline;
+        ArrayList list = favor.loadFavorites(activity.getApplicationContext());
+
+        for (int i=0; i<list.size(); i++) {
+            if (headline.compareTo((String) list.get(i)) == 0) return true;
+        }
+
+        return false;
+    };
+
+    public String[] getStringArray(JSONArray jsonArray) {
+        String[] stringArray = null;
+        int length = jsonArray.length();
+        if (jsonArray!=null) {
+            stringArray = new String[length];
+            for(int i=0;i<length;i++){
+                stringArray[i]= jsonArray.optString(i);
+            }
+        }
+        return stringArray;
     }
 
     public void setLoaded() {

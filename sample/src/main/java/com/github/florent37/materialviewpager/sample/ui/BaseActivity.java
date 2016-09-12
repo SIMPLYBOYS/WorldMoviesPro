@@ -81,7 +81,6 @@ import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -127,7 +126,7 @@ import com.github.florent37.materialviewpager.sample.nytimes.nyTimesActivity;
 import com.github.florent37.materialviewpager.sample.provider.ScheduleContract;
 import com.github.florent37.materialviewpager.sample.service.QuickstartPreferences;
 import com.github.florent37.materialviewpager.sample.service.RegistrationIntentService;
-import com.github.florent37.materialviewpager.sample.service.UnRegistrationIntentService;
+import com.github.florent37.materialviewpager.sample.settings.SettingsActivity;
 import com.github.florent37.materialviewpager.sample.settings.SettingsUtils;
 import com.github.florent37.materialviewpager.sample.sync.SyncHelper;
 import com.github.florent37.materialviewpager.sample.ui.widget.MultiSwipeRefreshLayout;
@@ -164,7 +163,6 @@ import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGE;
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.LOGW;
 import static com.github.florent37.materialviewpager.sample.util.LogUtils.makeLogTag;
 
-
 /**
  * A base activity that handles common functionality in the app. This includes the
  * navigation drawer, login and authentication, Action Bar tweaks, amongst others.
@@ -182,6 +180,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public static final String FILM_NAME = "filmName";
     public static final String FILM_DESCRIPTION = "filmDescription";
     public static final String FILM_POSTER = "filmPoster";
+    private String HOST_NAME = Config.HOST_NAME;
     private int offSet = 0;
     private RequestQueue mQueue;
     private AccessToken accessToken;
@@ -220,6 +219,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected final int NAVDRAWER_ITEM_ABOUT = 9;
     protected final int NAVDRAWER_ITEM_GENRE = 5;
     protected final int NAVDRAWER_ITEM_SIGN_OUT = 11;
+    protected final int NAVDRAWER_ITEM_GLOBAL = 13;
     protected final int NAVDRAWER_ITEM_IMDB = 10;
     protected final int NAVDRAWER_ITEM_INVALID = -1;
     protected final int NAVDRAWER_ITEM_SEPARATOR = -2;
@@ -260,7 +260,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
             R.string.description_about,
             R.string.navdrawer_item_imdb,
             R.string.navdrawer_item_logout,
-            R.string.navdrawer_item_debug
+            R.string.navdrawer_item_debug,
+            R.string.navdrawer_item_global
     };
 
     // icons for navdrawer items (indices must correspond to above array)
@@ -275,10 +276,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
             R.drawable.facebook, // Sign in
             R.drawable.ic_navview_settings, // Settings.
             R.drawable.ic_info_outline, // About
-            R.drawable.ic_theaters, //IMDB
+            R.drawable.imdb, //IMDB
             R.drawable.ic_navview_logout, //Sign out
             R.drawable.ic_navview_settings, // Debug
-            R.drawable.ic_navview_my_schedule // My Schedule
+            R.drawable.ic_global,
+            R.drawable.ic_navview_my_schedule, // My Schedule
+
     };
 
     // delay to launch nav drawer item, to allow close animation to play
@@ -373,8 +376,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             public void onReceive(Context context, Intent intent) {
                 SharedPreferences sharedPreferences =
                         PreferenceManager.getDefaultSharedPreferences(context);
-                boolean sentToken = sharedPreferences
-                        .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+                boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
                 Log.d("0523", String.valueOf(sentToken));
 
                 /*if (sentToken) {
@@ -474,14 +476,38 @@ public abstract class BaseActivity extends AppCompatActivity implements
                                 User user = PrefUtils.getCurrentUser(getApplicationContext());
                                 AccountUtils.setActiveAccount(getApplicationContext(), user.name);
                                 onAuthSuccess(user.name, true);
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                finish();
+                                mQueue = CustomVolleyRequestQueue.getInstance(BaseActivity.this).getRequestQueue();
+                                String user_name = user.name;
+                                user_name = user_name.replaceAll(" ", "%20");
+                                CustomJSONObjectRequest jsonRequest_q = null;
+                                String url = HOST_NAME + "register/"+user_name+"/"+user.facebookID;
+
+                                jsonRequest_q = new CustomJSONObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        try {
+                                            String result = response.getString("content");
+                                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                            finish();
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+                                        Toast.makeText(BaseActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                                mQueue.add(jsonRequest_q);
+
                             } else {
                                 Toast.makeText(BaseActivity.this,
                                         response.getError().getErrorMessage(),
                                         Toast.LENGTH_SHORT).show();
-                                startActivityForVersion(new Intent(getApplicationContext(), MainActivity.class));
-                                finish();
+                                /*startActivityForVersion(new Intent(getApplicationContext(), MainActivity.class));
+                                finish();*/
                             }
                         }
                     }
@@ -517,7 +543,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                                     user.gender = object.optString("gender");
                                     user.accessToken = accessToken.getToken();
                                     user.pictureUrl = "https://graph.facebook.com/" + user.facebookID + "/picture?type=large";
-                                    //TODO post user's name and facebookID to server then launch MainActivity
                                     PrefUtils.setCurrentUser(user, getApplicationContext());
                                     Bundle parameters = new Bundle();
                                     parameters.putString("fields", "id,name,email,picture,birthday,education");
@@ -773,8 +798,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
             // Other items that are always in the nav drawer.
             mNavDrawerItems.add(NAVDRAWER_ITEM_UP_COMING);
             mNavDrawerItems.add(NAVDRAWER_ITEM_IMDB);
-            mNavDrawerItems.add(NAVDRAWER_ITEM_NYTIMES);
             mNavDrawerItems.add(NAVDRAWER_ITEM_GENRE);
+            mNavDrawerItems.add(NAVDRAWER_ITEM_GLOBAL);
+            mNavDrawerItems.add(NAVDRAWER_ITEM_NYTIMES);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SEPARATOR_SPECIAL);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SETTINGS);
             mNavDrawerItems.add(NAVDRAWER_ITEM_SIGN_OUT);
@@ -998,8 +1024,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
         for (Iterator it = friendList.iterator(); it.hasNext();) {
             View itemView = layoutInflater.inflate(R.layout.list_item_account, mAccountListContainer, false);
-            User user = (User) it.next();
-
+            final User user = (User) it.next();
 
             ((TextView) itemView.findViewById(R.id.profile_email_text))
                     .setText(user.name);
@@ -1026,8 +1051,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
                         mDrawer.closeDrawer(GravityCompat.START);
                     } else {
                         Log.d("0426", "show account: " + accountName);
-                        Toast.makeText(getApplicationContext(), "the function is constructing!", Toast.LENGTH_SHORT).show();
-                        //TODO friend profile display
+//                        Toast.makeText(getApplicationContext(), "the function is constructing!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(BaseActivity.this, MyFavoriteActivity.class);
+                        intent.putExtra("user", user);
+                        createBackStack(intent);
                         /*AccountUtils.setActiveAccount(BaseActivity.this, accountName);
                         onAccountChangeRequested();
                         startLoginProcess();
@@ -1123,10 +1150,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     private void goToNavDrawerItem(int item) {
-        Log.d("0213", "goToNavDrawerItem: " + item);
         switch (item) {
             case NAVDRAWER_ITEM_MY_FAVORITE:
-                createBackStack(new Intent(this, MyFavoriteActivity.class));
+                Intent intent = new Intent(this, MyFavoriteActivity.class);
+                User user = PrefUtils.getCurrentUser(getApplicationContext());
+                intent.putExtra("user", user);
+                createBackStack(intent);
 //                createBackStack(new Intent(this, VideoLibraryActivity.class));
                 break;
             case NAVDRAWER_ITEM_EXPLORE:
@@ -1153,7 +1182,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 signOut();
                 break;
             case NAVDRAWER_ITEM_SETTINGS:
-//                createBackStack(new Intent(this, SettingsActivity.class));
+                createBackStack(new Intent(this, SettingsActivity.class));
                 break;
             case NAVDRAWER_ITEM_ABOUT:
                 createBackStack(new Intent(this, AboutActivity.class));
@@ -1276,8 +1305,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         if (isSpecialItem(itemId)) {
-//            goToNavDrawerItem(itemId);
-            Toast.makeText(getApplicationContext(), "the function is constructing!", Toast.LENGTH_SHORT).show();
+            goToNavDrawerItem(itemId);
+//            Toast.makeText(getApplicationContext(), "the function is constructing!", Toast.LENGTH_SHORT).show();
         } else {
             // launch the target Activity after a short delay, to allow the close animation to play
             mHandler.postDelayed(new Runnable() {
@@ -1326,12 +1355,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public static String[] getStringArray(JSONArray jsonArray) {
         String[] stringArray = null;
         int length = jsonArray.length();
+
         if (jsonArray!=null) {
             stringArray = new String[length];
-            for(int i=0;i<length;i++){
+            for (int i=0;i<length;i++) {
                 stringArray[i]= jsonArray.optString(i);
             }
         }
+
         return stringArray;
     }
 
@@ -1867,11 +1898,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
                     getString(NAVDRAWER_TITLE_RES_ID[itemId])));
         }
 
-        if (itemId == NAVDRAWER_ITEM_SETTINGS) {
+        /*if (itemId == NAVDRAWER_ITEM_SETTINGS) {
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(context);
-            boolean sentToken = sharedPreferences
-                    .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+            boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
             if (sentToken)
                 switchButton.setCheckedImmediately(true);
             else
@@ -1889,7 +1919,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                     }
                 }
             });
-        }
+        }*/
 
         formatNavDrawerItem(item, itemId, selected);
 
