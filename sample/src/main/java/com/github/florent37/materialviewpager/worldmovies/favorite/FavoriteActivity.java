@@ -16,7 +16,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,13 +35,15 @@ import com.github.florent37.materialviewpager.worldmovies.genre.GenreActivity;
 import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivity;
-import com.github.florent37.materialviewpager.worldmovies.trends.TrendsWebViewActivity;
+import com.github.florent37.materialviewpager.worldmovies.framework.ContentWebViewActivity;
 import com.github.florent37.materialviewpager.worldmovies.upcoming.upComingActivity;
 import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
 
 /**
  * Created by aaron on 2016/6/21.
@@ -75,7 +76,9 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
         userName = (TextView) findViewById(R.id.name);
         userImage = (ImageView) findViewById(R.id.avatar);
         userName.setText(user.name);
-        Picasso.with(userImage.getContext()).load(user.pictureUrl).placeholder(R.drawable.person_image_empty)
+        Picasso.with(userImage.getContext())
+                .load(user.pictureUrl)
+                .placeholder(R.drawable.person_image_empty)
                 .fit()
                 .centerCrop()
                 .into(userImage);
@@ -84,9 +87,9 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
         userImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("0917", user.link);
+                LOGD("0917", user.link);
                 Context context = v.getContext();
-                Intent intent = new Intent(context, TrendsWebViewActivity.class);
+                Intent intent = new Intent(context, ContentWebViewActivity.class);
                 intent.putExtra("url", user.link);
                 context.startActivity(intent);
             }

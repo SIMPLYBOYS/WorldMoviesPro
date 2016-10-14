@@ -179,6 +179,7 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
                     rAdapter.notifyItemRemoved(reviewItems.size());
                     JSONArray contents = response.getJSONArray("review");
                     maxSize = response.getInt("size");
+
                     for (int i = 0; i < contents.length(); i++) {
                         JSONObject reviewObj = contents.getJSONObject(i);
                         String avatar = reviewObj.getString("avatar");
@@ -187,10 +188,11 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
                         String topic = reviewObj.getString("topic");
                         String text = reviewObj.getString("text");
                         String point = reviewObj.getString("point");
-
-                        ReviewItem Item = new ReviewItem(avatar, name, date, topic, text, Float.parseFloat(point));
+                        ReviewItem Item = point.compareTo("null") != 0 ? new ReviewItem(avatar, name, date, topic, text, Float.parseFloat(point)) :
+                                new ReviewItem(avatar, name, date, topic, text, 0.0f);
                         curSize = rAdapter.getItemCount();
                         reviewItems.add(reviewItems.size(), Item);
+
                         if (rAdapter != null) {
                             rAdapter.notifyItemInserted(reviewItems.size());
                         }
@@ -226,7 +228,6 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mQueue.stop();
     }
 
     private String getChannel(int position) {

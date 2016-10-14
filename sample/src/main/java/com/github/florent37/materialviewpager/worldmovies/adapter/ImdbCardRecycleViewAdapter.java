@@ -23,7 +23,6 @@ import com.google.gson.JsonParser;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,16 +146,10 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
             jsonElement = ratingInfo.getAsJsonObject();
             ratingItem = gson.fromJson(jsonElement, ImdbObject.RatingItem.class);
 
-            if (titleView == null)
-                return;
+            if (titleView == null) return;
 
-            try {
-                title = new String(imdbObject.getTitle().getBytes("ISO-8859-1"), "UTF-8");
-                description = new String(imdbObject.getDescription().getBytes("ISO-8859-1"), "UTF-8");
-            } catch (UnsupportedEncodingException e ) {
-                e.printStackTrace();
-            }
-
+            title = imdbObject.getTitle();
+            description = imdbObject.getDescription();
             titleView.setText(title);
             desciptionView.setText(description);
             topView.setText(imdbObject.getTop());

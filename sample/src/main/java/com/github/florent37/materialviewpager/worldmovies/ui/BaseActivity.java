@@ -94,22 +94,14 @@ import com.android.volley.VolleyError;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.facebook.Profile;
 import com.facebook.ProfileTracker;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.MainActivity;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.about.AboutActivity;
-import com.github.florent37.materialviewpager.worldmovies.favorite.MyFavoriteActivity;
+import com.github.florent37.materialviewpager.worldmovies.favorite.FavoriteActivity;
 import com.github.florent37.materialviewpager.worldmovies.framework.Model;
 import com.github.florent37.materialviewpager.worldmovies.framework.MovieDetail;
 import com.github.florent37.materialviewpager.worldmovies.framework.PresenterFragmentImpl;
@@ -121,6 +113,7 @@ import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectR
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.worldmovies.imdb.MovieDetailActivity;
+import com.github.florent37.materialviewpager.worldmovies.login.LoginActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivity;
@@ -338,35 +331,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
             return;
         }
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
-        callbackManager = CallbackManager.Factory.create();
-        LoginManager.getInstance().registerCallback(callbackManager, mCallBack);
-
-        accessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(
-                    AccessToken oldAccessToken,
-                    AccessToken currentAccessToken) {
-                // Set the access token using
-                //TODO currentAccessToken when it's loaded or set.
-                accessToken = AccessToken.getCurrentAccessToken();
-            }
-        };
-
-        // If the access token is available already assign it.
-        accessToken = AccessToken.getCurrentAccessToken();
-
-        profileTracker = new ProfileTracker() {
-            @Override
-            protected void onCurrentProfileChanged(
-                    Profile oldProfile,
-                    Profile currentProfile) {
-                //TODO App code
-            }
-        };
-
         context = getApplicationContext();
+        FacebookSdk.sdkInitialize(context);
         mImageLoader = new ImageLoader(this);
         mHandler = new Handler();
         setupWindowAnimations();
@@ -402,7 +368,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     private void selectItem(int position) {
         mDrawer.closeDrawer(GravityCompat.START);
-        //TODO fragment transaction
     }
 
     private void setupWindowAnimations() {
@@ -439,147 +404,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
         return true;
     }
-
-    private FacebookCallback<LoginResult> mCallBack = new FacebookCallback<LoginResult>() {
-
-        @Override
-        public void onSuccess(LoginResult loginResult) {
-
-            accessToken = loginResult.getAccessToken();
-            Log.d("FB", "access token got.");
-            Log.d("FB", "accessToken" + ": " + accessToken.getToken());
-
-            final GraphRequest friendsRequest = new GraphRequest( /* handle the result */
-                    accessToken,
-                    "/me/friends",
-                    null,
-                    HttpMethod.GET,
-                    new GraphRequest.Callback() {
-                        public void onCompleted(GraphResponse response) {
-                            if(response.getError() == null) {
-                                List<User> FriendList = new ArrayList<>();;
-                                JSONObject jsonObj = response.getJSONObject();
-                                JSONArray data = jsonObj.optJSONArray("data");
-
-                                for(int i=0; i < data.length(); i++) {
-                                    User user = new User();
-                                    Log.d("FB", "friends complete " + i + ": " + data.optJSONObject(i));
-                                    JSONObject dataobj= data.optJSONObject(i);
-                                    user.name = dataobj.optString("name");
-                                    user.facebookID = dataobj.optString("id");
-                                    user.link = dataobj.optString("link");
-                                    user.pictureUrl = "https://graph.facebook.com/" + user.facebookID + "/picture?type=large";
-                                    FriendList.add(user);
-                                }
-
-                                PrefUtils.setCurrentFriends(FriendList, getApplicationContext());
-                                User user = PrefUtils.getCurrentUser(getApplicationContext());
-                                AccountUtils.setActiveAccount(getApplicationContext(), user.name);
-                                onAuthSuccess(user.name, true);
-                                mQueue = CustomVolleyRequestQueue.getInstance(BaseActivity.this).getRequestQueue();
-                                String user_name = user.name;
-                                user_name = user_name.replaceAll(" ", "%20");
-                                CustomJSONObjectRequest jsonRequest_q = null;
-                                String url = HOST_NAME + "register/"+user_name+"/"+user.facebookID;
-
-                                jsonRequest_q = new CustomJSONObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        try {
-                                            String result = response.getString("content");
-                                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                            finish();
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }, new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        Toast.makeText(BaseActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-                                mQueue.add(jsonRequest_q);
-
-                            } else {
-                                Toast.makeText(BaseActivity.this,
-                                        response.getError().getErrorMessage(),
-                                        Toast.LENGTH_SHORT).show();
-                                startActivityForVersion(new Intent(getApplicationContext(), MainActivity.class));
-                                finish();
-                            }
-                        }
-                    }
-            );
-
-            // If the access token is available already assign it.
-            //send request and call graph api
-            GraphRequest meRequest = GraphRequest.newMeRequest(
-                    accessToken,
-                    new GraphRequest.GraphJSONObjectCallback() {
-                        @Override
-                        public void onCompleted(JSONObject object, GraphResponse response) {
-                            if(response.getError() == null) {
-                                User user = new User();
-
-                                Log.d("FB", "complete " + object);
-                                Log.d("FB", object.optString("name"));
-                                Log.d("FB", object.optString("link"));
-                                Log.d("FB", object.optString("id"));
-                                Log.d("FB", object.optString("email"));
-                                Log.d("FB", object.optString("gender"));
-
-                                /*JSONObject object1 = object.optJSONObject("picture");
-                                Log.d("FB", String.valueOf(object1.optJSONObject("data").optString("url")));*/
-
-                                try {
-                                    user.facebookID = object.optString("id");
-                                    user.email = object.optString("email");
-                                    user.link = object.getString("link");
-                                    user.name = object.optString("name");
-                                    user.gender = object.optString("gender");
-                                    user.accessToken = accessToken.getToken();
-                                    user.pictureUrl = "https://graph.facebook.com/" + user.facebookID + "/picture?type=large";
-                                    PrefUtils.setCurrentUser(user, getApplicationContext());
-                                    Bundle parameters = new Bundle();
-                                    parameters.putString("fields", "id,link,name,email,picture,birthday,education");
-                                    friendsRequest.setParameters(parameters);
-                                    friendsRequest.executeAsync();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                Toast.makeText(BaseActivity.this,
-                                        response.getError().getErrorMessage(),
-                                        Toast.LENGTH_SHORT).show();
-                                startActivityForVersion(new Intent(getApplicationContext(), MainActivity.class));
-                                finish();
-                            }
-                        }
-                    }
-            );
-
-            Bundle parameters = new Bundle();
-            parameters.putString("fields", "id,link,name,email,gender,birthday,picture"); //items listed depend on facebook app's permission permission
-            meRequest.setParameters(parameters);
-            meRequest.executeAsync();
-        }
-
-        //登入取消
-        @Override
-        public void onCancel() {
-            // App code
-            Log.d("FB", "CANCEL");
-        }
-
-        //登入失敗
-        @Override
-        public void onError(FacebookException exception) {
-            // App code
-            Log.d("FB", exception.toString());
-        }
-    };
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -670,8 +494,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         ScrimInsetsScrollView navDrawer = (ScrimInsetsScrollView) mDrawer.findViewById(R.id.navdrawer);
-
-        Log.d("0227", "selfItem: " +selfItem);
 
         if (navDrawer != null) {
             final View chosenAccountContentView = findViewById(R.id.chosen_account_content_view);
@@ -781,7 +603,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
      */
     private void populateNavDrawer() {
 
-        Log.d("0227", "populateNavDrawer user: " + PrefUtils.getCurrentUser(this) + " account: " + AccountUtils.hasActiveAccount(this));
+        LOGD("0227", "populateNavDrawer user: " + PrefUtils.getCurrentUser(this) + " account: " + AccountUtils.hasActiveAccount(this));
         mNavDrawerItems.clear();
 
         // decide which items will appear in the nav drawer
@@ -919,11 +741,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
         String friends = PrefUtils.getCurrentFriends(this);
         Gson gson = new Gson();
         List<User> friendslist = gson.fromJson(friends, new TypeToken<List<User>>(){}.getType());
-        Log.d("0526", String.valueOf(friendslist));
+        LOGD("0526", String.valueOf(friendslist));
 
         final View chosenAccountView = findViewById(R.id.chosen_account_view);
         Account chosenAccount = AccountUtils.getActiveAccount(this);
-        Log.d("0314", "chosenAccount: " + chosenAccount);
+        LOGD("0314", "chosenAccount: " + chosenAccount);
 
         chosenAccountView.setVisibility(View.VISIBLE);
         mAccountListContainer.setVisibility(View.INVISIBLE);
@@ -944,14 +766,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
         });
 
         String name = AccountUtils.getPlusName(this);
+        String imageUrl = null;
+        String coverImageUrl = AccountUtils.getPlusCoverUrl(this);
+
         if (name == null) {
             nameTextView.setVisibility(View.GONE);
         } else {
             nameTextView.setVisibility(View.VISIBLE);
             nameTextView.setText(name);
         }
-
-        String imageUrl = null;
 
         if (fromFB) {
             User user= PrefUtils.getCurrentUser(this);
@@ -961,7 +784,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 nameTextView.setText(user.name);
                 email.setText(user.email);
             }
-
         } else {
             imageUrl = AccountUtils.getPlusImageUrl(this);
             email.setText(chosenAccount != null ? chosenAccount.name: "");
@@ -970,8 +792,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (imageUrl != null) {
             mImageLoader.loadImage(imageUrl, profileImageView);
         }
-
-        String coverImageUrl = AccountUtils.getPlusCoverUrl(this);
 
         if (coverImageUrl != null) {
             findViewById(R.id.profile_cover_image_placeholder).setVisibility(View.GONE);
@@ -1009,7 +829,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         setupAccountBoxToggle();
-
         populateAccountList(friendslist);
     }
 
@@ -1028,7 +847,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             final String accountName = user.name;
             String imageUrl = user.pictureUrl;
 
-            Log.d("0426", String.valueOf(user.name));
+            LOGD("0426", String.valueOf(user.name));
 
             if (!TextUtils.isEmpty(imageUrl)) {
                 mImageLoader.loadImage(imageUrl,
@@ -1047,9 +866,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
                                 Toast.LENGTH_SHORT).show();
                         mDrawer.closeDrawer(GravityCompat.START);
                     } else {
-                        Log.d("0426", "show account: " + accountName);
+                        LOGD("0426", "show account: " + accountName);
 //                        Toast.makeText(getApplicationContext(), "the function is constructing!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(BaseActivity.this, MyFavoriteActivity.class);
+                        Intent intent = new Intent(BaseActivity.this, FavoriteActivity.class);
                         intent.putExtra("user", user);
                         createBackStack(intent);
                         /*AccountUtils.setActiveAccount(BaseActivity.this, accountName);
@@ -1149,7 +968,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private void goToNavDrawerItem(int item) {
         switch (item) {
             case NAVDRAWER_ITEM_MY_FAVORITE:
-                Intent intent = new Intent(this, MyFavoriteActivity.class);
+                Intent intent = new Intent(this, FavoriteActivity.class);
                 User user = PrefUtils.getCurrentUser(getApplicationContext());
                 intent.putExtra("user", user);
                 createBackStack(intent);
@@ -1174,7 +993,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 break;
             case NAVDRAWER_ITEM_SIGN_IN:
 //                createBackStack(new Intent(this, LoginActivity.class));
-                signInOrCreateAnAccount();
+                createBackStack(new Intent(this, LoginActivity.class));
+//                signInOrCreateAnAccount();
                 break;
             case NAVDRAWER_ITEM_SIGN_OUT:
                 signOut();
@@ -1280,18 +1100,20 @@ public abstract class BaseActivity extends AppCompatActivity implements
             return;
         }
 
-        Log.d("0314", "Login do nothing now.");
+        LOGD("0314", "Login do nothing now.");
 //        mDrawer.closeDrawer(GravityCompat.START);
     }
 
     private void signOut() {
-        Log.d("0315", "signOut");
-
+        LOGD("0315", "signOut");
         PrefUtils.clearCurrentUser(this);
+        String friends = PrefUtils.getCurrentFriends(this);
+        Gson gson = new Gson();
+        List<User> friendslist = gson.fromJson(friends, new TypeToken<List<User>>(){}.getType());
+        PrefUtils.clearCurrentFriends(friendslist, this);
         AccountUtils.clearActiveAccount(this);
         LoginManager.getInstance().logOut();
-
-        Intent i=  new Intent(this, MainActivity.class);
+        Intent i=  new Intent(this, LoginActivity.class);
         startActivityForVersion(i);
         finish();
     }
@@ -1328,7 +1150,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("0219", "BaseActivity -> onResume");
         // Perform one-time bootstrap setup, if needed
 //        DataBootstrapService.startDataBootstrapIfNecessary(this);
 
@@ -1522,7 +1343,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 finish();
             }
             return;
-        } else if (requestCode == SELECT_FACEBOOK_ACCOUNT_RESULT){
+        } else if (requestCode == SELECT_FACEBOOK_ACCOUNT_RESULT) {
             if (resultCode == RESULT_OK) {
                 callbackManager.onActivityResult(requestCode, resultCode, data);
             } else {
@@ -1550,8 +1371,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         LOGD(TAG, "Refreshing User Data");
         getContentResolver().notifyChange(ScheduleContract.MySchedule.CONTENT_URI, null, false);
         getContentResolver().notifyChange(ScheduleContract.MyViewedVideos.CONTENT_URI, null, false);
-        getContentResolver().notifyChange(
-                ScheduleContract.MyFeedbackSubmitted.CONTENT_URI, null, false);
+        getContentResolver().notifyChange(ScheduleContract.MyFeedbackSubmitted.CONTENT_URI, null, false);
     }
 
     protected void retryAuth() {

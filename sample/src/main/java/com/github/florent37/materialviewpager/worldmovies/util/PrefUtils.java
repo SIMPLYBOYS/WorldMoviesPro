@@ -33,6 +33,12 @@ public class PrefUtils {
         complexPreferences.commit();
     }
 
+    public static void clearCurrentFriends(List<User> FriendList, Context context) {
+        ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(context, "friends_prefs", 0);
+        complexPreferences.clearObject();
+        complexPreferences.commit();
+    }
+
     public static String getCurrentFriends(Context context) {
         ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(context, "friends_prefs", 0);
         List<User> FriendList = complexPreferences.getObject("current_friends_list", List.class);

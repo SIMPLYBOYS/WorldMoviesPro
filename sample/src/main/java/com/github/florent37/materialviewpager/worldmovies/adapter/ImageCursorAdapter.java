@@ -53,29 +53,34 @@ public class ImageCursorAdapter extends SimpleCursorAdapter {
         }
 
         ImageView iv = (ImageView) v.findViewById(R.id.pic);
-        Picasso.with(iv.getContext()).load(posterUrl).placeholder(R.drawable.placeholder).centerCrop().fit()
+        Picasso.with(iv.getContext())
+                .load(posterUrl)
+                .placeholder(R.drawable.placeholder)
+                .centerCrop()
+                .fit()
                 .into(iv);
         CustomTextView title = (CustomTextView) v.findViewById(R.id.title);
         title.setText(titleStr);
-
         TextView description = (TextView) v.findViewById(R.id.descriptioin);
         description.setText(descriptionStr);
-
-        Log.d("0906", type);
 
         if (type == "genre") {
             v.setBackgroundColor(context.getResources().getColor(R.color.material_blue_300));
             title.setTextColor(context.getResources().getColor(R.color.io15_white));
-        }
-        else if (type == "imdb") {
+        } else if (type == "imdb") {
             v.setBackgroundColor(context.getResources().getColor(R.color.imdb_yellow));
             title.setTextColor(context.getResources().getColor(R.color.black_opacity_66));
             description.setTextColor(context.getResources().getColor(R.color.material_grey_600));
         } else if (type == "upcoming") {
             v.setBackgroundColor(context.getResources().getColor(R.color.tab_background));
-        } else if (type == "main" || type == "detail") {
+        } else if (type == "detail") {
             v.setBackgroundColor(context.getResources().getColor(R.color.transparent_black));
             title.setTextColor(context.getResources().getColor(R.color.app_white));
+            description.setTextColor(context.getResources().getColor(R.color.material_indigo_100));
+        } else if (type == "main") {
+            v.setBackgroundColor(context.getResources().getColor(R.color.primary_dark_material_dark));
+            title.setTextColor(context.getResources().getColor(R.color.app_white));
+            description.setTextColor(context.getResources().getColor(R.color.material_indigo_100));
         }
     }
 }

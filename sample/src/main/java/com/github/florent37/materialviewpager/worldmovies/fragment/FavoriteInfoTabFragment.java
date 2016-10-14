@@ -1,14 +1,10 @@
 package com.github.florent37.materialviewpager.worldmovies.fragment;
 
-import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +17,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
-import com.github.florent37.materialviewpager.worldmovies.adapter.FacebookFavoriteRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.adapter.TrendsFavoriteRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.adapter.nyTimesFavoriteRecycleViewAdapter;
-import com.github.florent37.materialviewpager.worldmovies.favorite.TrendsFavoriteDetail;
+import com.github.florent37.materialviewpager.worldmovies.favorite.MoviesFavoriteDetail;
 import com.github.florent37.materialviewpager.worldmovies.favorite.nyTimesFavoriteDetail;
 import com.github.florent37.materialviewpager.worldmovies.framework.FlatButton;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRequest;
@@ -38,7 +34,6 @@ import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesDetailActivity;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesFavoritePreference;
 import com.github.florent37.materialviewpager.worldmovies.trends.TrendsDetail;
-import com.github.florent37.materialviewpager.worldmovies.trends.TrendsWebViewActivity;
 import com.github.florent37.materialviewpager.worldmovies.util.BuildModelUtils;
 import com.github.florent37.materialviewpager.worldmovies.util.UIUtils;
 import com.squareup.picasso.Picasso;
@@ -59,16 +54,20 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
 
     private RequestQueue mQueue;
     private List<Movie> nyTimesList, trendsList, facebookList;
-    private ImageView nyTimesPicNumView, trendsPicNumView, facebookPicNumView;
+    private ImageView nyTimesPicNumView, trendsPicNumView;
+//    private ImageView facebookPicNumView;
     private User user;
-    private RecyclerView nytimesRecyclerview, trendsRecyclerview, facebookRecyclerview;
-    private FlatButton nyTimesAllButton, trendsAllButton, facebookAllButton;
+    private RecyclerView nytimesRecyclerview, trendsRecyclerview;
+//    private RecyclerView facebookRecyclerview;
+    private FlatButton nyTimesAllButton, trendsAllButton;
+//    private FlatButton facebookAllButton;
     private nyTimesFavoriteRecycleViewAdapter nyTimesFavoriteAdapter;
     private TrendsFavoriteRecycleViewAdapter trendsFavoriteAdapter;
-    private FacebookFavoriteRecycleViewAdapter facebookFavoriteRecycleViewAdapter;
-    private LinearLayoutManager nylinearLayoutManager, trlinearLayoutManager, fbLayoutManager;
+//    private FacebookFavoriteRecycleViewAdapter facebookFavoriteRecycleViewAdapter;
+    private LinearLayoutManager nylinearLayoutManager, trlinearLayoutManager;
+//    private LinearLayoutManager fbLayoutManager;
     private nyTimesFavoritePreference favor;
-    private TextView plot, metascrore, genre, runtime, country, moreButton, nytimes_picNum, trends_picNum, facebook_picNum, year, studio, trailer_title;
+    private TextView nytimes_picNum, trends_picNum, facebook_picNum;
 
     public static FavoriteInfoTabFragment newInstance(User user) {
         FavoriteInfoTabFragment fragment = new FavoriteInfoTabFragment();
@@ -93,14 +92,14 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         mQueue = CustomVolleyRequestQueue.getInstance(getActivity()).getRequestQueue();
         nylinearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         trlinearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        fbLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         favor = new nyTimesFavoritePreference();
         nyTimesAllButton = (FlatButton) view.findViewById(R.id.nytimes_all);
         nyTimesAllButton.setButtonColor(getResources().getColor(R.color.material_grey_500));
         trendsAllButton = (FlatButton) view.findViewById(R.id.trends_all);
         trendsAllButton.setButtonColor(getResources().getColor(R.color.material_deep_orange_A100));
+        /*fbLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         facebookAllButton =(FlatButton) view.findViewById(R.id.facebook_all);
-        facebookAllButton.setButtonColor(getResources().getColor(R.color.facebook));
+        facebookAllButton.setButtonColor(getResources().getColor(R.color.facebook));*/
         return view;
     }
 
@@ -109,8 +108,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         headline = headline.indexOf(":") != -1 ? headline.split(":")[1].trim() : headline;
         ArrayList list = favor.loadFavorites(getActivity().getApplicationContext());
 
-        if (list == null)
-            return false;
+        if (list == null) return false;
 
         for (int i=0; i<list.size(); i++) {
             if (headline.compareTo((String) list.get(i)) == 0) return true;
@@ -127,6 +125,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), nyTimesFavoriteDetail.class);
+                intent.putExtra("user", user);
                 ActivityCompat.startActivity(getActivity(), intent, null);
             }
         });
@@ -134,7 +133,8 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         trendsAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), TrendsFavoriteDetail.class);
+                Intent intent = new Intent(v.getContext(), MoviesFavoriteDetail.class);
+                intent.putExtra("user", user);
                 ActivityCompat.startActivity(getActivity(), intent, null);
             }
         });
@@ -145,16 +145,16 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         super.onActivityCreated(savedInstanceState);
         nytimesRecyclerview = (RecyclerView) getView().findViewById(R.id.nytimes_recyclerview);
         trendsRecyclerview = (RecyclerView) getView().findViewById(R.id.trends_recyclerview);
-        facebookRecyclerview = (RecyclerView) getView().findViewById(R.id.facebook_recyclerview);
         nytimesRecyclerview.setLayoutManager(nylinearLayoutManager);
         trendsRecyclerview.setLayoutManager(trlinearLayoutManager);
+        /*facebookRecyclerview = (RecyclerView) getView().findViewById(R.id.facebook_recyclerview);
         facebookRecyclerview.setLayoutManager(fbLayoutManager);
+        facebookFavoriteRecycleViewAdapter = new FacebookFavoriteRecycleViewAdapter(facebookList);
+        facebookRecyclerview.setAdapter(facebookFavoriteRecycleViewAdapter);*/
         nyTimesFavoriteAdapter = new nyTimesFavoriteRecycleViewAdapter(nyTimesList);
         trendsFavoriteAdapter = new TrendsFavoriteRecycleViewAdapter(trendsList);
-        facebookFavoriteRecycleViewAdapter = new FacebookFavoriteRecycleViewAdapter(facebookList);
         nytimesRecyclerview.setAdapter(nyTimesFavoriteAdapter);
         trendsRecyclerview.setAdapter(trendsFavoriteAdapter);
-        facebookRecyclerview.setAdapter(facebookFavoriteRecycleViewAdapter);
 
         nyTimesFavoriteAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -234,25 +234,25 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
             }
         });
 
-        facebookFavoriteRecycleViewAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*facebookFavoriteRecycleViewAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Movie movie = facebookList.get(position);
                 Context context = view.getContext();
-                Intent intent = new Intent(context, TrendsWebViewActivity.class);
+                Intent intent = new Intent(context, ContentWebViewActivity.class);
                 intent.putExtra("url", movie.getLink());
                 context.startActivity(intent);
             }
-        });
+        });*/
 
-        fetch_watched_movies();
+//        fetch_watched_movies();
         fetch_nytimes();
         fetch_trends();
     }
 
     private void fetch_watched_movies() {
-        facebookPicNumView = (ImageView) getView().findViewById(R.id.facebook_media);
-        Picasso.with(facebookPicNumView.getContext()).load(R.drawable.facebook).into(facebookPicNumView);
+        /*facebookPicNumView = (ImageView) getView().findViewById(R.id.facebook_media);
+        Picasso.with(facebookPicNumView.getContext()).load(R.drawable.facebook).into(facebookPicNumView);*/
 
         CustomJSONObjectRequest jsonRequest_f = new CustomJSONObjectRequest(Request.Method.GET, "https://graph.facebook.com/me/video.watches?access_token="+user.accessToken, new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
@@ -263,14 +263,12 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                         JSONObject movieObj = contents.getJSONObject(i);
                         String head = movieObj.getJSONObject("data").getJSONObject("movie").getString("title");
                         String link = movieObj.getJSONObject("data").getJSONObject("movie").getString("url");
-                        Log.d("0919", link);
                         Movie movie = new Movie(head, null, null, link, null, null, null);
                         facebookList.add(facebookList.size(), movie);
                     }
-                    Log.d("0919", String.valueOf(facebookList.size()));
                     facebook_picNum = (TextView) getView().findViewById(R.id.facebook_picNum);
                     facebook_picNum.setText(" " + facebookList.size());
-                    fbLayoutManager.scrollToPositionWithOffset(1,650);
+//                    fbLayoutManager.scrollToPositionWithOffset(1,650);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -284,11 +282,16 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         mQueue.add(jsonRequest_f);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
     private void fetch_nytimes() {
         nyTimesPicNumView = (ImageView) getView().findViewById(R.id.nytimes_media);
         Picasso.with(nyTimesPicNumView.getContext()).load(R.drawable.nytimes).into(nyTimesPicNumView);
 
-        CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "my_nyTimes/"+user.facebookID, new Response.Listener<JSONArray>() {
+        CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "my_nyTimes/"+user.id, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 JSONArray contents = ((JSONArray) response);
@@ -311,14 +314,15 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+                LOGD("0928", "Remote Server connect fail from FavoriteInfoTabFragment!");
+//                Toast.makeText(getActivity(), "Remote Server connect fail from FavoriteInfoTabFragment!", Toast.LENGTH_SHORT).show();
             }
         });
         mQueue.add(jsonRequest);
     }
 
     private void fetch_trends() {
-        CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "my_trends/"+user.facebookID, new Response.Listener<JSONArray>() {
+        CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "my_trends/"+user.id, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 JSONArray contents = ((JSONArray) response);
@@ -335,10 +339,8 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                     }
                     trends_picNum = (TextView) getView().findViewById(R.id.trends_picNum);
                     trendsPicNumView = (ImageView) getView().findViewById(R.id.trends_media);
-                    LOGD("0903", String.valueOf(trendsList.size()));
                     Picasso.with(trendsPicNumView.getContext()).load(R.drawable.ic_movie).into(trendsPicNumView);
                     trends_picNum.setText("  "+trendsList.size());
-                    LOGD("0903", String.valueOf(trendsList.size()));
                     trlinearLayoutManager.scrollToPositionWithOffset(1,650);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -347,20 +349,10 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getActivity(), "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+                LOGD("0928", "Remote Server connect fail from GenreActivity!");
+//                Toast.makeText(getActivity(), "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
             }
         });
         mQueue.add(jsonRequest);
-    }
-
-    private void startActivityForVersion(Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            startActivity(intent,
-                    ActivityOptions.makeSceneTransitionAnimation(
-                            getActivity()).toBundle());
-        }
-        else {
-            startActivity(intent);
-        }
     }
 }

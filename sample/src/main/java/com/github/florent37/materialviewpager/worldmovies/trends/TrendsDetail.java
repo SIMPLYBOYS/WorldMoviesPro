@@ -496,7 +496,7 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
                     User user = PrefUtils.getCurrentUser(getApplicationContext());
                     trendsObject.setBookmark(true);
                     CustomJSONObjectRequest jsonRequest_q = null;
-                    String url = HOST_NAME + "trends/"+user.facebookID;
+                    String url = HOST_NAME + "trends/"+user.id;
                     JSONObject jsonBody = new JSONObject();
 
                     try {
@@ -541,7 +541,7 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
                         throw new AssertionError("UTF-8 is unknown");
                     }
 
-                    String url = HOST_NAME + "trends/"+user.facebookID+"/"+Query;
+                    String url = HOST_NAME + "trends/"+user.id+"/"+Query;
 
                     jsonRequest_q = new CustomJSONObjectRequest(Request.Method.DELETE, url, null, new Response.Listener<JSONObject>() {
                         @Override

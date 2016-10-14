@@ -270,19 +270,20 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
     }
 
     private void buildGenreModel(JSONArray genreItems) {
+        int currentOffset = 0;
         try {
             for (int i = 0; i < genreItems.length(); i++) {
-                int colSpan = Math.random() < 0.2f ? 2 : 1;
+                int colSpan = Math.random() < 0.2f ? 1 : 1;
                 // Swap the next 2 lines to have items with variable
                 // column/row span.
-//                int rowSpan;
+                int rowSpan;
 
-                /*if (colSpan == 1)
+                if (colSpan == 1)
                     rowSpan = colSpan;
                 else
-                    rowSpan = Math.random() < 0.5f ? 2 : 1;*/
-                int rowSpan = Math.random() < 0.2f ? 2 : 1;
-                BlockItem item = new BlockItem(colSpan, rowSpan, i);
+                    rowSpan = Math.random() < 0.2f ? 1 : 1;
+                BlockItem item = new BlockItem(colSpan, rowSpan, currentOffset + i);
+                currentOffset += 22;
                 item.setTopic(genreItems.getJSONObject(i).getString("type"));
 
                 if (genreItems.getJSONObject(i).has("imageUrl")) {
@@ -292,8 +293,7 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
             }
 
             genreAdapter = new GenreSwipeRecyclerViewAdapter(genreList);
-            //        recyclerView.setBackgroundColor(Color.BLACK);
-            recyclerView.setRequestedColumnCount(3);
+            recyclerView.setRequestedColumnCount(2);
             recyclerView.setDebugging(false);
             recyclerView.setRequestedHorizontalSpacing(Utils.dpToPx(GenreActivity.this, 3));
             recyclerView.addItemDecoration(new SpacesItemDecoration(getResources().getDimensionPixelSize(R.dimen.recycler_padding)));
@@ -459,7 +459,6 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
         }
 
         @Override public int getItemViewType(int position) {
-//            return position % 2 == 0 ? 1 : 0;
             return items.get(position) == null ? 1: 0;
         }
     }
@@ -484,8 +483,7 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
             textView.setText(item.getTopic());
             if (Type == 0) {
                 Picasso.with(coverView.getContext()).load(item.getImageUrl().compareTo("") == 0 ? "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg" :
-                item.getImageUrl()).placeholder(R.drawable.placeholder).centerCrop().fit()
-                        .into(coverView);
+                item.getImageUrl()).placeholder(R.drawable.placeholder).into(coverView);
                 coverView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -597,7 +597,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
         String url;
         try {
-            url = Config.HOST_NAME + "search/2/" + URLEncoder.encode(query, "UTF-8");;
+            url = Config.HOST_NAME + "search/2/" + URLEncoder.encode(query, "UTF-8"); //TODO muti-channel support
         }  catch (UnsupportedEncodingException e) {
             throw new AssertionError("UTF-8 is unknown");
         }
@@ -611,7 +611,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                     for (int i = 0; i < MOVIES.length; i++) {
                         JSONObject obj = MOVIES[i].getJSONObject("_source");
                         posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
-                        cursor.addRow(new Object[]{i, obj.getString("title"), "", posterUrl});
+                        cursor.addRow(new Object[]{i, obj.getString("title"), obj.getString("description"), posterUrl});
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -54,7 +54,11 @@ public class BuildModelUtils {
         favor = new TrendsFavoritePreference();
         JSONObject c = contents.getJSONObject(0);
         String title = c.getString(TAG_TITLE);
-        int top = c.getInt(TAG_TOP);;
+        int top = 0;
+
+        if (c.has(TAG_TOP))
+            top = c.getInt(TAG_TOP);;
+
         String releaseDate = "";
         String mainInfo = "";
         String story = "";

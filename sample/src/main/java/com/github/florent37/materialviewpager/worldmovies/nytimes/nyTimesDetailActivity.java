@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -213,17 +211,6 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         // Inflate the menu; this adds items to the action bar if it is present.
 
         getMenuInflater().inflate(R.menu.nytimes_detail_menu, menu);
-
-        for (int i = 0; i < menu.size(); i++) {
-
-            Drawable drawable = menu.getItem(i).getIcon();
-
-            if (drawable != null) {
-                drawable.mutate();
-                drawable.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
-            }
-        }
-
         bookmarkActionView = (LinearLayout) getLayoutInflater().inflate(R.layout.bookmark_image, null);
         LOGD("0816", String.valueOf(movie.getBookmark()));
         bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
@@ -239,7 +226,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
             bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
         } else {
             bookmarkView.setChecked(false);
-            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_not_white);
         }
 
         shareItem = menu.findItem(R.id.action_share);
@@ -267,7 +254,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
                     movie.setBookmark(true);
                     String headline = movie.getHeadline().indexOf(":") != -1 ? movie.getHeadline().split(":")[1].trim() : movie.getHeadline();
                     CustomJSONObjectRequest jsonRequest_q = null;
-                    String url = HOST_NAME + "nyTimes/"+user.facebookID;
+                    String url = HOST_NAME + "nyTimes/"+user.id;
                     JSONObject jsonBody = new JSONObject();
 
                     try {
@@ -305,7 +292,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
                     favor.removeFavorite(getApplicationContext(), headline);
                     CustomJSONObjectRequest jsonRequest_q = null;
                     headline = ParserUtils.encode(headline);
-                    String url = HOST_NAME + "nyTimes/"+user.facebookID+"/"+headline;
+                    String url = HOST_NAME + "nyTimes/"+user.id+"/"+headline;
                     JSONObject jsonBody = new JSONObject();
 
                     /*try {

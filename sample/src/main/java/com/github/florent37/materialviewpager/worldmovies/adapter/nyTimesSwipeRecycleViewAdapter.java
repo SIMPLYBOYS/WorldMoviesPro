@@ -137,7 +137,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
         favor = new nyTimesFavoritePreference();
 
         if (favor.loadFavorites(activity.getApplicationContext()) == null){
-            CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "my_nyTimes/"+user.facebookID, new Response.Listener<JSONArray>() {
+            CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "my_nyTimes/"+user.id, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     JSONArray contents = ((JSONArray) response);
@@ -243,7 +243,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
                         movie.setBookmark(true);
                         String headline = movie.getHeadline().indexOf(":") != -1 ? movie.getHeadline().split(":")[1].trim() : movie.getHeadline();
                         CustomJSONObjectRequest jsonRequest_q = null;
-                        String url = HOST_NAME + "nyTimes/"+user.facebookID;
+                        String url = HOST_NAME + "nyTimes/"+user.id;
                         JSONObject jsonBody = new JSONObject();
 
                         try {
@@ -280,7 +280,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
                         favor.removeFavorite(activity.getApplicationContext(), headline);
                         CustomJSONObjectRequest jsonRequest_q = null;
                         headline = ParserUtils.encode(headline);
-                        String url = HOST_NAME + "nyTimes/"+user.facebookID+headline;
+                        String url = HOST_NAME + "nyTimes/"+user.id+headline;
                         JSONObject jsonBody = new JSONObject();
 
                         try {

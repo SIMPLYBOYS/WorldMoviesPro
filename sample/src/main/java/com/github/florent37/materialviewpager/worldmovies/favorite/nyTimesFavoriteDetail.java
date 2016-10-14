@@ -42,7 +42,6 @@ import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivit
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesDetailActivity;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesFavoritePreference;
 import com.github.florent37.materialviewpager.worldmovies.upcoming.upComingActivity;
-import com.github.florent37.materialviewpager.worldmovies.util.PrefUtils;
 import com.sackcentury.shinebuttonlib.ShineButton;
 
 import org.json.JSONArray;
@@ -114,7 +113,8 @@ public class nyTimesFavoriteDetail extends AppCompatActivity implements BottomNa
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         favor = new nyTimesFavoritePreference();
         mQueue = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getRequestQueue();
-        user = PrefUtils.getCurrentUser(getApplicationContext());
+//        user = PrefUtils.getCurrentUser(getApplicationContext());
+        user = (User) getIntent().getSerializableExtra("user");
         nyTimesList = new ArrayList<>();
         nyTimesRecyclerView = (RecyclerView)findViewById(R.id.nytimes_recyclerview);
         nyTimesRecyclerView.getItemAnimator().setAddDuration(1000);
@@ -138,7 +138,7 @@ public class nyTimesFavoriteDetail extends AppCompatActivity implements BottomNa
     }
 
     private void fetch_nytimes() {
-        CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(HOST_NAME + "my_nyTimes/"+user.facebookID, new Response.Listener<JSONArray>() {
+        CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(HOST_NAME + "my_nyTimes/"+user.id, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 JSONArray contents = ((JSONArray) response);

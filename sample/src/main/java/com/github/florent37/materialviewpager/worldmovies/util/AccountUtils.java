@@ -17,6 +17,7 @@
 package com.github.florent37.materialviewpager.worldmovies.util;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -30,8 +31,10 @@ import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContr
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableNotifiedException;
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -305,26 +308,29 @@ public class AccountUtils {
      * @param activityResultCode The result to be used to start the {@link AccountPicker}.
      * @return Returns whether the user already has an active account registered.
      */
-    public static boolean enforceActiveGoogleAccount(Activity activity, int activityResultCode) {
+    public static boolean enforceActiveGoogleAccount(Activity activity, GoogleApiClient mGoogleApiClient, int activityResultCode) {
         if (hasActiveAccount(activity)) {
             Log.d("0226", "hasActiveAccount");
             return true;
         } else {
-            Intent intent = AccountPicker.newChooseAccountIntent(null, null,
+            /*Intent intent = AccountManager.newChooseAccountIntent(null, null,
                     new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE},
                     true, null, null, null, null);
-            activity.startActivityForResult(intent, activityResultCode);
+            activity.startActivityForResult(intent, activityResultCode);*/
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            activity.startActivityForResult(signInIntent, activityResultCode);
             return false;
         }
     }
 
-    public static boolean enforceActiveFaceBookAccount(Activity activity, int activityResultCode){
+    public static boolean enforceActiveFaceBookAccount(Activity activity, int activityResultCode) {
         /*if (hasActiveAccount(activity)) {
             Log.d("0226", "hasActiveAccount");
             return true;
         }*/
         Log.d("0315", "enforceActiveFaceBookAccount");
-        LoginManager.getInstance().logInWithReadPermissions(activity, Arrays.asList("public_profile", "user_friends", "user_likes", "user_videos"));
+        LoginManager.getInstance().logInWithReadPermissions(activity, Arrays.asList("public_profile", "user_friends", "user_likes"));
         return false;
     }
 }

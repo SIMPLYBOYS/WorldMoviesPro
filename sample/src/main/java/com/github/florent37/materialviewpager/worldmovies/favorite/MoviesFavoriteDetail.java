@@ -43,7 +43,6 @@ import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivit
 import com.github.florent37.materialviewpager.worldmovies.trends.TrendsDetail;
 import com.github.florent37.materialviewpager.worldmovies.upcoming.upComingActivity;
 import com.github.florent37.materialviewpager.worldmovies.util.BuildModelUtils;
-import com.github.florent37.materialviewpager.worldmovies.util.PrefUtils;
 import com.github.florent37.materialviewpager.worldmovies.util.UIUtils;
 import com.sackcentury.shinebuttonlib.ShineButton;
 
@@ -111,7 +110,8 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
 
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         mQueue = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getRequestQueue();
-        user = PrefUtils.getCurrentUser(getApplicationContext());
+//        user = PrefUtils.getCurrentUser(getApplicationContext());
+        user = (User) getIntent().getSerializableExtra("user");
         trendsList = new ArrayList<>();
         trendsRecyclerView = (RecyclerView)findViewById(R.id.trends_recyclerview);
         trendsRecyclerView.getItemAnimator().setAddDuration(1000);

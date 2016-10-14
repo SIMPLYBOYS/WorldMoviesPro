@@ -101,7 +101,6 @@ public class ImdbChartTabFragment extends Fragment implements Response.ErrorList
                         JSONArray contents = ((JSONObject) response).getJSONArray("contents");
                         JSONObject c = contents.getJSONObject(0);
                         JSONArray records = c.getJSONArray(TAG_RECORDS);
-
                         ratingChart = (LineChartView) mActivity.findViewById(R.id.ratingChart);
                         positionChart = (LineChartView) mActivity.findViewById(R.id.postitionChart);
                         ratingPreview = (PreviewLineChartView) mActivity.findViewById(R.id.rating_preview);

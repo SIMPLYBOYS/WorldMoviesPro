@@ -427,15 +427,6 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.trends_menu, menu);
-
-        for(int i = 0; i < menu.size(); i++) {
-            Drawable drawable = menu.getItem(i).getIcon();
-            if (drawable != null) {
-                drawable.mutate();
-                drawable.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
-            }
-        }
-
         bookmarkActionView = (LinearLayout) getLayoutInflater().inflate(R.layout.bookmark_image, null);
         bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
         bookmarkView.init(this);

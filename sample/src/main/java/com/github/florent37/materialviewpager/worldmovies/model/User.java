@@ -11,7 +11,7 @@ public class User implements Serializable {
 
     public String email;
 
-    public String facebookID;
+    public String id;
 
     public String link;
 

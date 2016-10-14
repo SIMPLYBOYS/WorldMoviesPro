@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.model.TrendsObject;
-import com.github.florent37.materialviewpager.worldmovies.trends.TrendsWebViewActivity;
+import com.github.florent37.materialviewpager.worldmovies.framework.ContentWebViewActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -129,7 +129,7 @@ public class TrendsCastTabFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Context context = v.getContext();
-                    Intent intent = new Intent(context, TrendsWebViewActivity.class);
+                    Intent intent = new Intent(context, ContentWebViewActivity.class);
                     intent.putExtra("url", item.getUrl());
                     context.startActivity(intent);
                 }

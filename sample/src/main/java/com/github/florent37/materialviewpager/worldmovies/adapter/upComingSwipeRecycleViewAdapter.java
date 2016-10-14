@@ -24,9 +24,9 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.framework.CustomLightBoxActivity;
+import com.github.florent37.materialviewpager.worldmovies.imdb.MovieDetailActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
-import com.github.florent37.materialviewpager.worldmovies.imdb.MovieDetailActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -34,7 +34,6 @@ import com.google.gson.JsonParser;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
@@ -123,13 +122,8 @@ public class upComingSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycl
                     votesView.setText(ratingItem.getVotes());
             }
 
-            try {
-                title = new String(imdbObject.getTitle().getBytes("ISO-8859-1"), "UTF-8");
-                description = new String(imdbObject.getDescription().getBytes("ISO-8859-1"), "UTF-8");
-            } catch (UnsupportedEncodingException e ) {
-                e.printStackTrace();
-            }
-
+            title = imdbObject.getTitle();
+            description = imdbObject.getDescription();
             titleView.setText(title);
             yearView.setText(imdbObject.getYear());
             desciptionView.setText(description);

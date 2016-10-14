@@ -111,7 +111,7 @@ public class TrendsReviewRecycleViewAdapter extends RecyclerView.Adapter<Recycle
                 @Override
                 public void onClick(View v) {
                     /*Context context = v.getContext();
-                    Intent intent = new Intent(context, TrendsWebViewActivity.class);
+                    Intent intent = new Intent(context, ContentWebViewActivity.class);
                     intent.putExtra("url", item.getUrl());
                     context.startActivity(intent);*/
                 }

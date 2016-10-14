@@ -1,6 +1,5 @@
 package com.github.florent37.materialviewpager.worldmovies.nytimes;
 
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -97,32 +96,32 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
             // Translucent status bar
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             // Translucent navigation bar
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
 
+        //-------- change statusbar color -----//
         TextView textView = new TextView(this);
         LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewPager.LayoutParams.MATCH_PARENT, getStatusBarHeight());
         textView.setBackgroundColor(Color.parseColor("#ff212121"));
         textView.setLayoutParams(lParams);
-        // 获得根视图并把TextView加进去。
         ViewGroup view = (ViewGroup) getWindow().getDecorView();
         view.addView(textView);
+        //-------- fixed statusbar color -----//
+
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_movie_layout);
         movieList = new ArrayList<>();
         linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(false);
         rAdapter = new nyTimesSwipeRecycleViewAdapter(this, movieList);
         rvMovies = (RecyclerView) findViewById(R.id.recyclerView);
+        rvMovies.getItemAnimator().setAddDuration(500);
+        rvMovies.getItemAnimator().setChangeDuration(500);
         rvMovies.setLayoutManager(linearLayoutManager);
         rvMovies.setAdapter(rAdapter);
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
+        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
+
         rvMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -146,6 +145,7 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
+
         overridePendingTransition(0, 0);
     }
 
@@ -172,7 +172,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     public void trySetupSwipeRefresh() {
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.flat_button_text);
-
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
         /**
@@ -414,7 +413,7 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                         final String linkUrl = link.getString("url");
                         final Movie movie = new Movie(head, date, summery, linkUrl, picUrl, null, null);
 
-                        /*Intent intent = new Intent(nyTimesActivity.this, WebViewActivity.class);
+                        /*Intent intent = new Intent(nyTimesActivity.this, ContentWebViewActivity.class);
                         intent.putExtra("movie", movie);
                         ActivityCompat.startActivity(nyTimesActivity.this, intent, null);*/
 
@@ -542,7 +541,7 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     }
 
     @Override
-    public void onSaveInstanceState(Bundle saveInstanceState){
+    public void onSaveInstanceState(Bundle saveInstanceState) {
         super.onSaveInstanceState(saveInstanceState);
     }
 
@@ -555,17 +554,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     protected void enableDisableSwipeRefresh(boolean enable) {
         if (mSwipeRefreshLayout != null) {
             mSwipeRefreshLayout.setEnabled(enable);
-        }
-    }
-
-    private void startActivityForVersion(Intent intent) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            startActivity(intent,
-                    ActivityOptions.makeSceneTransitionAnimation(
-                            this).toBundle());
-        }
-        else {
-            startActivity(intent);
         }
     }
 }
