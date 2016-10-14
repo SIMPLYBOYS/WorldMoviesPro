@@ -26,14 +26,14 @@
     tools:context=".settings.SettingsActivity">
 
     <!-- Main layout -->
-    <com.github.florent37.materialviewpager.sample.ui.widget.DrawShadowFrameLayout
+    <com.github.florent37.materialviewpager.worldmovies.ui.widget.DrawShadowFrameLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
         app:shadowDrawable="@drawable/header_shadow">
 
-        <fragment android:name="com.github.florent37.materialviewpager.sample.settings.SettingsActivity$SettingsFragment"
+        <fragment android:name="com.github.florent37.materialviewpager.worldmovies.settings.SettingsActivity$SettingsFragment"
                   android:id="@+id/settings_fragment"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:orientation="vertical"
-            android:background="@color/material_blue_grey_200"
+            android:background="@color/io15_aqua_dark"
             android:theme="@style/ActionBarThemeOverlay">
             <include layout="@layout/toolbar_actionbar" /> <!-- placeholder, empty except on L -->
         </LinearLayout>
@@ -57,7 +57,7 @@
             android:layout_marginTop="?actionBarSize">
             <include layout="@layout/deprecated_include_butter_bar" />
         </FrameLayout>
-    </com.github.florent37.materialviewpager.sample.ui.widget.DrawShadowFrameLayout>
+    </com.github.florent37.materialviewpager.worldmovies.ui.widget.DrawShadowFrameLayout>
 
     <!-- Nav drawer -->
     <include layout="@layout/drawer" />

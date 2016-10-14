@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+        <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_xlarge"
@@ -46,7 +46,7 @@
             android:textColor="@color/material_blue_A100"
             app:font="Roboto-Black.ttf"/>
 
-        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+        <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
             android:id="@+id/plot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

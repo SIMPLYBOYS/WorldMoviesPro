@@ -7,11 +7,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardUseCompatPadding="true"
-    app:cardBackgroundColor="@color/card"
+    app:layout_scrollFlags="scroll"
     app:cardMaxElevation="@dimen/cardMaxElevation"
     app:cardPreventCornerOverlap="true"
     app:cardElevation="@dimen/card_elevation">
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -22,7 +23,7 @@
             android:layout_alignBottom="@+id/picture"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="68dp" />
-        <com.github.florent37.materialviewpager.sample.ui.widget.ProportionalImageView
+        <ImageView
             android:id="@+id/picture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,11 +31,13 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:adjustViewBounds="false"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:visibility="visible" />
-        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+        <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
             android:id="@+id/review_title"
-            android:layout_width="260dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="4dp"
             android:ellipsize="end"
             android:textSize="14dp"
             app:font="Roboto-Bold.ttf"

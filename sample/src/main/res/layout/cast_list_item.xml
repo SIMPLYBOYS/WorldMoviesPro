@@ -32,7 +32,7 @@
         android:layout_height="@dimen/list_item_avatar_size"
         android:layout_marginRight="16dp"/>
 
-    <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+    <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
         android:id="@+id/cast"
         android:layout_width="141dp"
         android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
         app:font="Roboto-Light.ttf"
         android:textAppearance="?attr/textAppearanceListItem"/>
 
-    <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+    <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
         android:id="@+id/as"
         android:layout_marginLeft="15dp"
         android:layout_width="141dp"

@@ -54,7 +54,7 @@
         android:layout_marginRight="25dp"
         android:layout_gravity="right" />
 
-    <com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout
+    <com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/explore_io_clickable_regin"
         android:layout_width="245dp"
@@ -95,7 +95,7 @@
                 android:visibility="gone"
                 />
 
-            <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+            <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                 android:id="@+id/delta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -128,7 +128,7 @@
             android:textStyle="bold"
             tools:text="@string/placeholder_session_title" />
 
-        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+        <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
             android:id="@+id/description"
             android:ellipsize="end"
             android:layout_width="230dp"
@@ -158,7 +158,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true" />
 
-            <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+            <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                 android:id="@+id/votes"
                 android:layout_width="50dp"
                 android:layout_height="14dp"
@@ -169,7 +169,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_toEndOf="@+id/rating" />
 
-            <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+            <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                 android:id="@+id/year"
                 android:layout_width="75dp"
                 android:layout_height="14dp"
@@ -183,5 +183,5 @@
         </RelativeLayout>
 
 
-    </com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout>
+    </com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout>
 </android.support.v7.widget.CardView>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.github.florent37.materialviewpager.sample.ui.widget.ScrimInsetsScrollView
+<com.github.florent37.materialviewpager.worldmovies.ui.widget.ScrimInsetsScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navdrawer"
@@ -49,7 +49,7 @@
                 android:paddingTop="@dimen/keyline_1"
                 android:layout_gravity="right|top">
 
-                <com.github.florent37.materialviewpager.sample.ui.widget.BezelImageView
+                <com.github.florent37.materialviewpager.worldmovies.ui.widget.BezelImageView
                     android:id="@+id/profile_image"
                     android:layout_width="@dimen/navdrawer_profile_image_size"
                     android:layout_height="@dimen/navdrawer_profile_image_size"
@@ -74,7 +74,7 @@
                     android:scaleType="center"
                     android:src="@drawable/ic_navview_accounts_expand" />
 
-                <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+                <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                     android:id="@+id/profile_email_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                     android:layout_alignParentEnd="true"
                     app:font="Roboto-Light.ttf"/>
 
-                <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+                <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                     android:id="@+id/profile_name_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -130,4 +130,4 @@
                 android:orientation="vertical" />
         </FrameLayout>
     </LinearLayout>
-</com.github.florent37.materialviewpager.sample.ui.widget.ScrimInsetsScrollView>
+</com.github.florent37.materialviewpager.worldmovies.ui.widget.ScrimInsetsScrollView>

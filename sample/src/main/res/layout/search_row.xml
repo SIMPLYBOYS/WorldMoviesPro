@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:weightSum="1">
 
-            <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+            <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
                 android:textSize="16dp"
                 app:font="Roboto-Bold.ttf"
                 android:layout_weight="3.15">
-            </com.github.florent37.materialviewpager.sample.framework.CustomTextView>
+            </com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView>
 
             <TextView
                 android:id="@+id/label1"
@@ -55,7 +55,7 @@
 
         </LinearLayout>
 
-        <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+        <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
             android:id="@+id/descriptioin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,6 +65,6 @@
             app:font="Roboto-Light.ttf"
             android:textColor="@color/app_white"
             android:textSize="12dp" >
-        </com.github.florent37.materialviewpager.sample.framework.CustomTextView>
+        </com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView>
     </LinearLayout>
 </LinearLayout>

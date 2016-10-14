@@ -11,8 +11,8 @@
     <LinearLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout style="@style/HeaderBar"
             android:id="@+id/headerbar"
@@ -41,14 +41,13 @@
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
-                android:orientation="horizontal">
-                <com.github.florent37.materialviewpager.sample.framework.AsymmetricRecyclerView
+                android:orientation="vertical">
+                <com.github.florent37.materialviewpager.worldmovies.framework.AsymmetricRecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:dividerHeight="3dp"
                     android:focusable="false"
-                    android:gravity="center"
                     android:listSelector="#ffffffff"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
                 <ProgressBar

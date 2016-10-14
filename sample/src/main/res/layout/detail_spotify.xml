@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:orientation="vertical">
-                <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+                <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                     android:layout_width="140dp"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/text_size_xlarge"

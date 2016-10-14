@@ -17,7 +17,7 @@
 <!-- This layout is added to most layouts throughout the app using include directives in Activities'
      XML layouts. Google Account and Navigation Item lists are populated through BaseActivity code.
      -->
-<com.github.florent37.materialviewpager.sample.ui.widget.ScrimInsetsScrollView
+<com.github.florent37.materialviewpager.worldmovies.ui.widget.ScrimInsetsScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navdrawer"
@@ -67,7 +67,7 @@
                 android:paddingRight="@dimen/keyline_1"
                 android:paddingTop="@dimen/keyline_1">
 
-                <com.github.florent37.materialviewpager.sample.ui.widget.BezelImageView
+                <com.github.florent37.materialviewpager.worldmovies.ui.widget.BezelImageView
                     android:id="@+id/profile_image"
                     android:layout_width="@dimen/navdrawer_profile_image_size"
                     android:layout_height="@dimen/navdrawer_profile_image_size"
@@ -142,4 +142,4 @@
                 android:orientation="vertical" />
         </FrameLayout>
     </LinearLayout>
-</com.github.florent37.materialviewpager.sample.ui.widget.ScrimInsetsScrollView>
+</com.github.florent37.materialviewpager.worldmovies.ui.widget.ScrimInsetsScrollView>

@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.github.florent37.materialviewpager.sample.ui.widget.DrawShadowFrameLayout
+    <com.github.florent37.materialviewpager.worldmovies.ui.widget.DrawShadowFrameLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/light_grey"
         app:shadowDrawable="@drawable/header_shadow">
-        <com.github.florent37.materialviewpager.sample.ui.widget.MultiSwipeRefreshLayout
+        <com.github.florent37.materialviewpager.worldmovies.ui.widget.MultiSwipeRefreshLayout
             android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -55,9 +55,9 @@
                     android:layout_centerHorizontal="true"/>
             </RelativeLayout>
 
-        </com.github.florent37.materialviewpager.sample.ui.widget.MultiSwipeRefreshLayout>
+        </com.github.florent37.materialviewpager.worldmovies.ui.widget.MultiSwipeRefreshLayout>
 
-    </com.github.florent37.materialviewpager.sample.ui.widget.DrawShadowFrameLayout>
+    </com.github.florent37.materialviewpager.worldmovies.ui.widget.DrawShadowFrameLayout>
 
     <include layout="@layout/drawer" />
 

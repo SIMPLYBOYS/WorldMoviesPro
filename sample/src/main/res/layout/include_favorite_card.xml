@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <include layout="@layout/nytimes_favorite"/>
     <!--<include layout="@layout/imdb_favorite"/>-->
     <include layout="@layout/trends_favorite"/>
-    <!--<include layout="@layout/spotify_favorite"/>-->
-</com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout>
+    <!--<include layout="@layout/facebook_favorite"/>-->
+</LinearLayout>

@@ -150,6 +150,10 @@
     <color name="fbutton_color_asbestos">#7f8c8d</color>
     <color name="fbutton_color_transparent">@android:color/transparent</color>
     <color name="textHint">#8C8C8C</color>
+    <color name="facebook">#3b5998</color>
+
+    <!-- search -->
+    <color name="dialog_background">#7f000000</color>
 
     <string-array name="movie_serial_bg">
         <item>#24c6d5</item>

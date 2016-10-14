@@ -15,5 +15,6 @@
   limitations under the License.
   -->
 <resources>
-    <item name="search_scrim_alpha" format="float" type="fraction">1</item>
+    <!-- on 21+ we animate in the scrim so make it transparent to begin -->
+    <item name="search_scrim_alpha" format="float" type="fraction">0</item>
 </resources>

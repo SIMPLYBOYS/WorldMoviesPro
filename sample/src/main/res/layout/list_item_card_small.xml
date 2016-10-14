@@ -33,7 +33,7 @@
             android:adjustViewBounds="false"
             android:foreground="?android:selectableItemBackground"/>
 
-        <com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout
+        <com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/explore_io_clickable_item2"
             android:layout_width="210dp"
@@ -72,7 +72,7 @@
                 android:textAppearance="@style/TextAppearance.SessionTitle"
                 tools:text="@string/placeholder_session_subtitle" />
 
-            <com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView
+            <com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView
                 android:layout_width="20dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="6dp"
@@ -88,7 +88,7 @@
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     android:src="@drawable/tw" />
-            </com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView>
+            </com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView>
 
-        </com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout>
+        </com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout>
 </android.support.v7.widget.CardView>

@@ -53,7 +53,7 @@
         android:layout_marginBottom="20dp"
         android:layout_weight="0.12" />
 
-    <com.github.florent37.materialviewpager.sample.framework.CustomTextView
+    <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
         android:id="@+id/trailer_title"
         android:layout_width="160dp"
         android:layout_height="wrap_content"

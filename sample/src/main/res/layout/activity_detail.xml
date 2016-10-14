@@ -8,7 +8,7 @@
     app:cardBackgroundColor="@color/card"
     android:fitsSystemWindows="true">
 
-    <com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout
+    <com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/explore_io_clickable_item"
@@ -30,7 +30,7 @@
             <include layout="@layout/toolbar_actionbar" />
         </LinearLayout>
 
-        <com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView
+        <com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:aspectRatio="@dimen/aspect_16_9">
@@ -42,7 +42,7 @@
                 android:src="@drawable/io_logo"
                 android:scaleType="centerCrop" />
 
-        </com.github.florent37.materialviewpager.sample.ui.widget.AspectRatioView>
+        </com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView>
 
         <TextView
             android:id="@+id/title"
@@ -70,5 +70,5 @@
             android:textAppearance="@style/TextAppearance.SessionTitle"
             android:text="@string/placeholder_session_subtitle" />
 
-    </com.github.florent37.materialviewpager.sample.ui.widget.ForegroundLinearLayout>
+    </com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout>
 </FrameLayout>

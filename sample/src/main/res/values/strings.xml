@@ -16,18 +16,22 @@
     <string name="Korea">Korea</string>
     <string name="France">France</string>
     <string name="China">China</string>
+    <string name="Germany">Germany</string>
     <string name="upcoming">upcoming</string>
     <string name="technologie">technology</string>
     <string name="international">international</string>
     <!-- Menu item that brings up the application's About screen -->
     <string name="description_about">About</string>
     <string name="description_favorite">Favorite</string>
+    <string name="description_favorite_trends">TrendsFavorite</string>
+    <string name="description_favorite_nytimes">NyTimesFavorite</string>
     <string name="description_detail">Detail</string>
     <string name="description_trends">TrendsDetail</string>
     <string name="description_album">Album</string>
     <string name="description_imdb">IMDB Top 250</string>
     <string name="description_genre">MovieGenre</string>
     <string name="description_genre_detail">GenreDetail</string>
+    <string name="description_login">Login</string>
     <string name="description_upcoming">UpComing films</string>
     <string name="image">image</string>
 
@@ -536,7 +540,8 @@ user updates the rating. -->
     example, this may be a button on a dialog that says "This will delete your data." -->
     <string name="cancel">Cancel</string>
 
-    <string name="facebook_app_id">906705239447168</string>
+    <string name="facebook_app_id">1107822022606191</string>
+    <string name="fb_login_protocol_scheme">1107822022606191</string>
 
     <string name="action_search">Search</string>
 
@@ -587,5 +592,7 @@ user updates the rating. -->
     <string name="drawer_item_help">Help</string>
     <string name="drawer_item_open_source">Open Source</string>
     <string name="drawer_item_contact">Contact</string>
+    <string name="server_client_id">445633336078-01pv9ls7dknrbrnq2j564fpccvap5gnm.apps.googleusercontent.com</string>
+
 
 </resources>
