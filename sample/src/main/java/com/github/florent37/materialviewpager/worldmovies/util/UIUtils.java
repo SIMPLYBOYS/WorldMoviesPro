@@ -49,6 +49,7 @@ import android.text.style.StyleSpan;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.florent37.materialviewpager.worldmovies.BuildConfig;
@@ -59,6 +60,7 @@ import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract.Rooms;
 import com.github.florent37.materialviewpager.worldmovies.settings.SettingsUtils;
+import com.squareup.picasso.Picasso;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -689,5 +691,52 @@ public class UIUtils {
         }
 
         return url;
+    }
+
+    public static void drawCountryFlag(View view, int order) {
+        switch (order) {
+            case 1:
+                Picasso.with(view.getContext()).load(R.drawable.australia).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 2:
+                Picasso.with(view.getContext()).load(R.drawable.china).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 3:
+                Picasso.with(view.getContext()).load(R.drawable.fr).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 4:
+                Picasso.with(view.getContext()).load(R.drawable.gm).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 5:
+                Picasso.with(view.getContext()).load(R.drawable.hong_kong).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 6:
+                Picasso.with(view.getContext()).load(R.drawable.india).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 7:
+                Picasso.with(view.getContext()).load(R.drawable.it).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 8:
+                Picasso.with(view.getContext()).load(R.drawable.japan).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 9:
+                Picasso.with(view.getContext()).load(R.drawable.korea).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 10:
+                Picasso.with(view.getContext()).load(R.drawable.poland).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 11:
+                Picasso.with(view.getContext()).load(R.drawable.es).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 12:
+                Picasso.with(view.getContext()).load(R.drawable.taiwan).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            case 13:
+                Picasso.with(view.getContext()).load(R.drawable.thailand).into((ImageView) view.findViewById(R.id.pic));
+                break;
+            default:
+                Picasso.with(view.getContext()).load(R.drawable.usa).into((ImageView) view.findViewById(R.id.pic));
+                break;
+        }
     }
 }

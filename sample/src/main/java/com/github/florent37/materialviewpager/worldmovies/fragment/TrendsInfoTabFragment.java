@@ -60,7 +60,6 @@ import java.util.List;
  * Created by aaron on 2016/6/21.
  */
 public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterView.OnItemClickListener {
-
     private ImageView thumbnailView, criticsView, audienceView;
     private View buttonLayout;
     private TextView plot, genre, runtime, country, picNum, year, studio, trailer_title, imdb_point, critics_point, audience_point, director;
@@ -174,8 +173,7 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
                     onClickButton(expandableLayout);
                 }
             });
-        }
-        else {
+        } else {
             ViewGroup group = (ViewGroup) story_layout.getParent();
             group.removeView(story_layout);
         }

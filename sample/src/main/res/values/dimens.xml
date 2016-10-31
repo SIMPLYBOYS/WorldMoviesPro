@@ -10,6 +10,13 @@
     <dimen name="cardMaxElevation">4dp</dimen>
     <dimen name="materialviewpager_logoHeight">35dp</dimen>
 
+    <!-- Spinner Preference -->
+    <dimen name="pk_preference_header_icon_horizontal_padding">20dp</dimen>
+    <dimen name="pk_preference_header_activity_horizontal_padding">0dp</dimen>
+    <dimen name="pk_preference_horizontal_padding">20dp</dimen>
+    <dimen name="pk_default_widgets_side_margins">10dp</dimen>
+    <dimen name="pk_circlepicker_radius">70dp</dimen>
+
     <!-- App Primary Text Sizes -->
     <dimen name="app_text_size_xsmall">11sp</dimen>
     <dimen name="app_text_size_small">12sp</dimen>

@@ -11,5 +11,4 @@ public class nyTimesFavoritePreference extends FavoritePreference {
     public nyTimesFavoritePreference() {
         super();
     }
-
 }

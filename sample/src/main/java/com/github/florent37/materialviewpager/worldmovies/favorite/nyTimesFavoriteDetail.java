@@ -113,7 +113,7 @@ public class nyTimesFavoriteDetail extends AppCompatActivity implements BottomNa
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         favor = new nyTimesFavoritePreference();
         mQueue = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getRequestQueue();
-//        user = PrefUtils.getCurrentUser(getApplicationContext());
+//        user = UsersUtils.getCurrentUser(getApplicationContext());
         user = (User) getIntent().getSerializableExtra("user");
         nyTimesList = new ArrayList<>();
         nyTimesRecyclerView = (RecyclerView)findViewById(R.id.nytimes_recyclerview);
@@ -219,7 +219,6 @@ public class nyTimesFavoriteDetail extends AppCompatActivity implements BottomNa
 
         headline = headline.indexOf(":") != -1 ? headline.split(":")[1].trim() : headline;
         ArrayList list = favor.loadFavorites(getApplicationContext());
-
         if (list == null)
             return false;
 

@@ -37,7 +37,7 @@ import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.TrendsSlideRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
-import com.github.florent37.materialviewpager.worldmovies.framework.MovieDetail;
+import com.github.florent37.materialviewpager.worldmovies.imdb.MovieDetailActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.TrendsObject;
 import com.github.florent37.materialviewpager.worldmovies.util.BuildModelUtils;
 import com.google.gson.Gson;
@@ -285,7 +285,7 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
                         JSONArray contents = response.getJSONArray("contents");
                         Log.d("0504", "title onResponse" + contents);
                         TrendsObject item = BuildModelUtils.buildTrendsModel(contents, true, trendsObject.getChannel());
-                        Intent intent = new Intent(TrendsSlideActivity.this, MovieDetail.class);
+                        Intent intent = new Intent(TrendsSlideActivity.this, MovieDetailActivity.class);
                         intent.putExtra(TrendsDetail.TRENDS_OBJECT, item);
                         ActivityCompat.startActivity(TrendsSlideActivity.this, intent, null);
                     } catch (JSONException e) {

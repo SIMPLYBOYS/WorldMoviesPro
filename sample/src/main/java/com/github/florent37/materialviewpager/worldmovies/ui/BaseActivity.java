@@ -73,7 +73,6 @@ import android.transition.Fade;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -91,6 +90,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.ashokvarma.bottomnavigation.BadgeItem;
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
+import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -102,8 +104,8 @@ import com.github.florent37.materialviewpager.worldmovies.MainActivity;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.about.AboutActivity;
 import com.github.florent37.materialviewpager.worldmovies.favorite.FavoriteActivity;
+import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
 import com.github.florent37.materialviewpager.worldmovies.framework.Model;
-import com.github.florent37.materialviewpager.worldmovies.framework.MovieDetail;
 import com.github.florent37.materialviewpager.worldmovies.framework.PresenterFragmentImpl;
 import com.github.florent37.materialviewpager.worldmovies.framework.QueryEnum;
 import com.github.florent37.materialviewpager.worldmovies.framework.UpdatableView;
@@ -118,6 +120,7 @@ import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivity;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract;
+import com.github.florent37.materialviewpager.worldmovies.service.DataBootstrapService;
 import com.github.florent37.materialviewpager.worldmovies.service.QuickstartPreferences;
 import com.github.florent37.materialviewpager.worldmovies.service.RegistrationIntentService;
 import com.github.florent37.materialviewpager.worldmovies.settings.SettingsActivity;
@@ -127,10 +130,11 @@ import com.github.florent37.materialviewpager.worldmovies.ui.widget.MultiSwipeRe
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.ScrimInsetsScrollView;
 import com.github.florent37.materialviewpager.worldmovies.upcoming.upComingActivity;
 import com.github.florent37.materialviewpager.worldmovies.util.AccountUtils;
+import com.github.florent37.materialviewpager.worldmovies.util.BuildModelUtils;
 import com.github.florent37.materialviewpager.worldmovies.util.ImageLoader;
 import com.github.florent37.materialviewpager.worldmovies.util.LUtils;
 import com.github.florent37.materialviewpager.worldmovies.util.LoginAndAuthHelper;
-import com.github.florent37.materialviewpager.worldmovies.util.PrefUtils;
+import com.github.florent37.materialviewpager.worldmovies.util.UsersUtils;
 import com.github.florent37.materialviewpager.worldmovies.welcome.WelcomeActivity;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
@@ -174,6 +178,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public static final String FILM_NAME = "filmName";
     public static final String FILM_DESCRIPTION = "filmDescription";
     public static final String FILM_POSTER = "filmPoster";
+    public static final String EXTRA_FILTER_TAG = "com.github.florent37.materialviewpager.worldmovies.EXTRA_FILTER_TAG";
+    // The saved instance state filters
+    private static final String STATE_FILTER_TAGS = "com.github.florent37.materialviewpager.worldmovies.STATE_FILTER_TAGS";
+    private static final String STATE_CURRENT_URI = "com.github.florent37.materialviewpager.worldmovies.STATE_CURRENT_URI";
     private String HOST_NAME = Config.HOST_NAME;
     private int offSet = 0;
     private RequestQueue mQueue;
@@ -218,6 +226,13 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected final int NAVDRAWER_ITEM_INVALID = -1;
     protected final int NAVDRAWER_ITEM_SEPARATOR = -2;
     protected final int NAVDRAWER_ITEM_SEPARATOR_SPECIAL = -3;
+    //------------------------------------//
+    protected final int NAV_ITEM_TREND = 0;
+    protected final int NAV_ITEM_UPCOMING = 1;
+    protected final int NAV_ITEM_IMDB = 2;
+    protected final int NAV_ITEM_NYTIMES = 3;
+    protected final int NAV_ITEM_FAVORITE = 4;
+    //------------------------------------//
     private final String TAG_TITLE = "title";
     private final String TAG_YEAR = "year";
     private final String TAG_DATA = "data";
@@ -239,6 +254,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private final String TAG_TRAILER = "trailerUrl";
     private final String TAG_GALLERY_FULL = "gallery_full";
     private final String TAG_DELTA = "delta";
+    public final int MESSAGE_TEXT_CHANGE = 100;
+    public final int AUTOCOMPLETE_DELAY = 750;
+    public int mAutoCompleteDelay = AUTOCOMPLETE_DELAY;
     // titles for navdrawer items (indices must correspond to the above)
 
     private static final int[] NAVDRAWER_TITLE_RES_ID = new int[] {
@@ -345,7 +363,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 SharedPreferences sharedPreferences =
                         PreferenceManager.getDefaultSharedPreferences(context);
                 boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
-                Log.d("0523", String.valueOf(sentToken));
 
                 /*if (sentToken) {
                     mInformationTextView.setText(getString(R.string.gcm_send_message));
@@ -603,11 +620,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
      */
     private void populateNavDrawer() {
 
-        LOGD("0227", "populateNavDrawer user: " + PrefUtils.getCurrentUser(this) + " account: " + AccountUtils.hasActiveAccount(this));
+        LOGD("0227", "populateNavDrawer user: " + UsersUtils.getCurrentUser(this) + " account: " + AccountUtils.hasActiveAccount(this));
         mNavDrawerItems.clear();
 
         // decide which items will appear in the nav drawer
-        if (AccountUtils.hasActiveAccount(this) || PrefUtils.getCurrentUser(this) != null) {
+        if (AccountUtils.hasActiveAccount(this) || UsersUtils.getCurrentUser(this) != null) {
             // Only logged-in users can save sessions, so if there is no active account,
             // there is no My Schedule
             mNavDrawerItems.add(NAVDRAWER_ITEM_MY_FAVORITE);
@@ -640,7 +657,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        LOGD("0531", "onBackPressed");
         if (isNavDrawerOpen()) {
             closeNavDrawer();
         } else {
@@ -658,12 +674,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
         mNavDrawerItemViews = new View[mNavDrawerItems.size()];
         mDrawerItemsListContainer.removeAllViews();
         int i = 0;
-        LOGD("0531: ", String.valueOf(mNavDrawerItems.size()));
 
         for (int itemId : mNavDrawerItems) {
             mNavDrawerItemViews[i] = makeNavDrawerItem(itemId, mDrawerItemsListContainer);
             mDrawerItemsListContainer.addView(mNavDrawerItemViews[i]);
-            LOGD("0531: ", String.valueOf(i));
             ++i;
         }
     }
@@ -695,8 +709,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d("0531", "onStart");
-        setupNavDrawer();
+//        setupNavDrawer();
         setupAccountBox(true);
         trySetupSwipeRefresh();
         updateSwipeRefreshProgressBarTop();
@@ -714,7 +727,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        Log.d("0531", "onPostCreate");
         View mainContent = findViewById(R.id.main_content);
         if (mainContent != null) {
             mainContent.setAlpha(0);
@@ -738,20 +750,14 @@ public abstract class BaseActivity extends AppCompatActivity implements
             return;
         }
 
-        String friends = PrefUtils.getCurrentFriends(this);
+        String friends = UsersUtils.getCurrentFriends(this);
         Gson gson = new Gson();
         List<User> friendslist = gson.fromJson(friends, new TypeToken<List<User>>(){}.getType());
-        LOGD("0526", String.valueOf(friendslist));
-
         final View chosenAccountView = findViewById(R.id.chosen_account_view);
         Account chosenAccount = AccountUtils.getActiveAccount(this);
-        LOGD("0314", "chosenAccount: " + chosenAccount);
-
         chosenAccountView.setVisibility(View.VISIBLE);
         mAccountListContainer.setVisibility(View.INVISIBLE);
-
-        ImageView coverImageView = (ImageView) chosenAccountView
-                .findViewById(R.id.profile_cover_image);
+        ImageView coverImageView = (ImageView) chosenAccountView.findViewById(R.id.profile_cover_image);
         ImageView profileImageView = (ImageView) chosenAccountView.findViewById(R.id.profile_image);
         TextView nameTextView = (TextView) chosenAccountView.findViewById(R.id.profile_name_text);
         TextView email = (TextView) chosenAccountView.findViewById(R.id.profile_email_text);
@@ -777,7 +783,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         if (fromFB) {
-            User user= PrefUtils.getCurrentUser(this);
+            User user= UsersUtils.getCurrentUser(this);
             if (user != null) {
                 imageUrl = user.pictureUrl;
                 nameTextView.setVisibility(View.VISIBLE);
@@ -841,13 +847,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
         for (Iterator it = friendList.iterator(); it.hasNext();) {
             View itemView = layoutInflater.inflate(R.layout.list_item_account, mAccountListContainer, false);
             final User user = (User) it.next();
-
-            ((TextView) itemView.findViewById(R.id.profile_email_text))
-                    .setText(user.name);
+            ((TextView) itemView.findViewById(R.id.profile_email_text)).setText(user.name);
             final String accountName = user.name;
             String imageUrl = user.pictureUrl;
-
-            LOGD("0426", String.valueOf(user.name));
 
             if (!TextUtils.isEmpty(imageUrl)) {
                 mImageLoader.loadImage(imageUrl,
@@ -866,7 +868,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                                 Toast.LENGTH_SHORT).show();
                         mDrawer.closeDrawer(GravityCompat.START);
                     } else {
-                        LOGD("0426", "show account: " + accountName);
 //                        Toast.makeText(getApplicationContext(), "the function is constructing!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(BaseActivity.this, FavoriteActivity.class);
                         intent.putExtra("user", user);
@@ -959,17 +960,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
         set.start();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return mDrawerToggle.onOptionsItemSelected(item) ||
-                super.onOptionsItemSelected(item);
-    }
-
     private void goToNavDrawerItem(int item) {
         switch (item) {
             case NAVDRAWER_ITEM_MY_FAVORITE:
                 Intent intent = new Intent(this, FavoriteActivity.class);
-                User user = PrefUtils.getCurrentUser(getApplicationContext());
+                User user = UsersUtils.getCurrentUser(getApplicationContext());
                 intent.putExtra("user", user);
                 createBackStack(intent);
 //                createBackStack(new Intent(this, VideoLibraryActivity.class));
@@ -1106,11 +1101,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     private void signOut() {
         LOGD("0315", "signOut");
-        PrefUtils.clearCurrentUser(this);
-        String friends = PrefUtils.getCurrentFriends(this);
+        UsersUtils.clearCurrentUser(this);
+        String friends = UsersUtils.getCurrentFriends(this);
         Gson gson = new Gson();
         List<User> friendslist = gson.fromJson(friends, new TypeToken<List<User>>(){}.getType());
-        PrefUtils.clearCurrentFriends(friendslist, this);
+        UsersUtils.clearCurrentFriends(this);
         AccountUtils.clearActiveAccount(this);
         LoginManager.getInstance().logOut();
         Intent i=  new Intent(this, LoginActivity.class);
@@ -1151,7 +1146,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         // Perform one-time bootstrap setup, if needed
-//        DataBootstrapService.startDataBootstrapIfNecessary(this);
+        DataBootstrapService.startDataBootstrapIfNecessary(this);
 
         // Check to ensure a Google Account is active for the app. Placing the check here ensures
         // it is run again in the case where a Google Account wasn't present on the device and a
@@ -1483,16 +1478,17 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     public void requestDataRefresh(String Query) {
         final CustomJSONObjectRequest jsonRequest = null;
-
         mQueue = CustomVolleyRequestQueue.getInstance(BaseActivity.this).getRequestQueue();
         CustomJSONObjectRequest jsonRequest_q = null;
         String url = null;
+        String searchChannel = CredentialsHandler.getCountry(this);
+        // String searchGenre = CredentialsHandler.getGenre(this); TODO search by genre
 
         if (Query != null) {
             // launch query from searchview
             try {
                 Query = URLEncoder.encode(Query, "UTF-8");
-                url= Config.HOST_NAME + "/imdb?title=" + Query + "&ascending=1";
+                url= Config.HOST_NAME + "/world/"+searchChannel+"/all?title=" + Query + "&ascending=1"; //TODO search by country with genre
             } catch (UnsupportedEncodingException e) {
                 throw new AssertionError("UTF-8 is unknown");
             }
@@ -1502,114 +1498,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 public void onResponse(JSONObject response) {
                     try {
                         JSONArray contents = response.getJSONArray("contents");
-                        JSONObject jsonObj = new JSONObject();
-                        JSONArray data = new JSONArray();
-                        JSONObject c = contents.getJSONObject(0);
-                        JSONObject d = null;
-                        int top = 0;
-                        String title = c.getString(TAG_TITLE);
-                        String year = "";
-                        String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
-                        String delta = "0";
-                        String detailUrl = "";
-
-                        if (c.has("detailContent")) {
-                            d = c.getJSONObject("detailContent");
-                        }
-
-                        JSONObject jo = new JSONObject();
-                        //----- start dummy GalleryUrl ----
-                        jo.put("type", "full");
-                        jo.put("url", "");
-                        JSONArray galleryFullUrl = new JSONArray();
-                        JSONArray cast = new JSONArray();
-                        galleryFullUrl.put(jo);
-                        //----- end dummy GalleryUrl ----
-
-                        if (c.has(TAG_TOP)) {
-                            top = c.getInt(TAG_TOP);
-                            if (top > offSet)
-                                offSet = top;
-                        }
-
-                        if (c.has(TAG_DATA)) {
-                            data = c.getJSONArray(TAG_DATA);
-                            jsonObj = (JSONObject) data.get(1);
-                            LOGD("0811", String.valueOf(data));
-                        }
-
-                        /*if (c.has(TAG_RELEASE) && !c.has(TAG_TOP)) {
-                            year = String.valueOf(c.getInt(TAG_RELEASE));
-                            year = year.substring(4, 8);
-                        } else {
-                            year = c.getString(TAG_YEAR);
-                        }*/
-
-                        year = c.has(TAG_YEAR) ? c.getString(TAG_YEAR) : jsonObj.getString("data");
-
-                        if (c.has(TAG_DELTA)) {
-                            delta = c.getString(TAG_DELTA);
-                        }
-
-                        if (c.has(TAG_DETAIL_URL))
-                            detailUrl = c.getString(TAG_DETAIL_URL);
-
-                        String description= c.getString(TAG_DESCRIPTION);
-                        String rating = c.getString(TAG_RATING);
-
-                        if (c.has(TAG_POSTER_URL)) {
-                            posterUrl = c.getString(TAG_POSTER_URL);
-                        }
-
-                        if (c.has(TAG_CAST)) {
-                            cast = c.getJSONArray(TAG_CAST);
-                        }
-
-                        String plot = c.has(TAG_PLOT) ? c.getString(TAG_PLOT) : c.getString("story");
-                        String genre = c.has(TAG_GENRE) ? c.getString(TAG_GENRE) : "";
-                        String votes = c.has(TAG_VOTES) ? c.getString(TAG_VOTES) : "";
-                        String runTime = c.has(TAG_RUNTIME) ? c.getString(TAG_RUNTIME) : "";
-                        String metaScore = c.has(TAG_METASCORE) ? c.getString(TAG_METASCORE) : "";
-
-                        if (runTime.compareTo("") == 0) {
-                            jsonObj = new JSONObject();
-                            jsonObj = (JSONObject) data.get(4);
-                            runTime = jsonObj.getString("data");
-                        }
-
-                        if (genre.compareTo("") == 0)
-                            genre = c.getString("genre");
-
-                        String summery = d != null ? d.getString(TAG_SUMMERY) : c.getString("story");
-                        String country = d != null ? d.getString(TAG_COUNTRY) : c.getString(TAG_COUNTRY);
-
-                        if (c.has(TAG_GALLERY_FULL)) {
-                            galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
-                        }
-
-                        String trailerUrl;
-                        String slate;
-
-                        if (c.has(TAG_TRAILER))
-                            trailerUrl = c.getString(TAG_TRAILER);
-                        else
-                            trailerUrl = "N/A";
-
-                        if (d != null)
-                            slate = d.has(TAG_SLATE) ? d.getString(TAG_SLATE) : "N/A";
-                        else
-                            slate = "N/A";
-
-                        ImdbObject movie = new ImdbObject(title, String.valueOf(top), year, description,
-                                rating, posterUrl, slate, summery, plot,
-                                genre, votes, runTime, metaScore, delta, country,
-                                trailerUrl, cast.toString(), galleryFullUrl.toString(), detailUrl);
+                        ImdbObject item = BuildModelUtils.buildImdbModel(contents);
                         Intent intent = new Intent(BaseActivity.this, MovieDetailActivity.class);
-                        if (c.has(TAG_TOP))
-                            movie.setType("imdb");
-                        else
-                            movie.setType("genre");
-                        intent.putExtra(MovieDetail.IMDB_OBJECT, movie);
+                        intent.putExtra(ImdbActivity.IMDB_OBJECT, item);
                         ActivityCompat.startActivity(BaseActivity.this, intent, null);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1757,8 +1648,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
             return;
         }
 
-        Log.d("0609", String.valueOf(itemId));
-
         ImageView iconView = (ImageView) view.findViewById(R.id.icon);
         TextView titleView = (TextView) view.findViewById(R.id.title);
 
@@ -1782,7 +1671,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("0531", "onDestroy");
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         sp.unregisterOnSharedPreferenceChangeListener(this);
     }
@@ -1805,9 +1693,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
                             account, ScheduleContract.CONTENT_AUTHORITY);
                     boolean syncPending = ContentResolver.isSyncPending(
                             account, ScheduleContract.CONTENT_AUTHORITY);
-                    if (!syncActive && !syncPending) {
+                    if (!syncActive && !syncPending)
                         mManualSyncRequest = false;
-                    }
+
                     onRefreshingStateChanged(syncActive || mManualSyncRequest);
                 }
             });
@@ -1917,7 +1805,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         PresenterFragmentImpl presenter = (PresenterFragmentImpl) fragmentManager.findFragmentByTag(
                 PRESENTER_TAG);
         if (presenter == null) {
-            Log.d("0219-1","presenter is null");
             //Create, set up and add the presenter.
             presenter = new PresenterFragmentImpl();
             setUpPresenter(presenter, fragmentManager, updatableViewResId, model, queries, actions);
@@ -1925,7 +1812,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
             fragmentTransaction.add(presenter, PRESENTER_TAG);
             fragmentTransaction.commit();
         } else {
-            Log.d("0219-2","presenter is not null");
             //Set up the presenter.
             setUpPresenter(presenter, fragmentManager, updatableViewResId, model, queries, actions);
         }
@@ -2016,5 +1902,50 @@ public abstract class BaseActivity extends AppCompatActivity implements
             actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
         }
         return actionBarHeight;
+    }
+
+    public void goToNavItem(int item) {
+        switch (item) {
+            case NAV_ITEM_TREND:
+                createBackStack(new Intent(this, MainActivity.class));
+                break;
+            case NAV_ITEM_UPCOMING:
+                createBackStack(new Intent(this, upComingActivity.class));
+                break;
+            case NAV_ITEM_IMDB:
+                createBackStack(new Intent(this, ImdbActivity.class));
+                break;
+            case NAV_ITEM_NYTIMES:
+                createBackStack(new Intent(this, nyTimesActivity.class));
+                break;
+            case NAV_ITEM_FAVORITE:
+//                createBackStack(new Intent(this, GenreActivity.class));
+                Intent intent = new Intent(this, FavoriteActivity.class);
+                User user = UsersUtils.getCurrentUser(getApplicationContext());
+                intent.putExtra("user", user);
+                createBackStack(intent);
+                break;
+        }
+    }
+
+    public void refresh(BottomNavigationBar bottomNavigationBar, int lastSelectedPosition, BadgeItem numberBadgeItem) {
+        bottomNavigationBar.clearAll();
+        numberBadgeItem = new BadgeItem()
+                .setBorderWidth(4)
+                .setBackgroundColorResource(R.color.blue)
+                .setText("" + lastSelectedPosition);
+
+        bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
+        bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
+        bottomNavigationBar
+                .addItem(new BottomNavigationItem(R.drawable.ic_trending_up, R.string.navdrawer_item_explore).setActiveColorResource(R.color.material_orange_900).setBadgeItem(numberBadgeItem))
+                .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
+                .addItem(new BottomNavigationItem(R.drawable.ic_theaters, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
+                .addItem(new BottomNavigationItem(R.drawable.nytimes, "nytimes").setActiveColorResource(R.color.material_brown_400))
+                .addItem(new BottomNavigationItem(R.drawable.ic_person, "Profile").setActiveColorResource(R.color.material_red_900))
+//                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_red_900))
+                .setFirstSelectedPosition(lastSelectedPosition)
+                .setBarBackgroundColor(R.color.foreground_material_light)
+                .initialise();
     }
 }

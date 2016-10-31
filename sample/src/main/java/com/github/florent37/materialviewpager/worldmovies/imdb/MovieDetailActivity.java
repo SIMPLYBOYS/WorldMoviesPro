@@ -1,7 +1,10 @@
 package com.github.florent37.materialviewpager.worldmovies.imdb;
 
 import android.app.ActivityOptions;
+import android.app.LoaderManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -14,6 +17,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -24,21 +29,27 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -58,20 +69,28 @@ import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.MainActivity;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.ImageCursorAdapter;
+import com.github.florent37.materialviewpager.worldmovies.favorite.FavoriteActivity;
 import com.github.florent37.materialviewpager.worldmovies.fragment.ImdbCastTabFragment;
 import com.github.florent37.materialviewpager.worldmovies.fragment.ImdbChartTabFragment;
 import com.github.florent37.materialviewpager.worldmovies.fragment.ImdbInfoTabFragment;
 import com.github.florent37.materialviewpager.worldmovies.fragment.ImdbMusicTabFragment;
 import com.github.florent37.materialviewpager.worldmovies.fragment.ImdbReviewTabFragment;
-import com.github.florent37.materialviewpager.worldmovies.framework.MovieDetail;
-import com.github.florent37.materialviewpager.worldmovies.genre.GenreActivity;
+import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
+import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
+import com.github.florent37.materialviewpager.worldmovies.model.TagFilterHolder;
+import com.github.florent37.materialviewpager.worldmovies.model.TagMetadata;
+import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivity;
 import com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity;
+import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionView;
+import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionViewCallbacks;
 import com.github.florent37.materialviewpager.worldmovies.upcoming.upComingActivity;
 import com.github.florent37.materialviewpager.worldmovies.util.BuildModelUtils;
+import com.github.florent37.materialviewpager.worldmovies.util.UIUtils;
+import com.github.florent37.materialviewpager.worldmovies.util.UsersUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -91,7 +110,6 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -100,13 +118,17 @@ import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 import lecho.lib.hellocharts.view.PreviewLineChartView;
 
+import static com.github.florent37.materialviewpager.worldmovies.trends.TrendsDetail.getJsonObjectArray;
+import static com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity.EXTRA_FILTER_TAG;
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
+import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.drawCountryFlag;
 
 /**
  * Created by aaron on 2016/7/28.
  */
-public class MovieDetailActivity extends AppCompatActivity implements KenBurnsView.TransitionListener, BottomNavigationBar.OnTabSelectedListener,
-        Response.Listener, Response.ErrorListener {
+public class MovieDetailActivity extends AppCompatActivity implements KenBurnsView.TransitionListener,
+        BottomNavigationBar.OnTabSelectedListener, Response.Listener, Response.ErrorListener, LoaderManager.LoaderCallbacks<Cursor> {
     public static String IMDB_OBJECT = "IMDB_OBJECT";
     public final String FILM_NAME = "filmName";
     public final String FILM_DESCRIPTION = "filmDescription";
@@ -115,7 +137,7 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
     protected final int NAV_ITEM_UPCOMING = 1;
     protected final int NAV_ITEM_IMDB = 2;
     protected final int NAV_ITEM_NYTIMES = 3;
-    protected final int NAV_ITEM_GENRE = 4;
+    protected final int NAV_ITEM_FAVORITE = 4;
     private int mTransitionsCount = 0;
     private String TAG_TOP = "top";
     private String HOST_NAME = Config.HOST_NAME;
@@ -135,16 +157,63 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
     private MenuItem searchItem = null;
     private MenuItem bookmarkItem = null;
     private RequestQueue mQueue;
-    public ArrayList<HashMap<String, String>> contentList;
-    public ArrayList<HashMap<String, String>> galleryList;
-    private ImageCursorAdapter mAdapter;
+    private ImageCursorAdapter cursorAdapter;
     private JSONObject[] MOVIES = {};
-    int lastSelectedPosition = 0;
-    ShareActionProvider shareActionProvider;
-    BottomNavigationBar bottomNavigationBar;
-    BadgeItem numberBadgeItem;
-    LinearLayout bookmarkActionView;
+    private int lastSelectedPosition = 0;
+    private ShareActionProvider shareActionProvider;
+    private BottomNavigationBar bottomNavigationBar;
+    private BadgeItem numberBadgeItem;
+    private LinearLayout bookmarkActionView;
     private ShineButton bookmarkView = null;
+    private DrawerLayout mDrawerLayout;
+    private CollectionView mDrawerCollectionView;
+    private String[] from = new String [] {FILM_NAME};
+    private int[] to = new int[] { R.id.text1};
+    private CustomJSONArrayRequest jsonRequest;
+    private String searchChannel = "14";
+    private final int MESSAGE_TEXT_CHANGE = 100;
+    private final int AUTOCOMPLETE_DELAY = 750;
+    private int mAutoCompleteDelay = AUTOCOMPLETE_DELAY;
+    private Handler completeHandler;
+    private final int TAG_METADATA_TOKEN = 0x8;
+    private TagMetadata mTagMetadata;
+    private TagFilterHolder mTagFilterHolder;
+    private static final int GROUP_TOPIC_TYPE_OR_THEME = 0;
+    private static final int GROUP_LIVE_STREAM = 1;
+    private static final int GROUP_COUNTRY = 2;
+    private final String TAG = makeLogTag(MovieDetailActivity.class);
+    // The OnClickListener for the Switch widgets on the navigation filter.
+    private final View.OnClickListener mDrawerItemCheckBoxClickListener =
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean isChecked = ((CheckBox)v).isChecked();
+                    TagMetadata.Tag theTag = (TagMetadata.Tag)v.getTag();
+                    LOGD(TAG, "Checkbox with tag: " + theTag.getName() + " isChecked => " + isChecked);
+                    if (isChecked) {
+                        if (theTag.getCategory().equals("COUNTRY")) {
+                            mTagFilterHolder.clear(); //support one country for searching
+                        }
+                        // Here we only add all 'types' if the user has not explicitly selected
+                        // one of the category_type tags.
+                        mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+
+                        List<TagMetadata.Tag> tags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
+
+                        for (TagMetadata.Tag tag : tags) {
+                            if (mTagFilterHolder.contains(tag.getId())) {
+                                LOGD("1019", String.valueOf(tag.getOrderInCategory()));
+                                searchChannel = String.valueOf(tag.getOrderInCategory());
+                                CredentialsHandler.setCountry(getApplicationContext(), searchChannel);
+                            }
+                        }
+                    } else {
+                        searchChannel = "12";
+                        mTagFilterHolder.remove(theTag.getId(), theTag.getCategory());
+                        CredentialsHandler.setCountry(getApplicationContext(), searchChannel);
+                    }
+                }
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +249,11 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         backgroundImageView5.setTransitionListener(this);
         //---------- Ken Burn Animation-----------//
 
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_flipped, GravityCompat.END);
+        mDrawerCollectionView = (CollectionView) findViewById(R.id.drawer_collection_view);
+        cursorAdapter = new ImageCursorAdapter(this, R.layout.search_row, null, from, to, "detail");
+
         imdbObject = (ImdbObject) getIntent().getSerializableExtra(IMDB_OBJECT);
         mViewSwitcher = (ViewFlipper) findViewById(R.id.viewSwitcher);
 //        collapsingToolbar.setTitle(trendsObject.getTitle());
@@ -202,9 +276,17 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         }
 
         //------- deserialize Gallery JSON object -------//
+        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
+        getLoaderManager().initLoader(TAG_METADATA_TOKEN, null, this);
         refresh();
-        loadHints();
         bottomNavigationBar.setTabSelectedListener(this);
+
+        completeHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                giveSuggestions((String) msg.obj);
+            }
+        };
     }
 
     @Override
@@ -244,7 +326,7 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
             final ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
-                final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+                final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
                 upArrow.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
                 actionBar.setHomeAsUpIndicator(upArrow);
             }
@@ -255,7 +337,7 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         bottomNavigationBar.clearAll();
         numberBadgeItem = new BadgeItem()
                 .setBorderWidth(4)
-                .setBackgroundColorResource(R.color.blue)
+                .setBackgroundColorResource(R.color.material_blue_700)
                 .setText("" + lastSelectedPosition);
 
 //        bottomNavigationBar.setFab(fab);
@@ -267,9 +349,171 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
                 .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
                 .addItem(new BottomNavigationItem(R.drawable.ic_theaters, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
                 .addItem(new BottomNavigationItem(R.drawable.nytimes, "NyTimes").setActiveColorResource(R.color.material_brown_300))
-                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_light_blue_A100))
+                .addItem(new BottomNavigationItem(R.drawable.ic_person, "Profile").setActiveColorResource(R.color.material_red_900))
+//                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_light_blue_A100))
                 .setFirstSelectedPosition(lastSelectedPosition)
+                .setBarBackgroundColor(R.color.material_grey_900)
                 .initialise();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (id == TAG_METADATA_TOKEN) {
+            LOGD("1018", "createLoader");
+            return TagMetadata.createCursorLoader(this);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        switch (loader.getId()) {
+            case TAG_METADATA_TOKEN:
+                searchChannel = CredentialsHandler.getCountry(this);
+                LOGD("1025", "load finish\n"+searchChannel+" # channel");
+                mTagMetadata = new TagMetadata(cursor);
+                onTagMetadataLoaded();
+                break;
+            default:
+                cursor.close();
+        }
+    }
+
+    public void onTagMetadataLoaded() {
+
+        if (mTagFilterHolder == null) {
+            // Use the Intent Extras to set up the TagFilterHolder
+            mTagFilterHolder = new TagFilterHolder();
+
+            String tag = getIntent().getStringExtra(EXTRA_FILTER_TAG); //TODO get tag from preference
+            TagMetadata.Tag userTag = mTagMetadata.getTag(tag);
+            String userTagCategory = userTag == null ? null : userTag.getCategory();
+
+            if (tag != null && userTagCategory != null) {
+                mTagFilterHolder.add(tag, userTagCategory);
+            }
+
+            List<TagMetadata.Tag> tags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_TYPE);
+            // Here we only add all 'types' if the user has not explicitly selected
+            // one of the category_type tags.
+            if (tags != null && !TextUtils.equals(userTagCategory, Config.Tags.CATEGORY_TYPE)) {
+                for (TagMetadata.Tag theTag : tags) {
+                    mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+                }
+            }
+
+            List<TagMetadata.Tag> countryTags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
+
+            if (countryTags != null && !TextUtils.equals(userTagCategory, Config.Tags.CATEGORY_COUNTRY)) {
+                for (TagMetadata.Tag theTag : countryTags) {
+                    if (String.valueOf(theTag.getOrderInCategory()).equals(searchChannel))
+                        mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+                }
+            }
+        }
+
+        TagAdapter tagAdapter = new TagAdapter();
+        mDrawerCollectionView.setCollectionAdapter(tagAdapter);
+        mDrawerCollectionView.updateInventory(tagAdapter.getInventory());
+    }
+
+    private class TagAdapter implements CollectionViewCallbacks {
+
+        public CollectionView.Inventory getInventory() {
+            List<TagMetadata.Tag> countries = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_TOPIC);
+            CollectionView.Inventory inventory = new CollectionView.Inventory();
+            CollectionView.InventoryGroup themeGroup = new CollectionView.InventoryGroup(GROUP_TOPIC_TYPE_OR_THEME)
+                    .setDisplayCols(1)
+                    .setDataIndexStart(0)
+                    .setShowHeader(false);
+
+            if (countries != null && countries.size() > 0) {
+                for (TagMetadata.Tag country : countries) {
+                    themeGroup.addItemWithTag(country);
+                }
+                inventory.addGroup(themeGroup);
+            }
+
+            // We need to add the Live streamed section after the Type category
+            CollectionView.InventoryGroup liveStreamGroup = new CollectionView.InventoryGroup(GROUP_LIVE_STREAM)
+                    .setDataIndexStart(0)
+                    .setShowHeader(true)
+                    .addItemWithTag("Livestreamed");
+
+            inventory.addGroup(liveStreamGroup);
+
+            CollectionView.InventoryGroup topicsGroup = new CollectionView.InventoryGroup(GROUP_COUNTRY)
+                    .setDataIndexStart(0)
+                    .setShowHeader(true);
+
+            List<TagMetadata.Tag> topics = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
+
+            if (topics != null && topics.size() > 0) {
+                for (TagMetadata.Tag topic : topics) {
+                    Log.d("1018", String.valueOf(topic));
+                    topicsGroup.addItemWithTag(topic);
+                }
+                inventory.addGroup(topicsGroup);
+            }
+
+            return inventory;
+        }
+
+        @Override
+        public View newCollectionHeaderView(Context context, int groupId, ViewGroup parent) {
+            View view = LayoutInflater.from(context)
+                    .inflate(R.layout.explore_sessions_list_item_alt_header, parent, false);
+            // We do not want the divider/header to be read out by TalkBack, so
+            // inform the view that this is not important for accessibility.
+            UIUtils.setAccessibilityIgnore(view);
+            return view;
+        }
+
+        @Override
+        public void bindCollectionHeaderView(Context context, View view, int groupId, String headerLabel, Object headerTag) {
+        }
+
+        @Override
+        public View newCollectionItemView(Context context, int groupId, ViewGroup parent) {
+            return LayoutInflater.from(context).inflate(groupId == GROUP_LIVE_STREAM ?
+                    R.layout.explore_sessions_list_item_livestream_alt_drawer :
+                    R.layout.explore_sessions_list_item_alt_drawer, parent, false);
+        }
+
+        @Override
+        public void bindCollectionItemView(Context context, View view, int groupId, int indexInGroup, int dataIndex, Object tag) {
+            final CheckBox checkBox = (CheckBox) view.findViewById(R.id.filter_checkbox);
+            if (groupId == GROUP_LIVE_STREAM) {
+                //Do nothing
+            } else {
+                TagMetadata.Tag theTag = (TagMetadata.Tag) tag;
+                if (theTag != null && groupId == GROUP_TOPIC_TYPE_OR_THEME) {
+                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
+                    // set the original checked state by looking up our tags.
+                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
+                    checkBox.setTag(theTag);
+                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
+                    //TODO poster by Genre api
+                } else if (theTag != null && groupId == GROUP_COUNTRY) {
+                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
+                    drawCountryFlag(view, theTag.getOrderInCategory());
+                    // set the original checked state by looking up our tags.
+                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
+                    checkBox.setTag(theTag);
+                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
+                }
+            }
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    checkBox.performClick();
+                }
+            });
+        }
     }
 
     private void setupViewPager() {
@@ -308,7 +552,8 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(this, "Remote Server not working!", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Remote Server not working!", Toast.LENGTH_LONG).show();
+        LOGD("1015","Remote Server not working!");
     }
 
     private void setupCollapsingToolbar() {
@@ -438,6 +683,9 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         searchItem = menu.findItem(R.id.action_search);
         bookmarkItem = menu.findItem(R.id.action_bookmark);
         bookmarkItem.setActionView(bookmarkView);
+        MenuItem filter = menu.findItem(R.id.action_filter);
+        Drawable drawable = filter.getIcon();
+        drawable.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);
@@ -480,7 +728,10 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
 
             @Override
             public boolean onQueryTextChange(String query) {
-                giveSuggestions(query);
+                if (!query.trim().isEmpty()) {
+                    completeHandler.removeMessages(MESSAGE_TEXT_CHANGE);
+                    completeHandler.sendMessageDelayed(completeHandler.obtainMessage(MESSAGE_TEXT_CHANGE, query), mAutoCompleteDelay);
+                }
                 return false;
             }
         });
@@ -495,7 +746,7 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
             public boolean onSuggestionClick(int position) {
                 Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
                 final String feedName = cursor.getString(1);
-                searchView.post(new Runnable(){
+                searchView.post(new Runnable() {
                     @Override
                     public void run() {
                         searchView.setQuery(feedName, true);
@@ -505,7 +756,7 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
             }
         });
 
-        searchView.setSuggestionsAdapter(mAdapter);
+        searchView.setSuggestionsAdapter(cursorAdapter);
 
         // Retrieve the share menu item
         MenuItem shareItem = menu.findItem(R.id.action_share);
@@ -522,15 +773,14 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         final int[] to = new int[] { R.id.text1};
         final CustomJSONObjectRequest jsonRequest;
 
-        mAdapter = new ImageCursorAdapter(this,
+        cursorAdapter = new ImageCursorAdapter(this,
                 R.layout.search_row,
                 null,
                 from,
                 to,
                 "detail");
 
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
+        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
 
         jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
@@ -553,58 +803,79 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
 
     private void giveSuggestions(String query) {
         final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        String url;
+
         try {
-            for (int i = 0; i < MOVIES.length; i++) {
-                if (MOVIES[i].getString("title").toLowerCase().contains(query.toLowerCase()))
-                    cursor.addRow(new Object[]{i, MOVIES[i].getString("title"), MOVIES[i].getString("description"), MOVIES[i].getString("posterUrl")});
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            url = Config.HOST_NAME + "search/"+ searchChannel+"/" + URLEncoder.encode(query, "UTF-8"); //TODO muti-channel support
+        }  catch (UnsupportedEncodingException e) {
+            throw new AssertionError("UTF-8 is unknown");
         }
-        mAdapter.changeCursor(cursor);
+
+        jsonRequest = new CustomJSONArrayRequest(url, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                JSONArray contents = ((JSONArray) response);
+                MOVIES = getJsonObjectArray(contents);
+                String posterUrl;
+                try {
+                    for (int i = 0; i < MOVIES.length; i++) {
+                        JSONObject obj = MOVIES[i].getJSONObject("_source");
+                        posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
+                        cursor.addRow(new Object[]{i, obj.getString("title"), obj.getString("description"), posterUrl});
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                cursorAdapter.changeCursor(cursor);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                Toast.makeText(MainActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mQueue.add(jsonRequest);
     }
 
     public void requestDataRefresh(String Query) {
         final CustomJSONObjectRequest jsonRequest = null;
-        AlbumActivity.contentList = new ArrayList<HashMap<String, String>>();
-        AlbumActivity.galleryList = new ArrayList<HashMap<String, String>>();
-
-        mQueue = CustomVolleyRequestQueue.getInstance(MovieDetailActivity.this)
-                .getRequestQueue();
-
+        mQueue = CustomVolleyRequestQueue.getInstance(MovieDetailActivity.this).getRequestQueue();
         CustomJSONObjectRequest jsonRequest_q = null;
+        String url = null;
+        String searchChannel = CredentialsHandler.getCountry(this);
+        // String searchGenre = CredentialsHandler.getGenre(this); TODO
 
         if (Query != null) {
             // launch query from searchview
             try {
                 Query = URLEncoder.encode(Query, "UTF-8");
+                url= Config.HOST_NAME + "world/"+searchChannel+"/all?title=" + Query + "&ascending=1"; //TODO search by country with genre
             } catch (UnsupportedEncodingException e) {
                 throw new AssertionError("UTF-8 is unknown");
             }
-            jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb?title=" + Query + "&ascending=1", new JSONObject(), new Response.Listener<JSONObject>() {
+
+            jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
                         JSONArray contents = response.getJSONArray("contents");
-                        JSONObject c = contents.getJSONObject(0);
-                        ImdbObject movie = BuildModelUtils.buildImdbModel(contents);
-                        if (c.has(TAG_TOP))
-                            movie.setType("imdb");
-                        else
-                            movie.setType("genre");
+                        ImdbObject item = BuildModelUtils.buildImdbModel(contents);
                         Intent intent = new Intent(MovieDetailActivity.this, MovieDetailActivity.class);
-                        intent.putExtra(MovieDetail.IMDB_OBJECT, movie);
+                        intent.putExtra(ImdbActivity.IMDB_OBJECT, item);
                         ActivityCompat.startActivity(MovieDetailActivity.this, intent, null);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-            }, this);
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(MovieDetailActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+                }
+            });
             mQueue.add(jsonRequest_q);
             return;
         }
-
-        jsonRequest.setTag(REQUEST_TAG);
 
         mQueue.add(jsonRequest); //trigger volley request
     }
@@ -624,6 +895,9 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
                 return true;
             case R.id.menu_smooth_end:
                 ImdbReviewTabFragment.movieReview.smoothScrollToPosition(ImdbReviewTabFragment.linearLayoutManager.getItemCount());
+                return true;
+            case R.id.action_filter:
+                mDrawerLayout.openDrawer(GravityCompat.END);
                 return true;
         }
 
@@ -676,8 +950,12 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
             case NAV_ITEM_NYTIMES:
                 createBackStack(new Intent(this, nyTimesActivity.class));
                 break;
-            case NAV_ITEM_GENRE:
-                createBackStack(new Intent(this, GenreActivity.class));
+            case NAV_ITEM_FAVORITE:
+                Intent intent = new Intent(this, FavoriteActivity.class);
+                User user = UsersUtils.getCurrentUser(getApplicationContext());
+                intent.putExtra("user", user);
+                createBackStack(intent);
+//                createBackStack(new Intent(this, GenreActivity.class));
                 break;
         }
     }

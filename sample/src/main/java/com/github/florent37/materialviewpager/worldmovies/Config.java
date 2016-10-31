@@ -125,6 +125,7 @@ public class Config {
         public static final String CATEGORY_THEME = "THEME";
         public static final String CATEGORY_TOPIC = "TOPIC";
         public static final String CATEGORY_TYPE = "TYPE";
+        public static final String CATEGORY_COUNTRY = "COUNTRY";
 
         public static final Map<String, Integer> CATEGORY_DISPLAY_ORDERS
                 = new HashMap<String, Integer>();
@@ -132,7 +133,7 @@ public class Config {
         public static final String SPECIAL_KEYNOTE = "FLAG_KEYNOTE";
 
         public static final String[] EXPLORE_CATEGORIES =
-                {CATEGORY_THEME, CATEGORY_TOPIC, CATEGORY_TYPE};
+                {CATEGORY_THEME, CATEGORY_TOPIC, CATEGORY_TYPE, CATEGORY_COUNTRY};
 
         public static final int[] EXPLORE_CATEGORY_ALL_STRING = {
                 R.string.all_themes, R.string.all_topics, R.string.all_types
@@ -147,6 +148,7 @@ public class Config {
         Tags.CATEGORY_DISPLAY_ORDERS.put(Tags.CATEGORY_THEME, 0);
         Tags.CATEGORY_DISPLAY_ORDERS.put(Tags.CATEGORY_TOPIC, 1);
         Tags.CATEGORY_DISPLAY_ORDERS.put(Tags.CATEGORY_TYPE, 2);
+        Tags.CATEGORY_DISPLAY_ORDERS.put(Tags.CATEGORY_COUNTRY,3);
     }
 
     // URL prefix for web links to session pages

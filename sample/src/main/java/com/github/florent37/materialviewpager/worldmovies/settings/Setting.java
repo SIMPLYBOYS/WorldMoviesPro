@@ -1,6 +1,5 @@
 package com.github.florent37.materialviewpager.worldmovies.settings;
 
-import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -11,7 +10,8 @@ public class Setting {
     public static final String AUTO_UPDATE = "change_update_time";
     public static final String LINK_ACCOUNT = "connect_account";
     public static final String PLAY_BY_SPOTIFY = "play_by_spotify";
-    public static final String CITY_NAME = "城市";
+    public static final String COUNTRY_SPINNER = "country_spinner";
+    public static final String LOGOUT = "logout";
     public static final String HOUR = "current_hour";
     public static final String NOTIFICATION_MODEL = "notification_model";
     public static final String REPEAT = "repeat";
@@ -50,13 +50,6 @@ public class Setting {
         return mPrefs.getString(key, defValue);
     }
 
-    public void setCurrentHour(int h){
-        mPrefs.edit().putInt(HOUR,h).apply();
-    }
-    public int getCurrentHour(){
-        return mPrefs.getInt(HOUR,0);
-    }
-
     public void setAutoUpdate(int t) {
         mPrefs.edit().putInt(AUTO_UPDATE, t).apply();
     }
@@ -65,17 +58,8 @@ public class Setting {
         return mPrefs.getInt(AUTO_UPDATE, 3);
     }
 
-    public void setCityName(String name) {
-        mPrefs.edit().putString(CITY_NAME, name).apply();
-    }
-
-    public String getCityName() {return mPrefs.getString(CITY_NAME, "台北");}
-
     public void setNotificationModel(int t) {
         mPrefs.edit().putInt(NOTIFICATION_MODEL, t).apply();
-    }
-    public int getNotificationModel() {
-        return mPrefs.getInt(NOTIFICATION_MODEL, Notification.FLAG_AUTO_CANCEL);
     }
 
     public void setPlayBySpotify(boolean choice) {

@@ -46,7 +46,7 @@ import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.upcoming.upComingActivity;
 import com.github.florent37.materialviewpager.worldmovies.util.ParserUtils;
-import com.github.florent37.materialviewpager.worldmovies.util.PrefUtils;
+import com.github.florent37.materialviewpager.worldmovies.util.UsersUtils;
 import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -67,11 +67,11 @@ import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.L
  * Created by aaron on 2016/6/12.
  */
 public class nyTimesDetailActivity extends AppCompatActivity implements Response.ErrorListener, BottomNavigationBar.OnTabSelectedListener  {
-    protected static final int NAV_ITEM_TREND = 0;
-    protected static final int NAV_ITEM_UPCOMING = 1;
-    protected static final int NAV_ITEM_IMDB = 2;
-    protected static final int NAV_ITEM_NYTIMES = 3;
-    protected static final int NAV_ITEM_GENRE = 4;
+    protected final int NAV_ITEM_TREND = 0;
+    protected final int NAV_ITEM_UPCOMING = 1;
+    protected final int NAV_ITEM_IMDB = 2;
+    protected final int NAV_ITEM_NYTIMES = 3;
+    protected final int NAV_ITEM_GENRE = 4;
     private ProgressBar progressBar;
     private AdvancedWebView mWebView;
     private MenuItem searchItem, shareItem, bookmarkItem;
@@ -250,7 +250,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
 
                 if (checked && !movie.getBookmark()) {
                     bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
-                    User user = PrefUtils.getCurrentUser(getApplicationContext());
+                    User user = UsersUtils.getCurrentUser(getApplicationContext());
                     movie.setBookmark(true);
                     String headline = movie.getHeadline().indexOf(":") != -1 ? movie.getHeadline().split(":")[1].trim() : movie.getHeadline();
                     CustomJSONObjectRequest jsonRequest_q = null;
@@ -286,7 +286,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
                 } else if (!checked && movie.getBookmark()) {
                     bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
                     movie.setBookmark(false);
-                    User user = PrefUtils.getCurrentUser(getApplicationContext());
+                    User user = UsersUtils.getCurrentUser(getApplicationContext());
                     String headline = movie.getHeadline().indexOf(":") != -1 ? movie.getHeadline().split(":")[1].trim() : movie.getHeadline();
 //                        String headline = movie.getHeadline();
                     favor.removeFavorite(getApplicationContext(), headline);

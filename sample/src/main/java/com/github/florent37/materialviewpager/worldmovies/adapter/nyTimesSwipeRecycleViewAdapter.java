@@ -32,7 +32,7 @@ import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesFavoritePreference;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesDetailActivity;
 import com.github.florent37.materialviewpager.worldmovies.util.ParserUtils;
-import com.github.florent37.materialviewpager.worldmovies.util.PrefUtils;
+import com.github.florent37.materialviewpager.worldmovies.util.UsersUtils;
 import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Picasso;
 
@@ -133,7 +133,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
         this.movieList = movieList;
         this.bgColors = activity.getApplicationContext().getResources().getStringArray(R.array.movie_serial_bg);
         mQueue = CustomVolleyRequestQueue.getInstance(activity).getRequestQueue();
-        User user = PrefUtils.getCurrentUser(activity.getApplicationContext());
+        User user = UsersUtils.getCurrentUser(activity.getApplicationContext());
         favor = new nyTimesFavoritePreference();
 
         if (favor.loadFavorites(activity.getApplicationContext()) == null){
@@ -239,7 +239,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
 //                    Snackbar.make(view, "Bookmark "+checked+" !!!", Snackbar.LENGTH_LONG).show();
                     if (checked && !movie.getBookmark()) {
                         bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
-                        User user = PrefUtils.getCurrentUser(activity.getApplicationContext());
+                        User user = UsersUtils.getCurrentUser(activity.getApplicationContext());
                         movie.setBookmark(true);
                         String headline = movie.getHeadline().indexOf(":") != -1 ? movie.getHeadline().split(":")[1].trim() : movie.getHeadline();
                         CustomJSONObjectRequest jsonRequest_q = null;
@@ -274,7 +274,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
                         mQueue.add(jsonRequest_q);
                     } else if (!checked && movie.getBookmark()) {
                         bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
-                        User user = PrefUtils.getCurrentUser(activity.getApplicationContext());
+                        User user = UsersUtils.getCurrentUser(activity.getApplicationContext());
                         String headline = movie.getHeadline().indexOf(":") != -1 ? movie.getHeadline().split(":")[1].trim() : movie.getHeadline();
 //                        String headline = movie.getHeadline();
                         favor.removeFavorite(activity.getApplicationContext(), headline);

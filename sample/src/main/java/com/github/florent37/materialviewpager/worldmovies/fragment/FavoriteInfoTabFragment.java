@@ -17,12 +17,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.TrendsFavoriteRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.adapter.nyTimesFavoriteRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.favorite.MoviesFavoriteDetail;
+import com.github.florent37.materialviewpager.worldmovies.favorite.MoviesFavoritePreference;
 import com.github.florent37.materialviewpager.worldmovies.favorite.nyTimesFavoriteDetail;
 import com.github.florent37.materialviewpager.worldmovies.framework.FlatButton;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRequest;
@@ -66,7 +66,8 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
 //    private FacebookFavoriteRecycleViewAdapter facebookFavoriteRecycleViewAdapter;
     private LinearLayoutManager nylinearLayoutManager, trlinearLayoutManager;
 //    private LinearLayoutManager fbLayoutManager;
-    private nyTimesFavoritePreference favor;
+    private nyTimesFavoritePreference nytimesFavor;
+    private MoviesFavoritePreference moviesFavor;
     private TextView nytimes_picNum, trends_picNum, facebook_picNum;
 
     public static FavoriteInfoTabFragment newInstance(User user) {
@@ -92,7 +93,10 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         mQueue = CustomVolleyRequestQueue.getInstance(getActivity()).getRequestQueue();
         nylinearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         trlinearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        favor = new nyTimesFavoritePreference();
+        nytimesFavor = new nyTimesFavoritePreference();
+        moviesFavor = new MoviesFavoritePreference();
+        nytimesFavor.clearFavorite(getActivity());
+        moviesFavor.clearFavorite(getActivity());
         nyTimesAllButton = (FlatButton) view.findViewById(R.id.nytimes_all);
         nyTimesAllButton.setButtonColor(getResources().getColor(R.color.material_grey_500));
         trendsAllButton = (FlatButton) view.findViewById(R.id.trends_all);
@@ -103,12 +107,26 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         return view;
     }
 
-    private boolean checkBookmark(String headline) {
-
+    private boolean checkNytimesBookmark(String headline) {
         headline = headline.indexOf(":") != -1 ? headline.split(":")[1].trim() : headline;
-        ArrayList list = favor.loadFavorites(getActivity().getApplicationContext());
+        ArrayList list = nytimesFavor.loadFavorites(getActivity().getApplicationContext());
 
-        if (list == null) return false;
+        if (list == null)
+            return false;
+
+        for (int i=0; i<list.size(); i++) {
+            if (headline.compareTo((String) list.get(i)) == 0) return true;
+        }
+
+        return false;
+    };
+
+    private boolean checkMoviesBookmark(String headline) {
+        headline = headline.indexOf(":") != -1 ? headline.split(":")[1].trim() : headline;
+        ArrayList list = moviesFavor.loadFavorites(getActivity().getApplicationContext());
+
+        if (list == null)
+            return false;
 
         for (int i=0; i<list.size(); i++) {
             if (headline.compareTo((String) list.get(i)) == 0) return true;
@@ -183,7 +201,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
 
                             head = movie.getHeadline();
                             Movie movie = new Movie(head, description, story, url, imageUrl, editor ,date);
-                            if (checkBookmark(head))
+                            if (checkNytimesBookmark(head))
                                 movie.setBookmark(true);
                             Intent intent = new Intent(getActivity(), nyTimesDetailActivity.class);
                             intent.putExtra("movie", movie);
@@ -215,10 +233,12 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                         try {
                             JSONArray contents = response.getJSONArray("contents");
                             TrendsObject item = BuildModelUtils.buildTrendsModel(contents, true, movie.getChannel());
+                            String title = item.getTitle();
                             Intent intent = new Intent(getActivity(), TrendsDetail.class);
+                            if (checkMoviesBookmark(title))
+                                item.setBookmark(true);
                             intent.putExtra(TrendsDetail.TRENDS_OBJECT, item);
                             ActivityCompat.startActivity(getActivity(), intent, null);
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -243,11 +263,13 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                 intent.putExtra("url", movie.getLink());
                 context.startActivity(intent);
             }
-        });*/
+        });
+        fetch_watched_movies();*/
+        if (user != null) {
+            fetch_nytimes();
+            fetch_trends();
+        }
 
-//        fetch_watched_movies();
-        fetch_nytimes();
-        fetch_trends();
     }
 
     private void fetch_watched_movies() {
@@ -299,6 +321,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                     for (int i = 0; i < contents.length(); i++) {
                         JSONObject movieObj = contents.getJSONObject(i);
                         String head = movieObj.getString("headline");
+                        nytimesFavor.addFavorite(getActivity(),head);
                         String link = movieObj.getString("link");
                         String picUrl = movieObj.getString("picUrl");
                         Movie movie = new Movie(head, null, null, link, picUrl, null, null);
@@ -314,7 +337,6 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                LOGD("0928", "Remote Server connect fail from FavoriteInfoTabFragment!");
 //                Toast.makeText(getActivity(), "Remote Server connect fail from FavoriteInfoTabFragment!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -332,6 +354,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                         String title = movieObj.getString("title");
                         String link = movieObj.getString("link");
                         int channel = movieObj.getInt("channel");
+                        moviesFavor.addFavorite(getActivity(), title);
                         String picUrl = movieObj.getString("picUrl");
                         Movie movie = new Movie(title, null, null, link, picUrl, null, null);
                         movie.setChannel(channel);

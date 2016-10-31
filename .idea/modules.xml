@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/WorldMoviesPro.iml" filepath="$PROJECT_DIR$/WorldMoviesPro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/materialviewpager/materialviewpager.iml" filepath="$PROJECT_DIR$/materialviewpager/materialviewpager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/materialviewpagercontroller/materialviewpagercontroller.iml" filepath="$PROJECT_DIR$/materialviewpagercontroller/materialviewpagercontroller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spotify-api/spotify-api.iml" filepath="$PROJECT_DIR$/spotify-api/spotify-api.iml" />
+    </modules>
+  </component>
+</project>

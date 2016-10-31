@@ -34,7 +34,6 @@ import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.worldmovies.adapter.ImdbSlideRecycleViewAdapter;
-import com.github.florent37.materialviewpager.worldmovies.framework.MovieDetail;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
@@ -327,7 +326,7 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
                         else
                             movie.setType("genre");
                         Intent intent = new Intent(SlideActivity.this, MovieDetailActivity.class);
-                        intent.putExtra(MovieDetail.IMDB_OBJECT, movie);
+                        intent.putExtra(ImdbActivity.IMDB_OBJECT, movie);
                         ActivityCompat.startActivity(SlideActivity.this, intent, null);
                     } catch (JSONException e) {
                         e.printStackTrace();

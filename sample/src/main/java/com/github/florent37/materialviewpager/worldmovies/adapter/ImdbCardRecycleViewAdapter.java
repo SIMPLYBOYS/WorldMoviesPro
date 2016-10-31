@@ -239,7 +239,7 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
             case TYPE_PLACEHOLDER: {
                 Log.d("0320", "PAGER PLACEHOLDER");
                 if (cardType)
-                    root = inflater.inflate(R.layout.material_view_pager_mini_placeholder, container, false);
+                    root = inflater.inflate(R.layout.mini_placeholder, container, false);
                 else
                     root = inflater.inflate(R.layout.material_view_pager_placeholder, container, false);
 

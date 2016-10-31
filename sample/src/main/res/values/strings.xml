@@ -34,7 +34,6 @@
     <string name="description_login">Login</string>
     <string name="description_upcoming">UpComing films</string>
     <string name="image">image</string>
-
     <string name="description_live">Live</string>
 
     <!-- Accessibility description for navigation drawer -->
@@ -84,7 +83,7 @@
     <!-- Menu item to open a list of current and past I/O videos [CHAR_LIMIT=20] -->
     <string name="navdrawer_item_video_library">Live</string>
 
-    <string name="navdrawer_item_up_coming">UpComing</string>
+    <string name="navdrawer_item_up_coming">Upcoming</string>
 
     <!-- Menu item to open the debugging screen on debug builds [CHAR_LIMIT=20] -->
     <string name="navdrawer_item_debug">Debug</string>

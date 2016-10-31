@@ -36,7 +36,6 @@ import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.ImdbGalleryRecycleViewAdapter;
-import com.github.florent37.materialviewpager.worldmovies.framework.MovieDetail;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
@@ -294,7 +293,7 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
                         else
                             movie.setType("genre");
                         Intent intent = new Intent(AlbumActivity.this, MovieDetailActivity.class);
-                        intent.putExtra(MovieDetail.IMDB_OBJECT, movie);
+                        intent.putExtra(ImdbActivity.IMDB_OBJECT, movie);
                         ActivityCompat.startActivity(AlbumActivity.this, intent, null);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -331,7 +330,7 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
         Toast.makeText(this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(view.getContext(), SlideActivity.class);
         intent.putExtra(SlideActivity.PIC_POSITION, position);
-        intent.putExtra(MovieDetail.IMDB_OBJECT, imdbObject);
+        intent.putExtra(ImdbActivity.IMDB_OBJECT, imdbObject);
         startActivity(intent);
     }
 

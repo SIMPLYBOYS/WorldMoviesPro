@@ -18,8 +18,16 @@ public class FavoritePreference {
     public FavoritePreference() {
         super();
     }
+    public void clearFavorite(Context context) {
+        SharedPreferences settings;
+        SharedPreferences.Editor editor;
+        settings = context.getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
+        editor = settings.edit();
+        editor.clear();
+        editor.commit();
+    }
     public void storeFavorites(Context context, List favorites) {
-// used for store arrayList in json format
+    // used for store arrayList in json format
         SharedPreferences settings;
         SharedPreferences.Editor editor;
         settings = context.getSharedPreferences(PREFS_NAME,Context.MODE_PRIVATE);
@@ -30,7 +38,7 @@ public class FavoritePreference {
         editor.commit();
     }
     public ArrayList loadFavorites(Context context) {
-// used for retrieving arraylist from json formatted string
+    // used for retrieving arraylist from json formatted string
         SharedPreferences settings;
         List favorites;
         if (context == null)

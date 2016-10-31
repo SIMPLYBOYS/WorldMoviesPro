@@ -52,7 +52,7 @@ import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.sync.SyncHelper;
 import com.github.florent37.materialviewpager.worldmovies.util.AccountUtils;
 import com.github.florent37.materialviewpager.worldmovies.util.LoginAndAuthHelper;
-import com.github.florent37.materialviewpager.worldmovies.util.PrefUtils;
+import com.github.florent37.materialviewpager.worldmovies.util.UsersUtils;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -355,8 +355,8 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
                                     FriendList.add(user);
                                 }
 
-                                PrefUtils.setCurrentFriends(FriendList, getApplicationContext());
-                                User user = PrefUtils.getCurrentUser(getApplicationContext());
+                                UsersUtils.setCurrentFriends(FriendList, getApplicationContext());
+                                User user = UsersUtils.getCurrentUser(getApplicationContext());
                                 AccountUtils.setActiveAccount(getApplicationContext(), user.name);
                                 onAuthSuccess(user.name, true);
                             } else {
@@ -394,7 +394,7 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
                                     user.gender = object.optString("gender");
                                     user.accessToken = accessToken.getToken();
                                     user.pictureUrl = "https://graph.facebook.com/" + user.id + "/picture?type=large";
-                                    PrefUtils.setCurrentUser(user, getApplicationContext());
+                                    UsersUtils.setCurrentUser(user, getApplicationContext());
                                     Bundle parameters = new Bundle();
                                     parameters.putString("fields", "id,link,name,email,picture,birthday,education");
                                     friendsRequest.setParameters(parameters);
@@ -469,7 +469,7 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
         //TODO register api for google account
 
         mQueue = CustomVolleyRequestQueue.getInstance(LoginActivity.this).getRequestQueue();
-        User user = PrefUtils.getCurrentUser(getApplicationContext());
+        User user = UsersUtils.getCurrentUser(getApplicationContext());
         String user_name = user.name;
 
         try {
@@ -528,7 +528,7 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
                 user.email = acct.getEmail();
                 user.name = acct.getDisplayName();
                 user.pictureUrl = String.valueOf(acct.getPhotoUrl());
-                PrefUtils.setCurrentUser(user, getApplicationContext());
+                UsersUtils.setCurrentUser(user, getApplicationContext());
                 AccountUtils.setActiveAccount(this, user.name);
                 onAuthSuccess(user.name, true);
 //                handleSignInResult(result);

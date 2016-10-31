@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
-public class PrefUtils {
+public class UsersUtils {
 
     public static void setCurrentUser(User currentUser, Context context) {
         ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(context, "user_prefs", 0);
@@ -33,7 +33,7 @@ public class PrefUtils {
         complexPreferences.commit();
     }
 
-    public static void clearCurrentFriends(List<User> FriendList, Context context) {
+    public static void clearCurrentFriends(Context context) {
         ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(context, "friends_prefs", 0);
         complexPreferences.clearObject();
         complexPreferences.commit();

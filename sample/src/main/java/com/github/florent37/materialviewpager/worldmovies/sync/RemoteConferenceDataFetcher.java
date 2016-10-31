@@ -3,18 +3,20 @@ package com.github.florent37.materialviewpager.worldmovies.sync;
 /**
  * Created by aaron on 2016/2/24.
  */
-/*import android.accounts.Account;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.github.florent37.materialviewpager.worldmovies.BuildConfig;
+import com.github.florent37.materialviewpager.worldmovies.io.model.DataManifest;
+import com.github.florent37.materialviewpager.worldmovies.util.HashUtils;
+import com.github.florent37.materialviewpager.worldmovies.util.IOUtils;
+import com.github.florent37.materialviewpager.worldmovies.util.TimeUtils;
 import com.google.gson.Gson;
-import com.google.samples.apps.iosched.BuildConfig;
-import com.google.samples.apps.iosched.io.model.DataManifest;
-import com.google.samples.apps.iosched.util.AccountUtils;
-import com.google.samples.apps.iosched.util.HashUtils;
-import com.google.samples.apps.iosched.util.IOUtils;
-import com.google.samples.apps.iosched.util.TimeUtils;
+import com.turbomanage.httpclient.BasicHttpClient;
+import com.turbomanage.httpclient.ConsoleRequestLogger;
+import com.turbomanage.httpclient.HttpResponse;
+import com.turbomanage.httpclient.RequestLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,18 +24,16 @@ import java.net.HttpURLConnection;
 import java.util.HashSet;
 import java.util.List;
 
-import com.turbomanage.httpclient.BasicHttpClient;
-import com.turbomanage.httpclient.ConsoleRequestLogger;
-import com.turbomanage.httpclient.HttpResponse;
-import com.turbomanage.httpclient.RequestLogger;
-
-import static com.google.samples.apps.iosched.util.LogUtils.*;*/
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGE;
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGW;
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
 
 /**
  * Helper class that fetches conference data from the remote server.
  */
 public class RemoteConferenceDataFetcher {
-   /* private static final String TAG = makeLogTag(SyncHelper.class);
+    private static final String TAG = makeLogTag(SyncHelper.class);
 
     // The directory under which we cache our downloaded files
     private static String CACHE_DIR = "data_cache";
@@ -63,7 +63,7 @@ public class RemoteConferenceDataFetcher {
         mManifestUrl = getManifestUrl();
     }
 
-    *//**
+    /**
      * Fetches data from the remote server.
      *
      * @param refTimestamp The timestamp of the data to use as a reference; if the remote data
@@ -72,7 +72,7 @@ public class RemoteConferenceDataFetcher {
      *
      * @return The data downloaded, or null if there is no data to download
      * @throws IOException if an error occurred during download.
-     *//*
+     */
     public String[] fetchConferenceDataIfNewer(String refTimestamp) throws IOException {
         if (TextUtils.isEmpty(mManifestUrl)) {
             LOGW(TAG, "Manifest URL is empty (remote sync disabled!).");
@@ -132,11 +132,11 @@ public class RemoteConferenceDataFetcher {
         return mServerTimestamp;
     }
 
-    *//**
+    /**
      * Returns the remote manifest file's URL. This is stored as a resource in the app,
      * but can be overriden by a file in the filesystem for debug purposes.
      * @return The URL of the remote manifest file.
-     *//*
+     */
     private String getManifestUrl() {
         Log.d("0219-end", "getManifestsUrl");
         String manifestUrl = BuildConfig.SERVER_MANIFEST_ENDPOINT;
@@ -156,7 +156,7 @@ public class RemoteConferenceDataFetcher {
         }
     }
 
-    *//**
+    /**
      * Fetches a file from the cache/network, from an absolute or relative URL. If the
      * file is available in our cache, we read it from there; if not, we will
      * download it from the network and cache it.
@@ -165,7 +165,7 @@ public class RemoteConferenceDataFetcher {
      *            relative, it will be considered to be relative to the manifest URL.
      * @return The contents of the file.
      * @throws IOException If an error occurs.
-     *//*
+     */
     private String fetchFile(String url) throws IOException {
         // If this is a relative url, consider it relative to the manifest URL
         if (!url.contains("://")) {
@@ -227,11 +227,11 @@ public class RemoteConferenceDataFetcher {
         }
     }
 
-    *//**
+    /**
      * Returns the cache file where we store our cache of the response of the given URL.
      * @param url The URL for which to return the cache file.
      * @return The cache file.
-     *//*
+     */
     private File getCacheFile(String url) {
         String cacheKey = getCacheKey(url);
         return new File(mContext.getCacheDir() + File.separator + CACHE_DIR + File.separator +
@@ -247,13 +247,13 @@ public class RemoteConferenceDataFetcher {
     }
 
 
-    *//**
+    /**
      * Loads our cached content corresponding to the given URL.
      * @param url The URL for which to load the cached response.
      * @return The cached response corresponding to the URL; or null if the given URL
      * does not exist in our cache.
      * @throws IOException If there is an error reading the cache.
-     *//*
+     */
     private String loadFromCache(String url) throws IOException {
         String cacheKey = getCacheKey(url);
         File cacheFile = getCacheFile(url);
@@ -266,12 +266,12 @@ public class RemoteConferenceDataFetcher {
         }
     }
 
-    *//**
+    /**
      * Writes a file to the cache.
      * @param url The URL from which the contents were retrieved.
      * @param body The contents retrieved from the given URL.
      * @throws IOException If there is a problem writing the file.
-     *//*
+     */
     private void writeToCache(String url, String body) throws IOException {
         String cacheKey = getCacheKey(url);
         File cacheFile = getCacheFile(url);
@@ -280,12 +280,12 @@ public class RemoteConferenceDataFetcher {
         LOGD(TAG, "Wrote to cache " + cacheKey + " --> " + sanitizeUrl(url));
     }
 
-    *//**
+    /**
      * Returns the cache key to be used to store the given URL. The cache key is the
      * file name under which the contents of the URL are stored.
      * @param url The URL.
      * @return The cache key (guaranteed to be a valid filename)
-     *//*
+     */
     private String getCacheKey(String url) {
         return HashUtils.computeWeakHash(url.trim()) + String.format("%04x", url.length());
     }
@@ -302,13 +302,13 @@ public class RemoteConferenceDataFetcher {
 
     private static final String MANIFEST_FORMAT = "iosched-json-v1";
 
-    *//**
+    /**
      * Process the data manifest and download data files referenced from it.
      * @param manifestJson The JSON of the manifest file.
      * @return The contents of the set of files referenced from the manifest, or null
      * if none could be retrieved.
      * @throws IOException If an error occurs while retrieving information.
-     *//*
+     */
     private String[] processManifest(String manifestJson) throws IOException {
         LOGD(TAG, "Processing data manifest, length " + manifestJson.length());
 
@@ -381,9 +381,9 @@ public class RemoteConferenceDataFetcher {
         return s.isEmpty() ? "" : s.get(0);
     }
 
-    *//**
+    /**
      * A type of ConsoleRequestLogger that does not log requests and responses.
-     *//*
+     */
     private RequestLogger mQuietLogger = new ConsoleRequestLogger(){
         @Override
         public void logRequest(HttpURLConnection uc, Object content) throws IOException { }
@@ -391,7 +391,6 @@ public class RemoteConferenceDataFetcher {
         @Override
         public void logResponse(HttpResponse res) { }
     };
-*/
 
 }
 

@@ -158,8 +158,7 @@ public class ScheduleProvider extends ContentProvider {
     }
 
     /**
-     * Adds the {@code tagsFilter} query parameter to the given {@code builder}. This query
-     * parameter is used by the {@link com.google.samples.apps.iosched.explore.ExploreSessionsActivity}
+     * Adds the {@code tagsFilter} query parameter to the given {@code builder}.
      * when the user makes a selection containing multiple filters.
      */
     private void addTagsFilter(SelectionBuilder builder, String tagsFilter, String numCategories) {

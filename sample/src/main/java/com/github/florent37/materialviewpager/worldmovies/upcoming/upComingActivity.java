@@ -1,17 +1,25 @@
 package com.github.florent37.materialviewpager.worldmovies.upcoming;
 
+import android.app.LoaderManager;
 import android.app.SearchManager;
+import android.content.Context;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.BaseColumns;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,12 +27,15 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,21 +44,33 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.ashokvarma.bottomnavigation.BadgeItem;
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
+import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.worldmovies.adapter.upComingSwipeRecycleViewAdapter;
-import com.github.florent37.materialviewpager.worldmovies.fragment.RecyclerViewFragment;
+import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
+import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
+import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
+import com.github.florent37.materialviewpager.worldmovies.model.TagFilterHolder;
+import com.github.florent37.materialviewpager.worldmovies.model.TagMetadata;
 import com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity;
+import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionView;
+import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionViewCallbacks;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.MultiSwipeRefreshLayout;
+import com.github.florent37.materialviewpager.worldmovies.util.UIUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,10 +78,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
+import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.drawCountryFlag;
+
 /**
  * Created by aaron on 2016/6/16.
  */
-public class upComingActivity extends BaseActivity implements Response.Listener, Response.ErrorListener {
+public class upComingActivity extends BaseActivity implements Response.Listener,
+        Response.ErrorListener, BottomNavigationBar.OnTabSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<ImdbObject> movieList;
     private RecyclerView rvMovies;
@@ -68,11 +96,8 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
     private LinearLayoutManager linearLayoutManager;
     private boolean mActionBarShown = true;
     private int mProgressBarTopWhenActionBarShown;
-    private static JSONObject[] MOVIES = {};
-    int curSize = 0;
-    private int offSet = 0;
-    CustomJSONObjectRequest jsonRequest;
-    private ImageCursorAdapter mAdapter;
+    private CustomJSONObjectRequest jsonRequest;
+    private ImageCursorAdapter cursorAdapter;
     private RequestQueue mQueue;
     public static int [] monthList;
     // JSON Node names
@@ -97,6 +122,57 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
     private final String TAG_GALLERY_FULL = "gallery_full";
     private final String TAG_DELTA = "delta";
     private SearchView searchView = null;
+    private int lastSelectedPosition = 1;
+    private int skipSize = 0;
+    private BottomNavigationBar bottomNavigationBar;
+    private BadgeItem numberBadgeItem;
+    private DrawerLayout mDrawerLayout;
+    private CollectionView mDrawerCollectionView;
+    private TagMetadata mTagMetadata;
+    private TagFilterHolder mTagFilterHolder;
+    private final String TAG = makeLogTag(ImdbActivity.class);
+    private final int TAG_METADATA_TOKEN = 0x8;
+    private final int GROUP_TOPIC_TYPE_OR_THEME = 0;
+    private final int GROUP_LIVE_STREAM = 1;
+    private final int GROUP_COUNTRY = 2;
+    private String searchChannel = "14";
+    private CustomJSONArrayRequest jsonArrayRequest;
+    private Handler completeHandler;
+    private static JSONObject[] MOVIES = {};
+    private String[] from = new String [] {FILM_NAME};
+    private int[] to = new int[] { R.id.text1};
+
+    // The OnClickListener for the Switch widgets on the navigation filter.
+    private final View.OnClickListener mDrawerItemCheckBoxClickListener =
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean isChecked = ((CheckBox)v).isChecked();
+                    TagMetadata.Tag theTag = (TagMetadata.Tag)v.getTag();
+                    LOGD(TAG, "Checkbox with tag: " + theTag.getName() + " isChecked => " + isChecked);
+                    if (isChecked) {
+                        if (theTag.getCategory().equals("COUNTRY")) {
+                            mTagFilterHolder.clear(); //support one country for searching
+                        }
+                        // Here we only add all 'types' if the user has not explicitly selected
+                        // one of the category_type tags.
+                        mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+
+                        List<TagMetadata.Tag> tags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
+
+                        for (TagMetadata.Tag tag : tags) {
+                            if (mTagFilterHolder.contains(tag.getId())) {
+                                searchChannel = String.valueOf(tag.getOrderInCategory());
+                                CredentialsHandler.setCountry(getApplicationContext(), searchChannel);
+                            }
+                        }
+                    } else {
+                        searchChannel = "14";
+                        mTagFilterHolder.remove(theTag.getId(), theTag.getCategory());
+                        CredentialsHandler.setCountry(getApplicationContext(), searchChannel);
+                    }
+                }
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +185,10 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         getSupportActionBar().setHomeButtonEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         registerHideableHeaderView(findViewById(R.id.headerbar));
+        bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_flipped, GravityCompat.END);
+        mDrawerCollectionView = (CollectionView) findViewById(R.id.drawer_collection_view);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
@@ -129,8 +209,7 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         // 获得根视图并把TextView加进去。
         ViewGroup view = (ViewGroup) getWindow().getDecorView();
         view.addView(textView);
-        loadHints();
-        overridePendingTransition(0, 0);
+        cursorAdapter = new ImageCursorAdapter(this, R.layout.search_row, null, from, to, "upcoming");
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_movie_layout);
         movieList = new ArrayList<>();
         linearLayoutManager = new LinearLayoutManager(this);
@@ -139,8 +218,8 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         rvMovies = (RecyclerView) findViewById(R.id.recyclerView);
         rvMovies.setLayoutManager(linearLayoutManager);
         rvMovies.setAdapter(adapter);
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
+        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
+
         rvMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -173,6 +252,121 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
 
             }
         });
+
+        getLoaderManager().initLoader(TAG_METADATA_TOKEN, null, this);
+        refresh();
+        bottomNavigationBar.setTabSelectedListener(this);
+
+        completeHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                giveSuggestions((String) msg.obj);
+            }
+        };
+
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (id == TAG_METADATA_TOKEN) {
+            return TagMetadata.createCursorLoader(this);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        switch (loader.getId()) {
+            case TAG_METADATA_TOKEN:
+                mTagMetadata = new TagMetadata(cursor);
+                onTagMetadataLoaded();
+                break;
+            default:
+                cursor.close();
+        }
+    }
+
+    public void onTagMetadataLoaded() {
+
+        if (mTagFilterHolder == null) {
+            // Use the Intent Extras to set up the TagFilterHolder
+            mTagFilterHolder = new TagFilterHolder();
+
+            String tag = getIntent().getStringExtra(EXTRA_FILTER_TAG); //TODO get tag from preference
+            TagMetadata.Tag userTag = mTagMetadata.getTag(tag);
+            String userTagCategory = userTag == null ? null : userTag.getCategory();
+
+            if (tag != null && userTagCategory != null) {
+                mTagFilterHolder.add(tag, userTagCategory);
+            }
+
+            List<TagMetadata.Tag> tags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_TYPE);
+            // Here we only add all 'types' if the user has not explicitly selected
+            // one of the category_type tags.
+            if (tags != null && !TextUtils.equals(userTagCategory, Config.Tags.CATEGORY_TYPE)) {
+                for (TagMetadata.Tag theTag : tags) {
+                    mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+                }
+            }
+
+            List<TagMetadata.Tag> countryTags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
+
+            if (countryTags != null && !TextUtils.equals(userTagCategory, Config.Tags.CATEGORY_COUNTRY)) {
+                for (TagMetadata.Tag theTag : countryTags) {
+                    if (theTag.getOrderInCategory() == 14)
+                        mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+                }
+            }
+        }
+
+        TagAdapter tagAdapter = new TagAdapter();
+        mDrawerCollectionView.setCollectionAdapter(tagAdapter);
+        mDrawerCollectionView.updateInventory(tagAdapter.getInventory());
+    }
+
+    private void refresh() {
+        bottomNavigationBar.clearAll();
+        numberBadgeItem = new BadgeItem()
+                .setBorderWidth(4)
+                .setBackgroundColorResource(R.color.blue)
+                .setText("" + lastSelectedPosition);
+
+        bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
+        bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
+        bottomNavigationBar
+                .addItem(new BottomNavigationItem(R.drawable.ic_trending_up, R.string.navdrawer_item_explore).setActiveColorResource(R.color.material_orange_900).setBadgeItem(numberBadgeItem))
+                .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
+                .addItem(new BottomNavigationItem(R.drawable.ic_theaters, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
+                .addItem(new BottomNavigationItem(R.drawable.nytimes, "nyimes").setActiveColorResource(R.color.material_brown_400))
+                .addItem(new BottomNavigationItem(R.drawable.ic_person, "Profile").setActiveColorResource(R.color.material_red_900))
+//                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_red_900))
+                .setFirstSelectedPosition(lastSelectedPosition)
+                .setInActiveColor(R.color.app_white)
+                .setBarBackgroundColor(R.color.theme_primary)
+                .initialise();
+    }
+
+    @Override
+    public void onTabSelected(int position) {
+        lastSelectedPosition = position;
+        if (numberBadgeItem != null) {
+            numberBadgeItem.setText(Integer.toString(position));
+        }
+        goToNavItem(position);
+    }
+
+    @Override
+    public void onTabReselected(int position) {
+        goToNavItem(position);
+    }
+
+    @Override
+    public void onTabUnselected(int position) {
     }
 
     @Override
@@ -180,8 +374,8 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         // Inflate the menu; this adds items to the action bar if it is present.
         SharedPreferences settings = getSharedPreferences("settings", 0);
         getMenuInflater().inflate(R.menu.imdb_menu, menu);
-
         Drawable drawable = toolbar.getOverflowIcon();
+
         if (drawable != null) {
             drawable = DrawableCompat.wrap(drawable);
             DrawableCompat.setTint(drawable.mutate(), Color.parseColor("#FFFFFF"));
@@ -191,6 +385,9 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         MenuItem miniCard = menu.findItem(R.id.menu_miniCard);
         MenuItem ascending = menu.findItem(R.id.menu_ascending);
         MenuItem menuItem = menu.findItem(R.id.action_share);
+        MenuItem filter = menu.findItem(R.id.action_filter);
+        Drawable image = filter.getIcon();
+        image.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
@@ -214,7 +411,10 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
 
             @Override
             public boolean onQueryTextChange(String query) {
-                giveSuggestions(query);
+                if (!query.trim().isEmpty()) {
+                    completeHandler.removeMessages(MESSAGE_TEXT_CHANGE);
+                    completeHandler.sendMessageDelayed(completeHandler.obtainMessage(MESSAGE_TEXT_CHANGE, query), mAutoCompleteDelay);
+                }
                 return false;
             }
         });
@@ -227,7 +427,7 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
 
             @Override
             public boolean onSuggestionClick(int position) {
-                Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
+                Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
                 final String feedName = cursor.getString(1);
                 searchView.post(new Runnable(){
                     @Override
@@ -239,56 +439,8 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             }
         });
 
-        searchView.setSuggestionsAdapter(mAdapter);
-
+        searchView.setSuggestionsAdapter(cursorAdapter);
         return true;
-    }
-
-    private void giveSuggestions(String query) {
-        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
-        try {
-            for (int i = 0; i < MOVIES.length; i++) {
-                if (MOVIES[i].getString("title").toLowerCase().contains(query.toLowerCase()))
-                    cursor.addRow(new Object[]{i, MOVIES[i].getString("title"), MOVIES[i].getString("description"), MOVIES[i].getString("posterUrl")});
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        mAdapter.changeCursor(cursor);
-    }
-
-    private void loadHints() {
-        final String[] from = new String [] {FILM_NAME};
-        final int[] to = new int[] { R.id.text1};
-        final CustomJSONObjectRequest jsonRequest;
-
-        mAdapter = new ImageCursorAdapter(this,
-                R.layout.search_row,
-                null,
-                from,
-                to,
-                "upcoming");
-
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
-
-        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-                    MOVIES = getJsonObjectArray(contents);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(upComingActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mQueue.add(jsonRequest);
     }
 
     @Override
@@ -307,8 +459,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        RecyclerViewFragment fragment;
-        RecyclerView view;
         switch (item.getItemId()) {
             case R.id.menu_miniCard:
                 item.setChecked(!item.isChecked());
@@ -337,6 +487,9 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
                 bindAdapter();
                 return true;
             case R.id.action_settings:
+                return true;
+            case R.id.action_filter:
+                mDrawerLayout.openDrawer(GravityCompat.END);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -421,14 +574,14 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
     public void trySetupSwipeRefresh() {
         mSwipeRefreshLayout.setColorSchemeResources(R.color.flat_button_text);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        Log.d("0625", String.valueOf(adapter.getItemCount()));
-
         /**
          * Showing Swipe Refresh animation on activity create
          * As animation won't start on onCreate, post runnable is used
          */
         if (adapter.getItemCount() == 0) {
-            mSwipeRefreshLayout.post(new Runnable() {
+            fetchMovies(true);
+            adapter.swipe = true;
+            /*mSwipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
                     mQueue = CustomVolleyRequestQueue.getInstance(upComingActivity.this).getRequestQueue();
@@ -465,7 +618,7 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
                     mQueue.add(jsonRequest_q);
 
                 }
-            });
+            });*/
         }
 
         if (mSwipeRefreshLayout instanceof MultiSwipeRefreshLayout) {
@@ -483,6 +636,42 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         fetchMovies(true);
     }
 
+    private void giveSuggestions(String query) {
+        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        String url;
+
+        try {
+            url = Config.HOST_NAME + "search/"+ searchChannel+"/" + URLEncoder.encode(query, "UTF-8"); //TODO muti-channel support
+        }  catch (UnsupportedEncodingException e) {
+            throw new AssertionError("UTF-8 is unknown");
+        }
+
+        jsonArrayRequest = new CustomJSONArrayRequest(url, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                JSONArray contents = ((JSONArray) response);
+                MOVIES = getJsonObjectArray(contents);
+                String posterUrl;
+                try {
+                    for (int i = 0; i < MOVIES.length; i++) {
+                        JSONObject obj = MOVIES[i].getJSONObject("_source");
+                        posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
+                        cursor.addRow(new Object[]{i, obj.getString("title"), obj.getString("description"), posterUrl});
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                cursorAdapter.changeCursor(cursor);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                Toast.makeText(ImdbActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mQueue.add(jsonArrayRequest);
+    }
+
     public void fetchMovies(final boolean swipe) {
         // showing refresh animation before making http call
         if (swipe)
@@ -494,14 +683,15 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
 
         int count = adapter.getItemCount();
         Calendar c = Calendar.getInstance();
-        Log.d("0616", "total count: " + String.valueOf(count));
 
-        if (monthList == null)
-            return; //skip fetching upon network not avaliable.
+        /*if (monthList == null)
+            return; //skip fetching when network not avaliable.*/
 
         int end = 14, start = c.get(Calendar.MONTH)%end;
 
-        if (count < monthList[start]) {
+        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/upcoming?release_from=" + getReleaseDate(c.get(Calendar.MONTH), 0, 1)+"&skip="+skipSize, new JSONObject(), this, this);
+
+        /*if (count < monthList[start]) {
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 0, 1)) +' ' +String.valueOf(getReleaseDate(start, 0, 30)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
                     "/imdb?release_from=" + getReleaseDate(start, 0, 1) + "&release_to=" + getReleaseDate(start, 0, 30), new JSONObject(), this, this);
@@ -521,26 +711,27 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 4, 1)) +' ' +String.valueOf(getReleaseDate(start, 4, 31)));
             jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
                     "/imdb?release_from=" + getReleaseDate(start, 4, 1) + "&release_to=" + getReleaseDate(start, 4, 30), new JSONObject(), this, this);
-        }
+        }*/
 
-        if (count > monthList[c.get(Calendar.MONTH)%end] + monthList[(c.get(Calendar.MONTH)+1)%end] + monthList[(c.get(Calendar.MONTH)+2)%end] + monthList[(c.get(Calendar.MONTH)+3)%end] +
+        /*if (count > monthList[c.get(Calendar.MONTH)%end] + monthList[(c.get(Calendar.MONTH)+1)%end] + monthList[(c.get(Calendar.MONTH)+2)%end] + monthList[(c.get(Calendar.MONTH)+3)%end] +
                 monthList[(c.get(Calendar.MONTH)+4)%end]) {
             movieList.remove(movieList.size()-1);
             adapter.notifyItemRemoved(movieList.size());
         } else {
             mQueue.add(jsonRequest);
-        }
+        }*/
+        mQueue.add(jsonRequest);
     }
 
-    private int getReleaseDate(int start, int roll, int day) {
+    private int getReleaseDate(int start, int month, int day) {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-        c.roll(Calendar.MONTH, roll);
-        c.set(Calendar.DAY_OF_MONTH, day);
+        /*c.roll(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, day);*/
         String str = df.format(c.getTime());
         String [] parts = TextUtils.split(str, "/");
-        if (start+roll >=12)
-            parts[0] = "2017";
+        /*if (start+month >=12)
+            parts[0] = "2017";*/
         return Integer.parseInt(TextUtils.join("", parts));
     }
 
@@ -566,6 +757,8 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             adapter.notifyItemRemoved(movieList.size());
         }
 
+        skipSize += contents.length();
+
         for (int i = 0; i < contents.length(); i++) {
             JSONObject c = contents.getJSONObject(i);
             String title = c.getString(TAG_TITLE);
@@ -588,6 +781,8 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             String summery = d != null ? d.getString(TAG_SUMMERY) : c.getString("mainInfo");
             String country = d != null ? d.getString(TAG_COUNTRY) : c.getString(TAG_COUNTRY);
             String year = c.getString(TAG_YEAR);
+            String trailerUrl;
+            String slate;
 
             //----- start dummy GalleryUrl ----
             JSONObject jo = new JSONObject();
@@ -621,9 +816,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             if (c.has(TAG_GALLERY_FULL))
                 galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
 
-            String trailerUrl;
-            String slate;
-
             if (c.has(TAG_TRAILER))
                 trailerUrl = c.getString(TAG_TRAILER);
             else
@@ -639,7 +831,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
                     galleryFullUrl.toString(), detailUrl);
             SharedPreferences settings = getSharedPreferences("settings", 0);
             boolean ascending = settings.getBoolean("ascending", false);
-            curSize = adapter.getItemCount();
             if (ascending)
                 movieList.add(movieList.size(), item);
             else
@@ -648,7 +839,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
                 adapter.notifyItemInserted(movieList.size());
             else if (adapter != null && !ascending)
                 adapter.notifyItemInserted(0);
-
         }
 
         if (!byTitle)
@@ -663,5 +853,101 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
     @Override
     public void onErrorResponse(VolleyError error) {
         Toast.makeText(this, "Remote Server not working!", Toast.LENGTH_LONG).show();
+    }
+
+    private class TagAdapter implements CollectionViewCallbacks {
+
+        public CollectionView.Inventory getInventory() {
+            Log.d("1018", "getInventory");
+            List<TagMetadata.Tag> countries = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_TOPIC);
+            CollectionView.Inventory inventory = new CollectionView.Inventory();
+            CollectionView.InventoryGroup themeGroup = new CollectionView.InventoryGroup(GROUP_TOPIC_TYPE_OR_THEME)
+                    .setDisplayCols(1)
+                    .setDataIndexStart(0)
+                    .setShowHeader(false);
+
+            if (countries != null && countries.size() > 0) {
+                for (TagMetadata.Tag country : countries) {
+                    themeGroup.addItemWithTag(country);
+                }
+                inventory.addGroup(themeGroup);
+            }
+
+            // We need to add the Live streamed section after the Type category
+            CollectionView.InventoryGroup liveStreamGroup = new CollectionView.InventoryGroup(GROUP_LIVE_STREAM)
+                    .setDataIndexStart(0)
+                    .setShowHeader(true)
+                    .addItemWithTag("Livestreamed");
+
+            inventory.addGroup(liveStreamGroup);
+
+            CollectionView.InventoryGroup topicsGroup = new CollectionView.InventoryGroup(GROUP_COUNTRY)
+                    .setDataIndexStart(0)
+                    .setShowHeader(true);
+
+            List<TagMetadata.Tag> topics = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
+
+            if (topics != null && topics.size() > 0) {
+                for (TagMetadata.Tag topic : topics) {
+                    Log.d("1018", String.valueOf(topic));
+                    topicsGroup.addItemWithTag(topic);
+                }
+                inventory.addGroup(topicsGroup);
+            }
+
+            return inventory;
+        }
+
+        @Override
+        public View newCollectionHeaderView(Context context, int groupId, ViewGroup parent) {
+            View view = LayoutInflater.from(context)
+                    .inflate(R.layout.explore_sessions_list_item_alt_header, parent, false);
+            // We do not want the divider/header to be read out by TalkBack, so
+            // inform the view that this is not important for accessibility.
+            UIUtils.setAccessibilityIgnore(view);
+            return view;
+        }
+
+        @Override
+        public void bindCollectionHeaderView(Context context, View view, int groupId, String headerLabel, Object headerTag) {
+        }
+
+        @Override
+        public View newCollectionItemView(Context context, int groupId, ViewGroup parent) {
+            return LayoutInflater.from(context).inflate(groupId == GROUP_LIVE_STREAM ?
+                    R.layout.explore_sessions_list_item_livestream_alt_drawer :
+                    R.layout.explore_sessions_list_item_alt_drawer, parent, false);
+        }
+
+        @Override
+        public void bindCollectionItemView(Context context, View view, int groupId, int indexInGroup, int dataIndex, Object tag) {
+            final CheckBox checkBox = (CheckBox) view.findViewById(R.id.filter_checkbox);
+            if (groupId == GROUP_LIVE_STREAM) {
+                //Do nothing
+            } else {
+                TagMetadata.Tag theTag = (TagMetadata.Tag) tag;
+                if (theTag != null && groupId == GROUP_TOPIC_TYPE_OR_THEME) {
+                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
+                    // set the original checked state by looking up our tags.
+                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
+                    checkBox.setTag(theTag);
+                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
+                    //TODO poster by Genre api
+                } else if (theTag != null && groupId == GROUP_COUNTRY) {
+                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
+                    drawCountryFlag(view, theTag.getOrderInCategory());
+                    // set the original checked state by looking up our tags.
+                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
+                    checkBox.setTag(theTag);
+                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
+                }
+            }
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    checkBox.performClick();
+                }
+            });
+        }
     }
 }

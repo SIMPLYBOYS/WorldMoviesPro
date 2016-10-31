@@ -1,6 +1,7 @@
 package com.github.florent37.materialviewpager.worldmovies.settings;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,17 +31,25 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.facebook.login.LoginManager;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
+import com.github.florent37.materialviewpager.worldmovies.framework.SpinnerPreference;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
+import com.github.florent37.materialviewpager.worldmovies.login.LoginActivity;
+import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.service.QuickstartPreferences;
 import com.github.florent37.materialviewpager.worldmovies.service.RegistrationIntentService;
 import com.github.florent37.materialviewpager.worldmovies.service.UnRegistrationIntentService;
 import com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.DrawShadowFrameLayout;
+import com.github.florent37.materialviewpager.worldmovies.util.AccountUtils;
 import com.github.florent37.materialviewpager.worldmovies.util.UIUtils;
+import com.github.florent37.materialviewpager.worldmovies.util.UsersUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -47,6 +58,7 @@ import com.spotify.sdk.android.player.Spotify;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
@@ -76,21 +88,16 @@ public class SettingsActivity extends BaseActivity {
         toolbar.setBackgroundColor(Color.TRANSPARENT);
         toolbar.setTitle(R.string.description_genre);
         toolbar.setTitleTextColor(Color.BLACK);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
         setSupportActionBar(toolbar);
         registerHideableHeaderView(findViewById(R.id.headerbar));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
             // Translucent status bar
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             // Translucent navigation bar
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
     }
 
@@ -98,6 +105,8 @@ public class SettingsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getApplicationContext();
+        String[] list = getResources().getStringArray(R.array.month);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, list);
         setContentView(R.layout.activity_setting);
     }
 
@@ -115,10 +124,10 @@ public class SettingsActivity extends BaseActivity {
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            LOGD("0826", "response " + response.getType());
+            LOGD(TAG, "response " + response.getType());
             switch (response.getType()) {
                 case CODE:
-                    LOGD("0826", "Got code: " + response.getCode());
+                    LOGD(TAG, "Got code: " + response.getCode());
                     CredentialsHandler.setCode(this, response.getCode());
                     mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
                     CustomJSONObjectRequest jsonRequest_q = null;
@@ -141,7 +150,7 @@ public class SettingsActivity extends BaseActivity {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(mContext, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(mContext, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -149,7 +158,7 @@ public class SettingsActivity extends BaseActivity {
                     break;
                 // Response was successful and contains auth token
                 case TOKEN:
-                    LOGD("0826", "Got token: " + response.getAccessToken());
+                    LOGD(TAG, "Got token: " + response.getAccessToken());
                     spotiryToken = response.getAccessToken();
                     CredentialsHandler.setToken(this, response.getAccessToken(), response.getExpiresIn(), TimeUnit.SECONDS);
 //                        startMainActivity(response.getAccessToken());
@@ -173,31 +182,40 @@ public class SettingsActivity extends BaseActivity {
         //private SettingActivity mActivity;
         private Setting mSetting;
         private SwitchPreference mNotificationType, mSpotify, mRepeat, mBackgroundPlay, mPlayBySpotify;
+        private SpinnerPreference spinner;
+        private Preference mLogout;
+        private Activity activity;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings_prefs);
+            activity = getActivity();
             mSetting = Setting.getInstance();
             mSpotify = (SwitchPreference) findPreference(Setting.LINK_ACCOUNT);
+            spinner = (SpinnerPreference) findPreference(Setting.COUNTRY_SPINNER);
             mNotificationType = (SwitchPreference) findPreference(Setting.NOTIFICATION_MODEL);
             mPlayBySpotify = (SwitchPreference) findPreference(Setting.PLAY_BY_SPOTIFY);
             mRepeat = (SwitchPreference) findPreference(Setting.REPEAT);
             mBackgroundPlay = (SwitchPreference) findPreference(Setting.BACKGROUND_PLAY);
+            mLogout = findPreference(Setting.LOGOUT);
+            mLogout.setSummary("登出");
+            mLogout.setOnPreferenceClickListener(this);
             mSpotify.setIcon(R.drawable.spotify);
             mSpotify.setSummary("Spotify");
             mSpotify.setOnPreferenceClickListener(this);
+            spinner.setTitle("預設國家");
+            spinner.setSummary("Choose default country for searching");
             mNotificationType.setOnPreferenceClickListener(this);
             mNotificationType.setSummary("接收推播");
             mPlayBySpotify.setOnPreferenceClickListener(this);
-            mPlayBySpotify.setSummary("" +
-                    "Play by Spotify");
+            mPlayBySpotify.setSummary("" + "Play by Spotify");
             mRepeat.setOnPreferenceClickListener(this);
             mRepeat.setSummary("自動重播");
             mBackgroundPlay.setOnPreferenceClickListener(this);
             mBackgroundPlay.setSummary("背景播放");
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+            boolean gcmToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
             spotiryToken = CredentialsHandler.getToken(getActivity());
 
             if (spotiryToken == null)
@@ -205,7 +223,7 @@ public class SettingsActivity extends BaseActivity {
             else
                 mSpotify.setChecked(true);
 
-            if (sentToken)
+            if (gcmToken)
                 mNotificationType.setChecked(true);
             else
                 mNotificationType.setChecked(false);
@@ -260,8 +278,32 @@ public class SettingsActivity extends BaseActivity {
             } else if (mPlayBySpotify == preference) {
                 mPlayBySpotify.setChecked(mPlayBySpotify.isChecked());
                 mSetting.setPlayBySpotify(mPlayBySpotify.isChecked());
+            } else if (mLogout == preference) {
+                UsersUtils.clearCurrentUser(activity);
+                String friends = UsersUtils.getCurrentFriends(activity);
+                Gson gson = new Gson();
+                List<User> friendslist = gson.fromJson(friends, new TypeToken<List<User>>(){}.getType());
+                UsersUtils.clearCurrentFriends(activity);
+                AccountUtils.clearActiveAccount(activity);
+                LoginManager.getInstance().logOut();
+                Intent i=  new Intent(activity, LoginActivity.class);
+                startActivityForVersion(i);
+                activity.finish();
+            } else if (spinner == preference) {
+                Toast.makeText(getActivity(), "Coming soon!", Toast.LENGTH_SHORT).show();
             }
             return false;
+        }
+
+        private void startActivityForVersion(Intent intent) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                startActivity(intent,
+                        ActivityOptions.makeSceneTransitionAnimation(
+                                activity).toBundle());
+            }
+            else {
+                startActivity(intent);
+            }
         }
 
         @Override

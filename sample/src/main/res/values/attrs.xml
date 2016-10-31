@@ -25,6 +25,23 @@
         <attr name="imageItemBackground" format="reference"/>
     </declare-styleable>
 
+    <declare-styleable name="preference_base">
+        <attr name="locked" format="boolean" />
+        <attr name="lockedText" format="reference|string" />
+    </declare-styleable>
+
+    <attr name="showValueInSummary" format="boolean" />
+    <declare-styleable name="preference_entryset">
+        <attr name="entries" />
+        <attr name="entryValues" />
+        <attr name="showValueInSummary" />
+    </declare-styleable>
+
+    <declare-styleable name="SpinnerPreference">
+        <attr name="entries" />
+        <attr name="entryValues" />
+    </declare-styleable>
+
     <declare-styleable name="MultiSwipeRefreshLayout">
         <attr name="foreground" format="reference" />
     </declare-styleable>

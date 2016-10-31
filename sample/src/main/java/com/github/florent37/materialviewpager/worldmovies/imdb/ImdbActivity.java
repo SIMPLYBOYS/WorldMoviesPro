@@ -1,61 +1,82 @@
 package com.github.florent37.materialviewpager.worldmovies.imdb;
 
+import android.app.LoaderManager;
 import android.app.SearchManager;
+import android.content.Context;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.BaseColumns;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.ashokvarma.bottomnavigation.BadgeItem;
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
+import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.worldmovies.adapter.ImdbSwipeRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.fragment.MovieRecycleFragment;
 import com.github.florent37.materialviewpager.worldmovies.fragment.RecyclerViewFragment;
+import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
+import com.github.florent37.materialviewpager.worldmovies.model.TagFilterHolder;
+import com.github.florent37.materialviewpager.worldmovies.model.TagMetadata;
 import com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity;
+import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionView;
+import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionViewCallbacks;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.MultiSwipeRefreshLayout;
+import com.github.florent37.materialviewpager.worldmovies.util.UIUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -63,11 +84,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
+import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.drawCountryFlag;
+
 /**
  * Created by aaron on 2016/3/21.
  */
-public class ImdbActivity extends BaseActivity implements Response.ErrorListener {
-
+public class ImdbActivity extends BaseActivity implements Response.ErrorListener,
+        BottomNavigationBar.OnTabSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
+    public static String IMDB_OBJECT = "IMDB_OBJECT";
     private Toolbar toolbar;
     private int mViewPagerScrollState = ViewPager.SCROLL_STATE_IDLE;
     private List<ImdbObject> movieList;
@@ -75,9 +101,15 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     private RequestQueue mQueue;
     private String HOST_NAME = Config.HOST_NAME;
     private ImdbSwipeRecycleViewAdapter adapter;
-    private StaggeredGridLayoutManager gaggeredGridLayoutManager;
     private LinearLayoutManager linearLayoutManager;
+    private DrawerLayout mDrawerLayout;
+    private CollectionView mDrawerCollectionView;
+    private static final int TAG_METADATA_TOKEN = 0x8;
     private static final int PAGE_UNIT = 6; //default 6 cards in one page
+    private static final int GROUP_TOPIC_TYPE_OR_THEME = 0;
+    private static final int GROUP_LIVE_STREAM = 1;
+    private static final int GROUP_COUNTRY = 2;
+    private Handler completeHandler;
 //    private SwipeListAdapter adapter;
     private boolean mActionBarShown = true;
     private int mProgressBarTopWhenActionBarShown;
@@ -110,6 +142,12 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     private final String TAG_GALLERY_FULL = "gallery_full";
     private final String TAG_DELTA = "delta";
     public final String REQUEST_TAG = "imdb250Request";
+    private TagMetadata mTagMetadata;
+    private TagFilterHolder mTagFilterHolder;
+    private int lastSelectedPosition = 2;
+    private BottomNavigationBar bottomNavigationBar;
+    BadgeItem numberBadgeItem;
+    private static final String TAG = makeLogTag(ImdbActivity.class);
     int curSize = 0;
     private MenuItem searchItem;
     private SearchView searchView = null;
@@ -119,17 +157,57 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     String[] from = new String [] {FILM_NAME};
     int[] to = new int[] { R.id.text1};
     CustomJSONArrayRequest jsonRequest;
+    private String searchChannel = "14";
+
+    // The OnClickListener for the Switch widgets on the navigation filter.
+    private final View.OnClickListener mDrawerItemCheckBoxClickListener =
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    boolean isChecked = ((CheckBox)v).isChecked();
+                    TagMetadata.Tag theTag = (TagMetadata.Tag)v.getTag();
+                    LOGD(TAG, "Checkbox with tag: " + theTag.getName() + " isChecked => " + isChecked);
+                    if (isChecked) {
+                        if (theTag.getCategory().equals("COUNTRY")) {
+                            mTagFilterHolder.clear(); //support one country for searching
+                        }
+                        // Here we only add all 'types' if the user has not explicitly selected
+                        // one of the category_type tags.
+                        mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+
+                        List<TagMetadata.Tag> tags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
+
+                        for (TagMetadata.Tag tag : tags) {
+                            if (mTagFilterHolder.contains(tag.getId())) {
+                                searchChannel = String.valueOf(tag.getOrderInCategory());
+                                CredentialsHandler.setCountry(getApplicationContext(), searchChannel);
+                            }
+                        }
+                    } else {
+                        searchChannel = "14";
+                        mTagFilterHolder.remove(theTag.getId(), theTag.getCategory());
+                        CredentialsHandler.setCountry(getApplicationContext(), searchChannel);
+                    }
+                }
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top250);
-        this.toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         toolbar.setTitleTextColor(Color.BLACK);
+        toolbar.setNavigationIcon(R.drawable.ic_up);
+        Drawable drawable = toolbar.getNavigationIcon();
+        drawable.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         registerHideableHeaderView(findViewById(R.id.headerbar));
+        bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_flipped, GravityCompat.END);
+        mDrawerCollectionView = (CollectionView) findViewById(R.id.drawer_collection_view);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
@@ -188,7 +266,225 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
+
+
+        // Start loading the tag metadata. This will in turn call the fragment with the correct arguments.
+        getLoaderManager().initLoader(TAG_METADATA_TOKEN, null, this);
+        refresh();
+        bottomNavigationBar.setTabSelectedListener(this);
+
+        completeHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                giveSuggestions((String) msg.obj);
+            }
+        };
+
         overridePendingTransition(0, 0);
+    }
+
+    private void refresh() {
+        bottomNavigationBar.clearAll();
+        numberBadgeItem = new BadgeItem()
+                .setBorderWidth(4)
+                .setBackgroundColorResource(R.color.blue)
+                .setText("" + lastSelectedPosition);
+
+        bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
+        bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
+        bottomNavigationBar
+                .addItem(new BottomNavigationItem(R.drawable.ic_trending_up, R.string.navdrawer_item_explore).setActiveColorResource(R.color.material_orange_900).setBadgeItem(numberBadgeItem))
+                .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
+                .addItem(new BottomNavigationItem(R.drawable.ic_theaters, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
+                .addItem(new BottomNavigationItem(R.drawable.nytimes, "nytimes").setActiveColorResource(R.color.material_brown_400))
+                .addItem(new BottomNavigationItem(R.drawable.ic_person, "Profile").setActiveColorResource(R.color.material_red_900))
+//                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_red_900))
+                .setFirstSelectedPosition(lastSelectedPosition)
+                .setInActiveColor(R.color.material_grey_800)
+                .setBarBackgroundColor(R.color.imdb_yellow)
+                .initialise();
+    }
+
+    @Override
+    public void onTabSelected(int position) {
+        lastSelectedPosition = position;
+        if (numberBadgeItem != null) {
+            numberBadgeItem.setText(Integer.toString(position));
+        }
+        goToNavItem(position);
+    }
+
+    @Override
+    public void onTabReselected(int position) {
+        goToNavItem(position);
+    }
+
+    @Override
+    public void onTabUnselected(int position) {
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (id == TAG_METADATA_TOKEN) {
+            LOGD("1018", "createLoader");
+            return TagMetadata.createCursorLoader(this);
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        switch (loader.getId()) {
+            case TAG_METADATA_TOKEN:
+                LOGD("1021", "load finish\n"+cursor.getCount());
+                searchChannel = CredentialsHandler.getCountry(this);
+                mTagMetadata = new TagMetadata(cursor);
+                onTagMetadataLoaded();
+                break;
+            default:
+                cursor.close();
+        }
+    }
+
+    public void onTagMetadataLoaded() {
+
+        if (mTagFilterHolder == null) {
+            // Use the Intent Extras to set up the TagFilterHolder
+            mTagFilterHolder = new TagFilterHolder();
+
+            String tag = getIntent().getStringExtra(EXTRA_FILTER_TAG); //TODO get tag from preference
+            TagMetadata.Tag userTag = mTagMetadata.getTag(tag);
+            String userTagCategory = userTag == null ? null : userTag.getCategory();
+
+            if (tag != null && userTagCategory != null) {
+                mTagFilterHolder.add(tag, userTagCategory);
+            }
+
+            List<TagMetadata.Tag> tags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_TYPE);
+            // Here we only add all 'types' if the user has not explicitly selected
+            // one of the category_type tags.
+            if (tags != null && !TextUtils.equals(userTagCategory, Config.Tags.CATEGORY_TYPE)) {
+                for (TagMetadata.Tag theTag : tags) {
+                    Log.d("1019", theTag.getName());
+                    mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+                }
+            }
+
+            List<TagMetadata.Tag> countryTags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
+
+            if (countryTags != null && !TextUtils.equals(userTagCategory, Config.Tags.CATEGORY_COUNTRY)) {
+                for (TagMetadata.Tag theTag : countryTags) {
+                    if (String.valueOf(theTag.getOrderInCategory()).equals(searchChannel))
+                        mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+                }
+            }
+        }
+
+        TagAdapter tagAdapter = new TagAdapter();
+        mDrawerCollectionView.setCollectionAdapter(tagAdapter);
+        mDrawerCollectionView.updateInventory(tagAdapter.getInventory());
+    }
+
+    private class TagAdapter implements CollectionViewCallbacks {
+
+        public CollectionView.Inventory getInventory() {
+            Log.d("1018", "getInventory");
+            List<TagMetadata.Tag> countries = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_TOPIC);
+            CollectionView.Inventory inventory = new CollectionView.Inventory();
+            CollectionView.InventoryGroup themeGroup = new CollectionView.InventoryGroup(GROUP_TOPIC_TYPE_OR_THEME)
+                    .setDisplayCols(1)
+                    .setDataIndexStart(0)
+                    .setShowHeader(false);
+
+            if (countries != null && countries.size() > 0) {
+                for (TagMetadata.Tag country : countries) {
+                    themeGroup.addItemWithTag(country);
+                }
+                inventory.addGroup(themeGroup);
+            }
+
+            // We need to add the Live streamed section after the Type category
+            CollectionView.InventoryGroup liveStreamGroup = new CollectionView.InventoryGroup(GROUP_LIVE_STREAM)
+                    .setDataIndexStart(0)
+                    .setShowHeader(true)
+                    .addItemWithTag("Livestreamed");
+
+            inventory.addGroup(liveStreamGroup);
+
+            CollectionView.InventoryGroup topicsGroup = new CollectionView.InventoryGroup(GROUP_COUNTRY)
+                    .setDataIndexStart(0)
+                    .setShowHeader(true);
+
+            List<TagMetadata.Tag> topics = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
+
+            if (topics != null && topics.size() > 0) {
+                for (TagMetadata.Tag topic : topics) {
+                    Log.d("1018", String.valueOf(topic));
+                    topicsGroup.addItemWithTag(topic);
+                }
+                inventory.addGroup(topicsGroup);
+            }
+
+            return inventory;
+        }
+
+        @Override
+        public View newCollectionHeaderView(Context context, int groupId, ViewGroup parent) {
+            View view = LayoutInflater.from(context)
+                    .inflate(R.layout.explore_sessions_list_item_alt_header, parent, false);
+            // We do not want the divider/header to be read out by TalkBack, so
+            // inform the view that this is not important for accessibility.
+            UIUtils.setAccessibilityIgnore(view);
+            return view;
+        }
+
+        @Override
+        public void bindCollectionHeaderView(Context context, View view, int groupId,
+                                             String headerLabel, Object headerTag) {
+        }
+
+        @Override
+        public View newCollectionItemView(Context context, int groupId, ViewGroup parent) {
+            return LayoutInflater.from(context).inflate(groupId == GROUP_LIVE_STREAM ?
+                    R.layout.explore_sessions_list_item_livestream_alt_drawer :
+                    R.layout.explore_sessions_list_item_alt_drawer, parent, false);
+        }
+
+        @Override
+        public void bindCollectionItemView(Context context, View view, int groupId,
+                                           int indexInGroup, int dataIndex, Object tag) {
+            final CheckBox checkBox = (CheckBox) view.findViewById(R.id.filter_checkbox);
+            if (groupId == GROUP_LIVE_STREAM) {
+                //Do nothing
+            } else {
+                TagMetadata.Tag theTag = (TagMetadata.Tag) tag;
+                if (theTag != null && groupId == GROUP_TOPIC_TYPE_OR_THEME) {
+                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
+                    // set the original checked state by looking up our tags.
+                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
+                    checkBox.setTag(theTag);
+                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
+                    //TODO poster by Genre api
+                } else if (theTag != null && groupId == GROUP_COUNTRY) {
+                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
+                    drawCountryFlag(view, theTag.getOrderInCategory());
+                    // set the original checked state by looking up our tags.
+                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
+                    checkBox.setTag(theTag);
+                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
+                }
+            }
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    checkBox.performClick();
+                }
+            });
+        }
     }
 
     @Override
@@ -250,7 +546,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ImdbActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(ImdbActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -289,6 +585,9 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                 bindAdapter();
                 return true;
             case R.id.action_settings:
+                return true;
+            case R.id.action_filter:
+                mDrawerLayout.openDrawer(GravityCompat.END);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -460,7 +759,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
             public void onErrorResponse(VolleyError error) {
                 if (swipe)
                     mSwipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(ImdbActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(ImdbActivity.this, "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -469,7 +768,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(this, "Remote Server not working!", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Remote Server not working!", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -488,11 +787,14 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         MenuItem miniCard = menu.findItem(R.id.menu_miniCard);
         MenuItem ascending = menu.findItem(R.id.menu_ascending);
         MenuItem menuItem = menu.findItem(R.id.action_share);
+        MenuItem filter = menu.findItem(R.id.action_filter);
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);
+        Drawable image = filter.getIcon();
+        image.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
         AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
         mQueryTextView.setThreshold(1);
         mQueryTextView.setTextColor(getResources().getColor(R.color.material_grey_500));
@@ -512,8 +814,10 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
 
             @Override
             public boolean onQueryTextChange(String query) {
-                if (!query.trim().isEmpty())
-                    giveSuggestions(query);
+                if (!query.trim().isEmpty()) {
+                    completeHandler.removeMessages(MESSAGE_TEXT_CHANGE);
+                    completeHandler.sendMessageDelayed(completeHandler.obtainMessage(MESSAGE_TEXT_CHANGE, query), mAutoCompleteDelay);
+                }
                 return false;
             }
         });
@@ -539,7 +843,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         });
 
         searchView.setSuggestionsAdapter(mAdapter);
-
         return true;
     }
 
@@ -576,31 +879,37 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         return super.onPrepareOptionsMenu(menu);
     }
 
-    private void giveSuggestions(final String query) {
-
+    private void giveSuggestions(String query) {
         final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        String url;
 
-        jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "search/99/"+ query.replaceAll(" ", "%20"), new Response.Listener<JSONArray>() {
+        try {
+            url = Config.HOST_NAME + "search/"+ searchChannel+"/" + URLEncoder.encode(query, "UTF-8"); //TODO muti-channel support
+        }  catch (UnsupportedEncodingException e) {
+            throw new AssertionError("UTF-8 is unknown");
+        }
+
+        jsonRequest = new CustomJSONArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                    JSONArray contents = ((JSONArray) response);
-                    MOVIES = getJsonObjectArray(contents);
-                    String posterUrl;
-                    try {
-                        for (int i = 0; i < MOVIES.length; i++) {
-                            JSONObject obj = MOVIES[i].getJSONObject("_source");
-                            posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
-                            cursor.addRow(new Object[]{i, obj.getString("title"), obj.getString("description"), posterUrl});
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                JSONArray contents = ((JSONArray) response);
+                MOVIES = getJsonObjectArray(contents);
+                String posterUrl;
+                try {
+                    for (int i = 0; i < MOVIES.length; i++) {
+                        JSONObject obj = MOVIES[i].getJSONObject("_source");
+                        posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
+                        cursor.addRow(new Object[]{i, obj.getString("title"), obj.getString("description"), posterUrl});
                     }
-                    mAdapter.changeCursor(cursor);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mAdapter.changeCursor(cursor);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ImdbActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(ImdbActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
             }
         });
         mQueue.add(jsonRequest);

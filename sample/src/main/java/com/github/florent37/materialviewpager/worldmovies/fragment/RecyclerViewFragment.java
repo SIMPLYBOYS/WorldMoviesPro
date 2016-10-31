@@ -92,7 +92,6 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
 
     public void requestDataRefresh(boolean Refresh, String Query, JSONArray List) {
 
-        Log.d("0414", "requestDataRefresh: " + List);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             if (!this.getUserVisibleHint()) {
                 return;
@@ -111,15 +110,8 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
         }
 
         CustomJSONObjectRequest jsonRequest = null;
-
         int channel = this.getArguments().getInt("index", 0);
-
-        Log.d("0616", String.valueOf(channel));
-
         mQueue = CustomVolleyRequestQueue.getInstance(getContext()).getRequestQueue();
-
-        CustomJSONObjectRequest jsonRequest_q = null; //json request from search bar
-
         SharedPreferences settings = getActivity().getSharedPreferences("settings", 0);
         boolean ascending = settings.getBoolean("ascending", false);
         String url = "";
@@ -127,22 +119,6 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
 
         switch (channel) {
             case 0:
-                if (Query != null) {
-                    /*// query from searchview
-                    if (isNumeric(Query))
-                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                                "/imdb?from=" + Integer.parseInt(Query) + "&to=" + Integer.parseInt(Query) + "&ascending=1", new JSONObject(), this, this);
-                    else {
-                        try {
-                            Query = URLEncoder.encode(Query, "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            throw new AssertionError("UTF-8 is unknown");
-                        }
-                        jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb?title=" + Query + "&ascending=1", new JSONObject(), this, this);
-                    }
-                    mQueue.add(jsonRequest_q);
-                    return;*/
-                }
                 url = HOST_NAME + "jpTrends";
                 adapter =  (TrendsCardRecycleViewAdapter) getInitiatedAdapter();
 

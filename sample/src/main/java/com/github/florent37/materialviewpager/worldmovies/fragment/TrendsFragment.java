@@ -170,10 +170,12 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
         for (int i = 0; i < contents.length(); i++) {
             JSONObject c = contents.getJSONObject(i);
             String title;
+
             if (channel != 5)
                 title= c.getString(TAG_TITLE);
             else
                 title = c.getString(TAG_ORIGIN_TITLE);
+
             int top = c.getInt(TAG_TOP);;
             String releaseDate = "";
             String mainInfo = "";
@@ -182,7 +184,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             String posterUrl = "";
             String detailUrl = "";
             String country = "";
-
             //----- start dummy GalleryUrl ----
             JSONObject jo = new JSONObject();
             jo.put("type", "full");
@@ -190,7 +191,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             JSONArray galleryFullUrl = new JSONArray();
             galleryFullUrl.put(jo);
             //----- end dummy GalleryUrl ----
-
             JSONArray data = new JSONArray();
             JSONArray staff = new JSONArray();
             JSONArray cast = new JSONArray();
@@ -224,7 +224,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
                 data.put(2, jsonObj);
             }
 
-
             story = c.getString(TAG_STORY);
             trailerUrl = c.getString(TAG_TRAILER);
             rating = c.getJSONObject(TAG_RATING);
@@ -233,9 +232,9 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             item = new TrendsObject(title, String.valueOf(top), detailUrl, posterUrl, trailerUrl, cast.toString(), review.toString(),
                     staff.toString(), data.toString(), story, mainInfo, gallery.toString(), rating.toString(), releaseDate, tomato.toString());
             item.setChannel(channel);
+
             if (checkBookmark(title))
                 item.setBookmark(true);
-
             if (byTitle)
                 return item; // only one item in case of query by title
             trendsCardAdapter.addItem(i, item);

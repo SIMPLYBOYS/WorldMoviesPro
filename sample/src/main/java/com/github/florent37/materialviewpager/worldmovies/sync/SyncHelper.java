@@ -3,21 +3,6 @@ package com.github.florent37.materialviewpager.worldmovies.sync;
 /**
  * Created by aaron on 2016/2/24.
  */
-/*
- * Copyright 2014 Google Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 import android.accounts.Account;
 import android.content.Context;
@@ -27,19 +12,24 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.github.florent37.materialviewpager.worldmovies.service.DataBootstrapService;
+import com.github.florent37.materialviewpager.worldmovies.settings.SettingsUtils;
+import com.github.florent37.materialviewpager.worldmovies.util.AccountUtils;
+
 import java.io.IOException;
 
-import com.github.florent37.materialviewpager.worldmovies.service.DataBootstrapService;
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGE;
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGI;
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGW;
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
 
 //import com.github.florent37.materialviewpager.sample.feedback.FeedbackApiHelper;
 //import com.github.florent37.materialviewpager.sample.feedback.FeedbackSyncHelper;
 //import com.github.florent37.materialviewpager.sample.service.SessionAlarmService;
 //import com.github.florent37.materialviewpager.sample.service.SessionCalendarService;
-//import com.github.florent37.materialviewpager.sample.sync.userdata.AbstractUserDataSyncHelper;
+//import com.github.florent37.materialviewpager.worldmovies.sync.userdata.AbstractUserDataSyncHelper;
 //import com.github.florent37.materialviewpager.sample.sync.userdata.UserDataSyncHelperFactory;
-import com.github.florent37.materialviewpager.worldmovies.util.AccountUtils;
-
-import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.*;
 
 /**
  * A helper class for dealing with conference data synchronization. All operations occur on the
@@ -52,7 +42,7 @@ public class SyncHelper {
 
     private Context mContext;
 
-//    private ConferenceDataHandler mConferenceDataHandler;
+    private MoviesDataHandler mMoviesDataHandler;
 
     private RemoteConferenceDataFetcher mRemoteDataFetcher;
 
@@ -63,8 +53,8 @@ public class SyncHelper {
      */
     public SyncHelper(Context context) {
         mContext = context;
-        /*mConferenceDataHandler = new ConferenceDataHandler(mContext);
-        mRemoteDataFetcher = new RemoteConferenceDataFetcher(mContext);*/
+        mMoviesDataHandler = new MoviesDataHandler(mContext);
+        mRemoteDataFetcher = new RemoteConferenceDataFetcher(mContext);
     }
 
     public static void requestManualSync(Account mChosenAccount) {
@@ -72,7 +62,7 @@ public class SyncHelper {
     }
 
     public static void requestManualSync(Account mChosenAccount, boolean userDataSyncOnly) {
-       /* if (mChosenAccount != null) {
+        /*if (mChosenAccount != null) {
             LOGD(TAG, "Requesting manual sync for account " + mChosenAccount.name
                     + " userDataSyncOnly=" + userDataSyncOnly);
             Bundle b = new Bundle();
@@ -128,13 +118,13 @@ public class SyncHelper {
     public boolean performSync(@Nullable SyncResult syncResult, Account account, Bundle extras) {
         boolean dataChanged = false;
         Log.d("0222", "performSync");
-       /* if (!SettingsUtils.isDataBootstrapDone(mContext)) {
+        if (!SettingsUtils.isDataBootstrapDone(mContext)) {
             LOGD(TAG, "Sync aborting (data bootstrap not done yet)");
             // Start the bootstrap process so that the next time sync is called,
             // it is already bootstrapped.
             DataBootstrapService.startDataBootstrapIfNecessary(mContext);
             return false;
-        }*/
+        }
 
         DataBootstrapService.startDataBootstrapIfNecessary(mContext);
 
@@ -203,13 +193,13 @@ public class SyncHelper {
         }
         choresDuration = System.currentTimeMillis() - opStart;
 
-       /* int operations = mConferenceDataHandler.getContentProviderOperationsDone();
+        int operations = mMoviesDataHandler.getContentProviderOperationsDone();
         if (syncResult != null && syncResult.stats != null) {
             syncResult.stats.numEntries += operations;
             syncResult.stats.numUpdates += operations;
         }
 
-        if (dataChanged) {
+        /*if (dataChanged) {
             long totalDuration = choresDuration + syncDuration;
             LOGD(TAG, "SYNC STATS:\n" +
                     " *  Account synced: " + (account == null ? "null" : account.name) + "\n" +
@@ -261,7 +251,7 @@ public class SyncHelper {
      * @throws IOException if there is a problem downloading or importing the data.
      */
     private boolean doConferenceDataSync() throws IOException {
-       /* if (!isOnline()) {
+        /*if (!isOnline()) {
             LOGD(TAG, "Not attempting remote sync because device is OFFLINE");
             return false;
         }
@@ -270,12 +260,12 @@ public class SyncHelper {
 
         // Fetch the remote data files via RemoteConferenceDataFetcher.
         String[] dataFiles = mRemoteDataFetcher.fetchConferenceDataIfNewer(
-                mConferenceDataHandler.getDataTimestamp());
+                mMoviesDataHandler.getDataTimestamp());
 
         if (dataFiles != null) {
             LOGI(TAG, "Applying remote data.");
             // Save the remote data to the database.
-            mConferenceDataHandler.applyConferenceData(dataFiles,
+            mMoviesDataHandler.applyConferenceData(dataFiles,
                     mRemoteDataFetcher.getServerDataTimestamp(), true);
             LOGI(TAG, "Done applying remote data.");
 

@@ -86,7 +86,7 @@ public class TrendsFavoriteRecycleViewAdapter extends RecyclerView.Adapter<Trend
         return mItems.size();
     }
 
-    public class TrendsItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    protected class TrendsItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TrendsFavoriteRecycleViewAdapter mAdapter;
         private ImageView pictureView;

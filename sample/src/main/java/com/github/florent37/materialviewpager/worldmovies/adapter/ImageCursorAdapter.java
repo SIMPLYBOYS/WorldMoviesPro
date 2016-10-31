@@ -17,13 +17,13 @@ import com.squareup.picasso.Picasso;
  * Created by aaron on 2016/8/3.
  */
 public class ImageCursorAdapter extends SimpleCursorAdapter {
-    private Cursor c;
+    private Cursor cusor;
     private Context context;
     private String type;
 
-    public ImageCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, String type) {
-        super(context, layout, c, from, to);
-        this.c = c;
+    public ImageCursorAdapter(Context context, int layout, Cursor cusor, String[] from, int[] to, String type) {
+        super(context, layout, cusor, from, to);
+        this.cusor = cusor;
         this.context = context;
         this.type = type;
     }

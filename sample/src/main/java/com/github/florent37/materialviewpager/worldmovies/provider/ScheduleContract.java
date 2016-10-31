@@ -68,6 +68,26 @@ public final class ScheduleContract {
         String BLOCK_SUBTITLE = "block_subtitle";
     }
 
+    interface CountryColumns {
+
+        /** Unique string identifying this tag. For example, "TOPIC_ANDROID", "TYPE_CODELAB" */
+        String TAG_ID = "tag_id";
+        /**
+         * Tag category. For example, the tags that identify what topic a session pertains
+         * to might belong to the "TOPIC" category; the tags that identify what type a session
+         * is (codelab, office hours, etc) might belong to the "TYPE" category.
+         */
+        String TAG_CATEGORY = "tag_category";
+        /** Tag name. For example, "Android". */
+        String TAG_NAME = "tag_name";
+        /** Tag's order in its category (for sorting). */
+        String TAG_ORDER_IN_CATEGORY = "tag_order_in_category";
+        /** Tag's color, in integer format. */
+        String TAG_COLOR = "tag_color";
+        /** Tag abstract. Short summary describing tag. */
+        String TAG_ABSTRACT = "tag_abstract";
+    }
+
     interface TagsColumns {
 
         /** Unique string identifying this tag. For example, "TOPIC_ANDROID", "TYPE_CODELAB" */
@@ -296,7 +316,7 @@ public final class ScheduleContract {
         String VIDEO_IMPORT_HASHCODE = "video_import_hashcode";
     }
 
-    public static final String CONTENT_AUTHORITY = "com.github.florent37.materialviewpager.sample";
+    public static final String CONTENT_AUTHORITY = "com.github.florent37.materialviewpager.worldmovies";
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 

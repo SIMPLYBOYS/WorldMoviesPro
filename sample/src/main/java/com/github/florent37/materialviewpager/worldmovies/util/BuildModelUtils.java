@@ -169,6 +169,10 @@ public class BuildModelUtils {
 
         year = c.has(TAG_YEAR) ? c.getString(TAG_YEAR) : c.getString(TAG_RELEASE);
 
+        if (c.has(TAG_DELTA)) {
+            delta = c.getString(TAG_DELTA);
+        }
+
         if (c.has(TAG_DETAIL_URL))
             detailUrl = c.getString(TAG_DETAIL_URL);
 
@@ -222,6 +226,11 @@ public class BuildModelUtils {
                 rating, posterUrl, slate, summery, plot,
                 genre, votes, runTime, metaScore, delta, country,
                 trailerUrl, cast.toString(), galleryFullUrl.toString(), detailUrl);
+
+        if (c.has(TAG_TOP))
+            movie.setType("imdb");
+        else
+            movie.setType("genre");
 
         return movie;
     }

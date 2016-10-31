@@ -3,6 +3,11 @@ package com.github.florent37.materialviewpager.worldmovies.favorite;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -18,6 +23,7 @@ import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -31,12 +37,13 @@ import com.github.florent37.materialviewpager.worldmovies.MainActivity;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.fragment.FavoriteInfoTabFragment;
 import com.github.florent37.materialviewpager.worldmovies.fragment.TabFragment;
-import com.github.florent37.materialviewpager.worldmovies.genre.GenreActivity;
+import com.github.florent37.materialviewpager.worldmovies.framework.ContentWebViewActivity;
 import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivity;
-import com.github.florent37.materialviewpager.worldmovies.framework.ContentWebViewActivity;
+import com.github.florent37.materialviewpager.worldmovies.settings.SettingsActivity;
 import com.github.florent37.materialviewpager.worldmovies.upcoming.upComingActivity;
+import com.github.florent37.materialviewpager.worldmovies.util.UsersUtils;
 import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Picasso;
 
@@ -52,18 +59,19 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
     private TextView userName;
     private ImageView userImage;
     private User user;
-    private int lastSelectedPosition = 0;
+    private int lastSelectedPosition = 4;
     private BottomNavigationBar bottomNavigationBar;
     private BadgeItem numberBadgeItem;
     protected static final int NAV_ITEM_TREND = 0;
     protected static final int NAV_ITEM_UPCOMING = 1;
     protected static final int NAV_ITEM_IMDB = 2;
     protected static final int NAV_ITEM_NYTIMES = 3;
-    protected static final int NAV_ITEM_GENRE = 4;
+//    protected static final int NAV_ITEM_GENRE = 4;
+    protected final int NAV_ITEM_FAVORITE = 4;
     LinearLayout socialAction;
     ShareActionProvider shareActionProvider;
     private ShineButton socialView = null;
-    private MenuItem socialItem, shareItem;
+    private MenuItem socialItem, shareItem, settingItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,13 +83,17 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         userName = (TextView) findViewById(R.id.name);
         userImage = (ImageView) findViewById(R.id.avatar);
-        userName.setText(user.name);
-        Picasso.with(userImage.getContext())
-                .load(user.pictureUrl)
-                .placeholder(R.drawable.person_image_empty)
-                .fit()
-                .centerCrop()
-                .into(userImage);
+
+        if (user != null) {
+            userName.setText(user.name);
+            Picasso.with(userImage.getContext())
+                    .load(user.pictureUrl)
+                    .placeholder(R.drawable.person_image_empty)
+                    .fit()
+                    .centerCrop()
+                    .into(userImage);
+        }
+
         refresh();
         bottomNavigationBar.setTabSelectedListener(this);
         userImage.setOnClickListener(new View.OnClickListener() {
@@ -111,41 +123,85 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
                 .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
                 .addItem(new BottomNavigationItem(R.drawable.ic_theaters, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
                 .addItem(new BottomNavigationItem(R.drawable.nytimes, "NyTimes").setActiveColorResource(R.color.material_brown_300))
-                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_light_blue_A100))
+                .addItem(new BottomNavigationItem(R.drawable.ic_person, "Profile").setActiveColorResource(R.color.material_red_900))
+//                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_light_blue_A100))
                 .setFirstSelectedPosition(lastSelectedPosition)
+                .setBarBackgroundColor(R.color.foreground_material_light)
                 .initialise();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.favorite_menu, menu);
-        shareItem = menu.findItem(R.id.action_share);
         socialAction = (LinearLayout) getLayoutInflater().inflate(R.layout.social_image, null);
+
+        //-----------------//
         socialView = (ShineButton) socialAction.findViewById(R.id.socialView);
         socialView.init(this);
         socialView.getLayoutParams().height=96;
         socialView.getLayoutParams().width=96;
         socialView.setBackgroundResource(R.drawable.ic_person_add);
         socialView.setColorFilter(getResources().getColor(R.color.app_white));
+        //-----------------//
+
+        //-----------------//
+        menu.findItem(R.id.action_settings).setIcon(resizeImage(R.drawable.ic_settings,350,350));
+        //-----------------//
+
+        shareItem = menu.findItem(R.id.action_share);
         socialItem = menu.findItem(R.id.socialItem);
-        socialItem.setActionView(socialView);
-        shareActionProvider = new ShareActionProvider(this);
-        MenuItemCompat.setActionProvider(shareItem, shareActionProvider);
-        shareActionProvider.setShareIntent(createShareIntent());
-        socialView.setScaleType(ImageView.ScaleType.FIT_XY);
+        settingItem = menu.findItem(R.id.action_settings);
+
+        settingItem.setOnMenuItemClickListener(new OnMenuItemClickListener()
+        {
+            @Override
+            public boolean onMenuItemClick(MenuItem item)
+            {
+                createBackStack(new Intent(getApplicationContext(), SettingsActivity.class));
+                return false;
+            }
+        });
+
+
         socialView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(FavoriteActivity.this, "Function Coming soon!", Toast.LENGTH_LONG).show();
             }
         });
+
+        socialItem.setActionView(socialView);
+//        settingItem.setActionView(settingView);
+        shareActionProvider = new ShareActionProvider(this);
+        MenuItemCompat.setActionProvider(shareItem, shareActionProvider);
+        shareActionProvider.setShareIntent(createShareIntent());
+
         return true;
+    }
+
+    private Drawable resizeImage(int resId, int w, int h)
+    {
+        // load the origial Bitmap
+        Bitmap BitmapOrg = BitmapFactory.decodeResource(getResources(), resId);
+        int width = BitmapOrg.getWidth();
+        int height = BitmapOrg.getHeight();
+        int newWidth = w;
+        int newHeight = h;
+        // calculate the scale
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // create a matrix for the manipulation
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0,width, height, matrix, true);
+        return new BitmapDrawable(resizedBitmap);
     }
 
     private Intent createShareIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, user.link); //TODO user's movie list page
+        if (user != null)
+            shareIntent.putExtra(Intent.EXTRA_TEXT, user.link); //TODO user's movie list page
         return shareIntent;
     }
 
@@ -231,8 +287,12 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
             case NAV_ITEM_NYTIMES:
                 createBackStack(new Intent(this, nyTimesActivity.class));
                 break;
-            case NAV_ITEM_GENRE:
-                createBackStack(new Intent(this, GenreActivity.class));
+            case NAV_ITEM_FAVORITE:
+                Intent intent = new Intent(this, FavoriteActivity.class);
+                User user = UsersUtils.getCurrentUser(getApplicationContext());
+                intent.putExtra("user", user);
+                createBackStack(intent);
+//                createBackStack(new Intent(this, GenreActivity.class));
                 break;
         }
     }

@@ -17,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -68,7 +67,6 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
     private User user;
     private MenuItem searchItem;
     private MenuItem bookmarkItem = null;
-    LinearLayout bookmarkActionView;
     private ShineButton bookmarkView = null;
     private SearchView searchView = null;
     public static final String FILM_NAME = "filmName";
@@ -81,6 +79,7 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
     protected final int NAV_ITEM_IMDB = 2;
     protected final int NAV_ITEM_NYTIMES = 3;
     protected final int NAV_ITEM_GENRE = 4;
+    private MoviesFavoritePreference moviesFavor;
 
 
     @Override
@@ -89,7 +88,7 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
         setContentView(R.layout.trends_favorite_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(toolbar);
-
+        moviesFavor = new MoviesFavoritePreference();
         final ActionBar actionBar = getSupportActionBar();
 
         if (actionBar != null) {
@@ -110,7 +109,7 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
 
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         mQueue = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getRequestQueue();
-//        user = PrefUtils.getCurrentUser(getApplicationContext());
+//        user = UsersUtils.getCurrentUser(getApplicationContext());
         user = (User) getIntent().getSerializableExtra("user");
         trendsList = new ArrayList<>();
         trendsRecyclerView = (RecyclerView)findViewById(R.id.trends_recyclerview);
@@ -168,6 +167,9 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
                                         JSONArray contents = response.getJSONArray("contents");
                                         TrendsObject item = BuildModelUtils.buildTrendsModel(contents, true, movie.getChannel());
                                         Intent intent = new Intent(MoviesFavoriteDetail.this, TrendsDetail.class);
+                                        String title = item.getTitle();
+                                        if (checkMoviesBookmark(title))
+                                            item.setBookmark(true);
                                         intent.putExtra(TrendsDetail.TRENDS_OBJECT, item);
                                         ActivityCompat.startActivity(MoviesFavoriteDetail.this, intent, null);
 
@@ -197,6 +199,20 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
         });
         mQueue.add(jsonRequest);
     }
+
+    private boolean checkMoviesBookmark(String headline) {
+        headline = headline.indexOf(":") != -1 ? headline.split(":")[1].trim() : headline;
+        ArrayList list = moviesFavor.loadFavorites(getApplicationContext());
+
+        if (list == null)
+            return false;
+
+        for (int i=0; i<list.size(); i++) {
+            if (headline.compareTo((String) list.get(i)) == 0) return true;
+        }
+
+        return false;
+    };
 
     @Override
     public void onTabSelected(int position) {

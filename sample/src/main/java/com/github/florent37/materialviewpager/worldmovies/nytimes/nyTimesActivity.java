@@ -33,6 +33,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.ashokvarma.bottomnavigation.BadgeItem;
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.nyTimesSwipeRecycleViewAdapter;
@@ -53,15 +55,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
+
 /**
  * Created by aaron on 2016/6/10.
  */
-public class nyTimesActivity extends BaseActivity implements Response.ErrorListener {
+public class nyTimesActivity extends BaseActivity implements Response.ErrorListener,
+        BottomNavigationBar.OnTabSelectedListener {
     private Toolbar toolbar;
     private int mViewPagerScrollState = ViewPager.SCROLL_STATE_IDLE;
     private List<Movie> movieList;
     private RecyclerView rvMovies;
-    public static final String TAG = "nyTimesActivity";
     public static final String FILM_NAME = "filmName";
     private RequestQueue mQueue;
     private nyTimesSwipeRecycleViewAdapter rAdapter;
@@ -72,6 +76,10 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     int curSize = 0;
     public final String REQUEST_TAG = "reviewRequest";
     private boolean mActionBarShown = true;
+    private int lastSelectedPosition = 3;
+    private BottomNavigationBar bottomNavigationBar;
+    private BadgeItem numberBadgeItem;
+    private static final String TAG = makeLogTag(nyTimesActivity.class);
     private String[] MOVIES = {};
     private int mProgressBarTopWhenActionBarShown;
     // initially offset will be 0, later will be updated while parsing the json
@@ -85,7 +93,8 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nytimes);
-        this.toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         toolbar.setBackgroundColor(Color.TRANSPARENT);
         toolbar.setTitle("NY Movies Review");
         toolbar.setTitleTextColor(Color.WHITE);
@@ -146,6 +155,8 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
             }
         });
 
+        refresh(bottomNavigationBar, lastSelectedPosition, numberBadgeItem);
+        bottomNavigationBar.setTabSelectedListener(this);
         overridePendingTransition(0, 0);
     }
 
@@ -166,6 +177,24 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onTabSelected(int position) {
+        lastSelectedPosition = position;
+        if (numberBadgeItem != null) {
+            numberBadgeItem.setText(Integer.toString(position));
+        }
+        goToNavItem(position);
+    }
+
+    @Override
+    public void onTabReselected(int position) {
+        goToNavItem(position);
+    }
+
+    @Override
+    public void onTabUnselected(int position) {
     }
 
     @Override

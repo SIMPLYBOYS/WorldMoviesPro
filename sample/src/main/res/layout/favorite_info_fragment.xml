@@ -9,8 +9,7 @@
         android:id="@+id/nested_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:overScrollMode="always"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:overScrollMode="always">
         <include layout="@layout/include_favorite_card" />
     </android.support.v4.widget.NestedScrollView>
 </FrameLayout>

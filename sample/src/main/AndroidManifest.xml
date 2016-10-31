@@ -117,11 +117,6 @@ package="com.github.florent37.materialviewpager.worldmovies">
         android:theme="@style/AppTheme.Translucent" />
 
     <activity
-        android:name="com.github.florent37.materialviewpager.worldmovies.framework.MovieDetail"
-        android:label="@string/description_detail">
-    </activity>
-
-    <activity
         android:name="com.github.florent37.materialviewpager.worldmovies.trends.TrendsDetail"
         android:screenOrientation="portrait"
         android:label="@string/description_trends">
@@ -179,6 +174,7 @@ package="com.github.florent37.materialviewpager.worldmovies">
         android:name="com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity"
         android:label="@string/description_imdb"
         android:parentActivityName="com.github.florent37.materialviewpager.worldmovies.MainActivity"
+        android:screenOrientation="portrait"
         android:theme="@style/AppTheme.ActionBar.Transparent"
         android:exported="false">
         <meta-data
@@ -339,9 +335,9 @@ package="com.github.florent37.materialviewpager.worldmovies">
     <!-- An IntentService responsible for bootstrapping the app with the necessary
        data such as session, speakers, etc. This data is used prior to the app's
        first sync to the backend server. -->
-    <!--<service
+    <service
         android:name=".service.DataBootstrapService"
-        android:exported="false" />-->
+        android:exported="false" />
 
     <provider
         android:name="com.github.florent37.materialviewpager.worldmovies.provider.ScheduleProvider"

@@ -8,42 +8,33 @@
     android:layout_height="match_parent"
     tools:context=".imdb.ImdbActivity"
     android:fitsSystemWindows="true">
-
     <!-- Main layout -->
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="match_parent">
 
-        <LinearLayout style="@style/HeaderBar"
-            android:id="@+id/headerbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/imdb_yellow"
-            android:orientation="vertical"
-            android:theme="@style/ActionBarThemeOverlay">
-            <include layout="@layout/toolbar_actionbar" />
-        </LinearLayout>
-
-        <!-- Dummy view that prevents the following ViewPager to capture focus -->
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"/>
+            android:layout_height="wrap_content">
+            <LinearLayout style="@style/HeaderBar"
+                android:id="@+id/headerbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/imdb_yellow"
+                android:orientation="vertical"
+                android:theme="@style/ActionBarThemeOverlay">
+                <include layout="@layout/toolbar_actionbar" />
+            </LinearLayout>
+        </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh_movie_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="60dp"
             app:foreground="@drawable/header_shadow">
-
-            <!--<ListView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/listView">
-            </ListView>-->
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
@@ -55,10 +46,17 @@
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
-        <include layout="@layout/deprecated_include_butter_bar" />
-    </LinearLayout>
-
-    <include layout="@layout/drawer"/>
+        <com.ashokvarma.bottomnavigation.BottomNavigationBar
+            android:id="@+id/bottom_navigation_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="0dp" />
+    </android.support.design.widget.CoordinatorLayout>
+    <include layout="@layout/explore_movies_alt_drawer_layout" />
+    <!--<include layout="@layout/drawer"/>-->
 
 </android.support.v4.widget.DrawerLayout>
 
