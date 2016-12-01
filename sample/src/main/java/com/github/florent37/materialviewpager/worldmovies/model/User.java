@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by Android on 22-04-2015.
  */
-public class User implements Serializable {
+public class User extends Object implements Serializable {
 
     public String name;
 
@@ -20,5 +20,11 @@ public class User implements Serializable {
     public String accessToken;
 
     public String pictureUrl;
+
+    public String description;
+
+    public boolean follow;
+
+    public int total;
 
 }

@@ -32,8 +32,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
-
 public class TagMetadata {
 
     // List of tags in each category, sorted by the category sort order.
@@ -47,7 +45,7 @@ public class TagMetadata {
                 TagsQueryEnum.TAG.getProjection(), null, null, null);
     }
 
-    protected TagMetadata(){
+    protected TagMetadata() {
     }
 
     public TagMetadata(Cursor cursor) {
@@ -56,20 +54,24 @@ public class TagMetadata {
         // loop, or we would mock cursor.moveToNext() to return false, and the test would be for an
         // empty cursor.
         int count = cursor.getCount();
-        for(int i = 0; i < count; i ++){
+
+        for(int i = 0; i < count; i ++) {
             cursor.moveToPosition(i);
-            Tag tag = new Tag(cursor.getString(cursor.getColumnIndex(ScheduleContract.Tags.TAG_ID)),
-                    cursor.getString(cursor.getColumnIndex(ScheduleContract.Tags.TAG_NAME)),
-                    cursor.getString(cursor.getColumnIndex(ScheduleContract.Tags.TAG_CATEGORY)),
-                    cursor.getInt(cursor.getColumnIndex(ScheduleContract.Tags.TAG_ORDER_IN_CATEGORY)),
-                    cursor.getString(cursor.getColumnIndex(ScheduleContract.Tags.TAG_ABSTRACT)),
-                    cursor.getInt(cursor.getColumnIndex(ScheduleContract.Tags.TAG_COLOR)));
-            LOGD("1018", tag.getName());
-            mTagsById.put(tag.getId(), tag);
-            if (!mTagsInCategory.containsKey(tag.getCategory())) {
-                mTagsInCategory.put(tag.getCategory(), new ArrayList<Tag>());
-            }
-            mTagsInCategory.get(tag.getCategory()).add(tag);
+//            if (cursor.getString(cursor.getColumnIndex(ScheduleContract.Tags.TAG_CATEGORY)).equals("COUNTRY")) {
+                Tag tag = new Tag(cursor.getString(cursor.getColumnIndex(ScheduleContract.Tags.TAG_ID)),
+                        cursor.getString(cursor.getColumnIndex(ScheduleContract.Tags.TAG_NAME)),
+                        cursor.getString(cursor.getColumnIndex(ScheduleContract.Tags.TAG_CATEGORY)),
+                        cursor.getInt(cursor.getColumnIndex(ScheduleContract.Tags.TAG_ORDER_IN_CATEGORY)),
+                        cursor.getString(cursor.getColumnIndex(ScheduleContract.Tags.TAG_ABSTRACT)),
+                        cursor.getInt(cursor.getColumnIndex(ScheduleContract.Tags.TAG_COLOR)));
+                /*LOGD("1107", cursor.getString(cursor.getColumnIndex(ScheduleContract.Tags.TAG_CATEGORY)));
+                LOGD("1107", tag.getName()+"\n"+tag.getCategory());*/
+                mTagsById.put(tag.getId(), tag);
+                if (!mTagsInCategory.containsKey(tag.getCategory())) {
+                    mTagsInCategory.put(tag.getCategory(), new ArrayList<Tag>());
+                }
+                mTagsInCategory.get(tag.getCategory()).add(tag);
+//            }
         }
 
         for (ArrayList<Tag> list : mTagsInCategory.values()) {
@@ -154,8 +156,7 @@ public class TagMetadata {
         private String mAbstract;
         private int mColor;
 
-        public Tag(String id, String name, String category, int orderInCategory, String _abstract,
-                int color) {
+        public Tag (String id, String name, String category, int orderInCategory, String _abstract, int color) {
             mId = id;
             mName = name;
             mCategory = category;

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:overScrollMode="always"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardUseCompatPadding="true"
+    app:cardBackgroundColor="@color/card"
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardMaxElevation="@dimen/cardMaxElevation"
+    app:cardPreventCornerOverlap="true"
+    app:cardElevation="@dimen/card_elevation">
+    <com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:fbutton="http://schemas.android.com/tools"
+        style="@style/Widget.CardContent"
+        android:id="@+id/gallery_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <com.github.florent37.materialviewpager.worldmovies.framework.FlatButton
+                android:id="@+id/trends_all"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="left|top"
+                android:text="See All"
+                android:textSize="10dp"
+                fbutton:cornerRadius="15dp"
+                fbutton:shadowEnabled="true"
+                fbutton:shadowHeight="6dp"
+                android:textColor="@android:color/white"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
+            <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
+                android:id="@+id/trends_picNum"
+                android:layout_width="35dp"
+                android:layout_height="16dp"
+                android:text="  10"
+                android:textSize="10dp"
+                android:textColor="@color/app_body_text_2"
+                android:paddingTop="0dp"
+                app:font="Roboto-Bold.ttf"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="40dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignStart="@+id/trends_picNumView" />
+            <com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView
+                android:layout_width="55dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginLeft="1dp"
+                app:aspectRatio="@dimen/aspect_16_9"
+                android:id="@+id/trends_picNumView">
+                <ImageView
+                    android:id="@+id/trends_media"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:scaleType="centerInside"/>
+            </com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView>
+        </RelativeLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/session_tags_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:requiresFadingEdge="horizontal"
+            android:fadingEdgeLength="@dimen/spacing_micro"
+            android:layout_marginBottom="@dimen/spacing_micro">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/trends_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </HorizontalScrollView>
+
+    </com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout>
+</FrameLayout>

@@ -13,6 +13,8 @@ import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView;
 import com.squareup.picasso.Picasso;
 
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+
 /**
  * Created by aaron on 2016/8/3.
  */
@@ -61,8 +63,10 @@ public class ImageCursorAdapter extends SimpleCursorAdapter {
                 .into(iv);
         CustomTextView title = (CustomTextView) v.findViewById(R.id.title);
         title.setText(titleStr);
-        TextView description = (TextView) v.findViewById(R.id.descriptioin);
+        TextView description = (TextView) v.findViewById(R.id.description);
         description.setText(descriptionStr);
+
+        LOGD("1113", type);
 
         if (type == "genre") {
             v.setBackgroundColor(context.getResources().getColor(R.color.material_blue_300));

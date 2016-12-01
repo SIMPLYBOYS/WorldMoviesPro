@@ -15,6 +15,7 @@ public class Movie implements Serializable {
     public String date;
     public boolean bookmark;
     public int channel;
+    public String country;
 
     public String getHeadline() {
         return headline;
@@ -36,9 +37,13 @@ public class Movie implements Serializable {
 
     public String getEditor() { return editor; }
 
+    public String getCountry() { return country;}
+
     public void setBookmark(boolean bookmark) {
         this.bookmark = bookmark;
     }
+
+    public void setCountry(String country) { this.country = country;}
 
     public void setChannel(int channel) {
         this.channel = channel;

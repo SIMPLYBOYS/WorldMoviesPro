@@ -1,7 +1,6 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-apply plugin: 'com.google.gms.google-services'
 
 buildscript {
     repositories {
@@ -18,12 +17,12 @@ buildscript {
 }
 
 android {
-    compileSdkVersion project.ANDROID_BUILD_SDK_VERSION
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         applicationId "com.github.florent37.materialviewpager.sample"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion project.ANDROID_BUILD_TARGET_SDK_VERSION
         versionCode 4
         versionName "1.0"
@@ -80,7 +79,7 @@ dependencies {
     compile "com.android.support:support-v4:${android_support_lib_version}"
     compile "com.android.support:support-v13:${android_support_lib_version}"
     compile "com.android.support:palette-v7:${android_support_lib_version}"
-    compile "com.android.support:preference-v7:23.4.0"
+    compile "com.android.support:preference-v7:${android_support_lib_version}"
 
     compile ('com.github.florent37:materialviewpager:1.2.0@aar'){
         transitive=true
@@ -95,9 +94,8 @@ dependencies {
     compile "com.google.android.gms:play-services-analytics:${google_play_services_client_library_version}"
     compile "com.google.android.gms:play-services-maps:${google_play_services_client_library_version}"
     compile "com.google.android.gms:play-services-plus:${google_play_services_client_library_version}"
-    compile "com.google.android.gms:play-services-gcm:${google_play_services_client_library_version}"
+    compile "com.google.firebase:firebase-messaging:${google_play_services_client_library_version}"
     compile "com.google.android.gms:play-services-base:${google_play_services_client_library_version}"
-    compile "com.google.android.gms:play-services-appindexing:${google_play_services_client_library_version}"
     compile "com.google.android.gms:play-services-auth:${google_play_services_client_library_version}"
     // JSON utility library.
     compile 'com.google.code.gson:gson:2.4'
@@ -117,7 +115,6 @@ dependencies {
     //facebook sdk
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'com.joooonho:selectableroundedimageview:1.0.1'
-
     compile 'com.flaviofaria:kenburnsview:1.0.7'
     compile 'com.android.support:multidex:1.0.0'
     compile 'com.github.aakira:expandable-layout:1.4.2@aar'
@@ -139,3 +136,5 @@ dependencies {
 //    compile project(':materialviewpager')
 //    compile project(':materialviewpagercontroller')
 }
+
+apply plugin: 'com.google.gms.google-services'

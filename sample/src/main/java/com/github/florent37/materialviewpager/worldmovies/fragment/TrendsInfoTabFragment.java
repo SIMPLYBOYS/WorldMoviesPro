@@ -127,20 +127,16 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
             audience_point = (TextView) view.findViewById(R.id.audience_point);
             criticsView = (ImageView) view.findViewById(R.id.critics);;
             audienceView = (ImageView) view.findViewById(R.id.audience);
-            critics_point.setText(tomatoItem.getCritics_score()+"%");
-            audience_point.setText(tomatoItem.getAudience_score()+"%");
-
-            if (Integer.parseInt(tomatoItem.getCritics_score()) < 60 )
-                criticsView.setImageResource(R.drawable.tomato_leaf);
-            else if (Integer.parseInt(tomatoItem.getCritics_score()) < 80)
-                criticsView.setImageResource(R.drawable.tomato);
-            else
-                criticsView.setImageResource(R.drawable.tomato_fresh);
-
-            if (Integer.parseInt(tomatoItem.getAudience_score()) < 60 )
-                audienceView.setImageResource(R.drawable.tomato_garbage);
-            else
-                audienceView.setImageResource(R.drawable.tomato_popcorn);
+            if (tomatoItem.getCritics_score() == null) {
+                ((ViewGroup) critics_point.getParent()).removeView(critics_point);
+                ((ViewGroup) audience_point.getParent()).removeView(audience_point);
+                ((ViewGroup) criticsView.getParent()).removeView(criticsView);
+                ((ViewGroup) audienceView.getParent()).removeView(audienceView);
+            } else {
+                critics_point.setText(tomatoItem.getCritics_score()+"%");
+                audience_point.setText(tomatoItem.getAudience_score()+"%");
+                rottenTomatoInfo(tomatoItem);
+            }
         }
 
         if (directorInfo.size() > 0) {
@@ -274,6 +270,20 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
 
         linearLayoutManager.scrollToPositionWithOffset(1, 650);
         return view;
+    }
+
+    private void rottenTomatoInfo(TrendsObject.TomatoItem tomatoItem) {
+        if (Integer.parseInt(tomatoItem.getCritics_score()) < 60 )
+            criticsView.setImageResource(R.drawable.tomato_leaf);
+        else if (Integer.parseInt(tomatoItem.getCritics_score()) < 80)
+            criticsView.setImageResource(R.drawable.tomato);
+        else
+            criticsView.setImageResource(R.drawable.tomato_fresh);
+
+        if (Integer.parseInt(tomatoItem.getAudience_score()) < 60 )
+            audienceView.setImageResource(R.drawable.tomato_garbage);
+        else
+            audienceView.setImageResource(R.drawable.tomato_popcorn);
     }
 
     @Override
@@ -411,6 +421,8 @@ public class TrendsInfoTabFragment extends InfoTabFragment implements AdapterVie
         super.onDestroy();
         if (mQueue != null)
             mQueue.cancelAll(REQUEST_TAG);
+        if (youTubeThumbnailView != null)
+            youTubeThumbnailView.destroyDrawingCache();
     }
 
 }

@@ -21,6 +21,7 @@ public class InfoTabFragment extends Fragment {
             case "Germany":
             case "Deutschland":
             case "West Germany":
+            case "德國":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.gm).into(thumbnailView);
                 break;
             case "일본":
@@ -34,10 +35,8 @@ public class InfoTabFragment extends Fragment {
             case "Brazil":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.brazil).into(thumbnailView);
                 break;
-            case "Espagne":
-                Picasso.with(thumbnailView.getContext()).load(R.drawable.es).into(thumbnailView);
-                break;
             case "Italy":
+            case "義大利":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.it).into(thumbnailView);
                 break;
             case "New Zealand":
@@ -49,18 +48,22 @@ public class InfoTabFragment extends Fragment {
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.korea).into(thumbnailView);
                 break;
             case "UK":
+            case "Britannique":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.uk).into(thumbnailView);
                 break;
             case "Iran":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.iran).into(thumbnailView);
                 break;
             case "India":
+            case "印度":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.india).into(thumbnailView);
                 break;
             case "Lebanon":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.lebanon).into(thumbnailView);
                 break;
             case "Spain":
+            case "西班牙":
+            case "Espagne":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.es).into(thumbnailView);
                 break;
             case "Turkey":
@@ -76,6 +79,7 @@ public class InfoTabFragment extends Fragment {
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.canada).into(thumbnailView);
                 break;
             case "Australia":
+            case "澳大利亞":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.australia).into(thumbnailView);
                 break;
             case "Ireland":
@@ -88,6 +92,7 @@ public class InfoTabFragment extends Fragment {
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.ru).into(thumbnailView);
                 break;
             case "Hong Kong":
+            case "香港":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.hong_kong).into(thumbnailView);
                 break;
             case "China":
@@ -98,9 +103,11 @@ public class InfoTabFragment extends Fragment {
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.denmark).into(thumbnailView);
                 break;
             case "Taiwan":
+            case "臺灣":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.taiwan).into(thumbnailView);
                 break;
             case "Thailand":
+            case "泰國":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.thailand).into(thumbnailView);
                 break;
             case "Russia":
@@ -111,6 +118,10 @@ public class InfoTabFragment extends Fragment {
             case "アメリカ":
             case "USA":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.usa).into(thumbnailView);
+                break;
+            case "Poland":
+            case "波蘭":
+                Picasso.with(thumbnailView.getContext()).load(R.drawable.poland).into(thumbnailView);
                 break;
         }
     }

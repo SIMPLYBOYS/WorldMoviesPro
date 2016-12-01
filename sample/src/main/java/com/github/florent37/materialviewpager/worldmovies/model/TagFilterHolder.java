@@ -34,6 +34,7 @@ public class TagFilterHolder implements Parcelable {
     public static final int CATEGORY_TYPE  = 1;
     public static final int CATEGORY_TOPIC = 2;
     public static final int CATEGORY_COUNTRY = 3;
+    public static final int CATEGORY_GENRE = 4;
 
     private Set<String> mSelectedFilters;
     private int[] mCategories;
@@ -41,11 +42,12 @@ public class TagFilterHolder implements Parcelable {
 
     public TagFilterHolder() {
         mSelectedFilters = new HashSet<>();
-        mCategories = new int[4];
+        mCategories = new int[5];
         mCategories[CATEGORY_THEME] = 0;
         mCategories[CATEGORY_TYPE] = 0;
         mCategories[CATEGORY_TOPIC] = 0;
         mCategories[CATEGORY_COUNTRY] = 0;
+        mCategories[CATEGORY_GENRE] = 0;
     }
 
     /**
@@ -88,11 +90,12 @@ public class TagFilterHolder implements Parcelable {
 
     public void clear() {
         mSelectedFilters = new HashSet<>();
-        mCategories = new int[4];
+        mCategories = new int[5];
         mCategories[CATEGORY_THEME] = 0;
         mCategories[CATEGORY_TYPE] = 0;
         mCategories[CATEGORY_TOPIC] = 0;
         mCategories[CATEGORY_COUNTRY] = 0;
+        mCategories[CATEGORY_GENRE] = 0;
     }
 
     /**
@@ -187,6 +190,8 @@ public class TagFilterHolder implements Parcelable {
                 return TagFilterHolder.CATEGORY_TOPIC;
             case Config.Tags.CATEGORY_COUNTRY:
                 return TagFilterHolder.CATEGORY_COUNTRY;
+            case Config.Tags.CATEGORY_GENRE:
+                return TagFilterHolder.CATEGORY_GENRE;
             default:
                 throw new IllegalArgumentException("Invalid category " + category);
         }
@@ -196,17 +201,13 @@ public class TagFilterHolder implements Parcelable {
 
         public TagFilterHolder createFromParcel(Parcel in) {
             TagFilterHolder holder = new TagFilterHolder();
-
             String[] filters = in.createStringArray();
             in.readStringArray(filters);
             Collections.addAll(holder.mSelectedFilters, filters);
-
             int[] categories = in.createIntArray();
             in.readIntArray(categories);
             System.arraycopy(categories, 0, holder.mCategories, 0, categories.length);
-
             holder.mShowLiveStreamedSessions = in.readInt() == 1;
-
             return holder;
         }
 

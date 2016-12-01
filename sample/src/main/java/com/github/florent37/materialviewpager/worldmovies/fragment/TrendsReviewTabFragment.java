@@ -99,7 +99,7 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
 
                 if (!rAdapter.loading && rAdapter.totalItemCount <= (rAdapter.lastVisibleItem + rAdapter.visibleThreshold)) {
                     // End has been reached
-                    fetchReviews();
+                    fetchReviews(false);
                     rAdapter.loading = true;
                 }
             }
@@ -110,7 +110,7 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
             }
         });
 
-        fetchReviews();
+        fetchReviews(true);
         return movieReview;
     }
 
@@ -153,9 +153,11 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
         return correctUrl;
     }
 
-    public void fetchReviews() {
-        reviewItems.add(null);
-        rAdapter.notifyItemInserted(reviewItems.size() - 1);
+    public void fetchReviews(final boolean first) {
+        if (!first) {
+            reviewItems.add(null);
+            rAdapter.notifyItemInserted(reviewItems.size() - 1);
+        }
         String title = trendsObject.getTitle();
         int channel = trendsObject.getChannel();
         if (channel != 1) {
@@ -174,9 +176,11 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    if (reviewItems.size() > 0)
+                    if (reviewItems.size() > 0 && !first) {
                         reviewItems.remove(reviewItems.size() - 1);
-                    rAdapter.notifyItemRemoved(reviewItems.size());
+                        rAdapter.notifyItemRemoved(reviewItems.size());
+                    }
+
                     JSONArray contents = response.getJSONArray("review");
                     maxSize = response.getInt("size");
 

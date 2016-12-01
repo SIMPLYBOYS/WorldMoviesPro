@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/transition/about_enter.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/transition/about_enter.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/transition/explode_transition.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/transition/explode_transition.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/transition/about_return.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/transition/about_return.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/transition/auto.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/transition/auto.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/transition/about_return_downward.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/transition/about_return_downward.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/transition/fade_transition.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/transition/fade_transition.xml"
+    }
+]

@@ -39,7 +39,6 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SyncStatusObserver;
 import android.content.pm.PackageManager;
@@ -58,7 +57,6 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -121,8 +119,6 @@ import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivity;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract;
 import com.github.florent37.materialviewpager.worldmovies.service.DataBootstrapService;
-import com.github.florent37.materialviewpager.worldmovies.service.QuickstartPreferences;
-import com.github.florent37.materialviewpager.worldmovies.service.RegistrationIntentService;
 import com.github.florent37.materialviewpager.worldmovies.settings.SettingsActivity;
 import com.github.florent37.materialviewpager.worldmovies.settings.SettingsUtils;
 import com.github.florent37.materialviewpager.worldmovies.sync.SyncHelper;
@@ -135,7 +131,6 @@ import com.github.florent37.materialviewpager.worldmovies.util.ImageLoader;
 import com.github.florent37.materialviewpager.worldmovies.util.LUtils;
 import com.github.florent37.materialviewpager.worldmovies.util.LoginAndAuthHelper;
 import com.github.florent37.materialviewpager.worldmovies.util.UsersUtils;
-import com.github.florent37.materialviewpager.worldmovies.welcome.WelcomeActivity;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -254,7 +249,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private final String TAG_TRAILER = "trailerUrl";
     private final String TAG_GALLERY_FULL = "gallery_full";
     private final String TAG_DELTA = "delta";
-    public final int MESSAGE_TEXT_CHANGE = 100;
+    public final int MESSAGE_TEXT_CHANGE = 200;
     public final int AUTOCOMPLETE_DELAY = 750;
     public int mAutoCompleteDelay = AUTOCOMPLETE_DELAY;
     // titles for navdrawer items (indices must correspond to the above)
@@ -293,7 +288,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
             R.drawable.ic_navview_settings, // Debug
             R.drawable.ic_global,
             R.drawable.ic_navview_my_schedule, // My Schedule
-
     };
 
     // delay to launch nav drawer item, to allow close animation to play
@@ -339,11 +333,28 @@ public abstract class BaseActivity extends AppCompatActivity implements
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-//        RecentTasksStyler.styleRecentTasksEntry(this);
-        // Check if the EULA has been accepted; if not, show it.
-        //TODO change Welcome to Login Page which support facebook, google
-        if (WelcomeActivity.shouldDisplay(this)) {
-            Intent intent = new Intent(this, WelcomeActivity.class);
+
+        User user = UsersUtils.getCurrentUser(getApplicationContext());
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if (activeNetwork == null || !activeNetwork.isConnected()) {
+            // if there's no network, don't try to change the selected account
+            Toast.makeText(BaseActivity.this, R.string.no_connection_cant_login,
+                    Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+            //TODO offline portal activity
+        }
+
+        if (user == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForVersion(intent);
+            finish();
+            return;
+        } else if (user.id == null){
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivityForVersion(intent);
             finish();
             return;
@@ -356,31 +367,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         setupWindowAnimations();
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         sp.registerOnSharedPreferenceChangeListener(this);
-
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                SharedPreferences sharedPreferences =
-                        PreferenceManager.getDefaultSharedPreferences(context);
-                boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
-
-                /*if (sentToken) {
-                    mInformationTextView.setText(getString(R.string.gcm_send_message));
-                } else {
-                    mInformationTextView.setText(getString(R.string.token_error_message));
-                }*/
-            }
-        };
-
-        registerReceiver();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
-
-        if (checkPlayServices() && sentToken) {
-            // Start IntentService to register this application with GCM.
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
-        }
     }
 
     private void selectItem(int position) {
@@ -395,14 +381,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
             Fade fade = new Fade();
             getWindow().setReenterTransition(fade);
-        }
-    }
-
-    private void registerReceiver() {
-        if(!isReceiverRegistered) {
-            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                    new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
-            isReceiverRegistered = true;
         }
     }
 
@@ -767,7 +745,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 Toast.makeText(getApplicationContext(), "Yes, the profile is clickable", Toast.LENGTH_SHORT).show();
-                //TODO show user profile
             }
         });
 
@@ -795,9 +772,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
             email.setText(chosenAccount != null ? chosenAccount.name: "");
         }
 
-        if (imageUrl != null) {
+        if (imageUrl != null)
             mImageLoader.loadImage(imageUrl, profileImageView);
-        }
 
         if (coverImageUrl != null) {
             findViewById(R.id.profile_cover_image_placeholder).setVisibility(View.GONE);
@@ -838,13 +814,13 @@ public abstract class BaseActivity extends AppCompatActivity implements
         populateAccountList(friendslist);
     }
 
-    private void populateAccountList(List<User> friendList) {
+    private void populateAccountList(List<User> friendsList) {
 
         mAccountListContainer.removeAllViews();
 
         LayoutInflater layoutInflater = LayoutInflater.from(this);
 
-        for (Iterator it = friendList.iterator(); it.hasNext();) {
+        for (Iterator it = friendsList.iterator(); it.hasNext();) {
             View itemView = layoutInflater.inflate(R.layout.list_item_account, mAccountListContainer, false);
             final User user = (User) it.next();
             ((TextView) itemView.findViewById(R.id.profile_email_text)).setText(user.name);
@@ -859,8 +835,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ConnectivityManager cm = (ConnectivityManager)
-                            getSystemService(CONNECTIVITY_SERVICE);
+                    ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
                     NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                     if (activeNetwork == null || !activeNetwork.isConnected()) {
                         // if there's no network, don't try to change the selected account
@@ -1104,7 +1079,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         UsersUtils.clearCurrentUser(this);
         String friends = UsersUtils.getCurrentFriends(this);
         Gson gson = new Gson();
-        List<User> friendslist = gson.fromJson(friends, new TypeToken<List<User>>(){}.getType());
         UsersUtils.clearCurrentFriends(this);
         AccountUtils.clearActiveAccount(this);
         LoginManager.getInstance().logOut();
@@ -1148,22 +1122,13 @@ public abstract class BaseActivity extends AppCompatActivity implements
         // Perform one-time bootstrap setup, if needed
         DataBootstrapService.startDataBootstrapIfNecessary(this);
 
-        // Check to ensure a Google Account is active for the app. Placing the check here ensures
-        // it is run again in the case where a Google Account wasn't present on the device and a
-        // picker had to be started.
-
-        /*if (!AccountUtils.enforceActiveGoogleAccount(this, SELECT_GOOGLE_ACCOUNT_RESULT)) {
-            LOGD(TAG, "EnforceActiveGoogleAccount returned false");
-            return;
-        }*/
-
         // Watch for sync state changes
         mSyncStatusObserver.onStatusChanged(0);
         final int mask = ContentResolver.SYNC_OBSERVER_TYPE_PENDING |
                 ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE;
         mSyncObserverHandle = ContentResolver.addStatusChangeListener(mask, mSyncStatusObserver);
 
-        startLoginProcess();
+//        startLoginProcess();
     }
 
     public static String[] getStringArray(JSONArray jsonArray) {
@@ -1299,8 +1264,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         String accountName = AccountUtils.getActiveAccountName(this);
         LOGD(TAG, "Chosen account: " + AccountUtils.getActiveAccountName(this));
 
-        if (mLoginAndAuthHelper != null && mLoginAndAuthHelper.getAccountName()
-                .equals(accountName)) {
+        if (mLoginAndAuthHelper != null && mLoginAndAuthHelper.getAccountName().equals(accountName)) {
             LOGD(TAG, "Helper already set up; simply starting it.");
             mLoginAndAuthHelper.start();
             return;
@@ -1940,7 +1904,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         bottomNavigationBar
                 .addItem(new BottomNavigationItem(R.drawable.ic_trending_up, R.string.navdrawer_item_explore).setActiveColorResource(R.color.material_orange_900).setBadgeItem(numberBadgeItem))
                 .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
-                .addItem(new BottomNavigationItem(R.drawable.ic_theaters, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
+                .addItem(new BottomNavigationItem(R.drawable.imdb, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
                 .addItem(new BottomNavigationItem(R.drawable.nytimes, "nytimes").setActiveColorResource(R.color.material_brown_400))
                 .addItem(new BottomNavigationItem(R.drawable.ic_person, "Profile").setActiveColorResource(R.color.material_red_900))
 //                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_red_900))

@@ -36,8 +36,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
-
 /**
  * Created by aaron on 2016/7/28.
  */
@@ -65,7 +63,7 @@ public class upComingSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycl
         private TextView rattingView;
         private TextView votesView;
         private TextView deltaView;
-        private ImageView posterView, arrowView;
+        private ImageView posterView, arrowView, starView;
 
         public ContentViewHolder(View itemView, MyViewHolderClick listener) {
             super(itemView);
@@ -81,9 +79,9 @@ public class upComingSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycl
             deltaView = (TextView) itemView.findViewById(R.id.delta);
             desciptionView = (TextView) itemView.findViewById(R.id.description);
             posterView = (ImageView) itemView.findViewById(R.id.poster);
-            ImageView lineColorCode = (ImageView)itemView.findViewById(R.id.thumbnail);
+            starView = (ImageView)itemView.findViewById(R.id.thumbnail);
             int color = Color.parseColor("#F3CE13"); //The color u want
-            lineColorCode.setColorFilter(color);
+            starView.setColorFilter(color);
             Picasso.with(posterView.getContext()).load(R.drawable.parisguidetower).into(posterView);
         }
 
@@ -113,8 +111,12 @@ public class upComingSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycl
                 JsonObject ratingInfo = new JsonParser().parse(imdbObject.getRating()).getAsJsonObject();
                 jsonElement = ratingInfo.getAsJsonObject();
                 ratingItem = gson.fromJson(jsonElement, ImdbObject.RatingItem.class);
-                rattingView.setText(ratingItem.getScore());
-                LOGD("0817", imdbObject.getVotes());
+
+
+                if (ratingItem.getScore() != null) {
+                    rattingView.setText(ratingItem.getScore());
+                    starView.setVisibility(View.VISIBLE);
+                }
 
                 if (imdbObject.getVotes() != "null")
                     votesView.setText(imdbObject.getVotes());

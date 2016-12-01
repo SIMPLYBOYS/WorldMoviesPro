@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="eula_legal_text">Your use of this application is governed by:\n\na) the Google Terms of Service (www.google.com/policies/terms);\nb) Google\'s Privacy Policy (www.google.com/policies/privacy); and\nc) any applicable Google service-specific terms of service or privacy policies.\n\nGoogle\'s terms of service and privacy policies may be updated from time to time and without notice.\n\nThis application collects certain information as you use it, including via Google Analytics. Google\'s Privacy Policy explains how Google treats your information and protects your privacy when you use the application. By using the application, you agree to the use of your data in accordance with Google\'s Privacy Policy.</string>
+    <string name="path_add">M38,26H26v12h-4V26H10v-4h12V10h4v12h12V26z</string>
+    <string name="path_comment">M44,8c0-2.2-1.8-4-4-4H8C5.8,4,4,5.8,4,8v24c0,2.2,1.8,4,4,4h28l8,8L44,8z M36,28H12v-4h24V28z M36,22H12v-4h24V22z M36,16H12v-4h24V16z</string>
+    <string name="path_filter">M20,36h8v-4h-8V36z M6,12v4h36v-4H6z M12,26h24v-4H12V26z</string>
+    <string name="path_search">M13.3843083,13.3956843 C11.233862,15.5399983 7.7581039,15.5381046 5.61000013,13.3900003 C3.46000004,11.2399998 3.46000004,7.76000023 5.61000013,5.61000013 C7.76000023,3.46000004 11.2400007,3.46000004 13.3900003,5.61000013 C15.54,7.76000023 15.5400009,11.2400007 13.3900003,13.3900003 C13.388104,13.3918967 13.3862067,13.3937913 13.3843083,13.3956843 C15.1427975,15.1834093 19.6826174,19.798706 19.6826172,19.7987061 L13.3843085,13.3956846 L13.3843083,13.3956843 Z</string>
+    <string name="path_upvote">M12 7l-8 9h16l-8-9z</string>
+    <string name="path_upvote_clip">M3 6h18v11H3z</string>
+    <string name="placeholder_button_label_1" translatable="false">No, thanks</string>
+    <string name="placeholder_button_label_2" translatable="false">Watch now!</string>
+    <string name="placeholder_email_address" translatable="false">really_long_email_address_string_to_ensure_proper_overflow_formatting@gmail.com</string>
+    <string name="placeholder_lorem_ipsum" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing
+        elit. Integer nec eleifend arcu, eu convallis nisi. Etiam bibendum, tellus nec ultricies suscipit, metus justo fringilla urna, non mollis tortor libero non enim. Mauris sit amet venenatis risus, at ullamcorper ligula. Maecenas adipiscing non odio ut hendrerit. Phasellus pharetra id sapien laoreet sagittis. Etiam mattis bibendum elit. Vestibulum rutrum a libero eget facilisis. Duis tempor quam velit, at viverra tellus faucibus ut. Mauris venenatis odio sed lorem dignissim, vitae tristique arcu sagittis.</string>
+    <string name="placeholder_session_block_time" translatable="false">10:00am - 10:45am</string>
+    <string name="placeholder_session_blurb" translatable="false">Room 10</string>
+    <string name="placeholder_session_day" translatable="false">6/25</string>
+    <string name="placeholder_session_end_time" translatable="false">to 10:45am</string>
+    <string name="placeholder_session_start_time" translatable="false">10:00am</string>
+    <string name="placeholder_session_subtitle" translatable="false">Test Session Subtitle</string>
+    <string name="placeholder_session_subtitle_and_abstract" translatable="false">Test Session Subtitle and
+        abstract\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec eleifend arcu, eu convallis nisi. Etiam bibendum, tellus nec ultricies suscipit, metus justo fringilla urna, non mollis tortor libero non enim. Mauris sit amet venenatis risus, at ullamcorper ligula. Maecenas adipiscing non odio ut hendrerit. Phasellus pharetra id sapien laoreet sagittis. Etiam mattis bibendum elit. Vestibulum rutrum a libero eget facilisis. Duis tempor quam velit, at viverra tellus faucibus ut. Mauris venenatis odio sed lorem dignissim, vitae tristique arcu sagittis.</string>
+    <string name="placeholder_session_title" translatable="false">You want me to measure what!? Turning qualitative
+        information into quantitative data</string>
+    <string name="welcome_conduct_text"><b>Be excellent to each other.</b>\nWe want I/O to be an excellent experience for everyone regardless of gender identity and expression, sexual orientation, differing abilities, neurodiversity, physical appearance, body size, ethnicity, nationality, age or religion. Treat everyone with respect. Participate while acknowledging that everyone deserves to be here -- and each of us has the right to enjoy our experience without fear of harassment, discrimination, or condescension, whether blatant or via micro-aggressions.\n\n<b>Speak up if you see or hear something.</b>\nHarassment is not tolerated, and you are empowered to politely engage when you or others are disrespected. Also, assume positive intent. The person making you feel uncomfortable may not be aware of what they are doing, and politely bringing their behavior to their attention is encouraged.\n\n<b>Practice saying \"Yes and\" to each other.</b>\nBuild on each other’s ideas. We all benefit when we create together.</string>
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+    <style name="PreferenceFragment">
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:divider">?android:attr/listDivider</item>
+    </style>
+    <style name="PreferenceFragmentList">
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+    </style>
+    <style name="RtlOverlay.DialogWindowTitle.AppCompat" parent="Base.DialogWindowTitle.AppCompat">
+        <item name="android:textAlignment">viewStart</item>
+    </style>
+    <style name="RtlOverlay.Widget.AppCompat.ActionBar.TitleItem" parent="android:Widget">
+        <item name="android:layout_gravity">center_vertical|start</item>
+        <item name="android:paddingEnd">8dp</item>
+    </style>
+    <style name="RtlOverlay.Widget.AppCompat.DialogTitle.Icon" parent="android:Widget">
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+    <style name="RtlOverlay.Widget.AppCompat.PopupMenuItem" parent="android:Widget">
+        <item name="android:paddingEnd">16dp</item>
+    </style>
+    <style name="RtlOverlay.Widget.AppCompat.PopupMenuItem.InternalGroup" parent="android:Widget">
+        <item name="android:layout_marginStart">16dp</item>
+    </style>
+    <style name="RtlOverlay.Widget.AppCompat.PopupMenuItem.Text" parent="android:Widget">
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:textAlignment">viewStart</item>
+    </style>
+    <style name="RtlOverlay.Widget.AppCompat.Search.DropDown" parent="android:Widget">
+        <item name="android:paddingStart">@dimen/abc_dropdownitem_text_padding_left</item>
+        <item name="android:paddingEnd">4dp</item>
+    </style>
+    <style name="RtlOverlay.Widget.AppCompat.Search.DropDown.Icon1" parent="android:Widget">
+        <item name="android:layout_alignParentStart">true</item>
+    </style>
+    <style name="RtlOverlay.Widget.AppCompat.Search.DropDown.Icon2" parent="android:Widget">
+        <item name="android:layout_toStartOf">@id/edit_query</item>
+    </style>
+    <style name="RtlOverlay.Widget.AppCompat.Search.DropDown.Query" parent="android:Widget">
+        <item name="android:layout_alignParentEnd">true</item>
+    </style>
+    <style name="RtlOverlay.Widget.AppCompat.Search.DropDown.Text" parent="Base.Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:layout_toStartOf">@android:id/icon2</item>
+        <item name="android:layout_toEndOf">@android:id/icon1</item>
+    </style>
+    <style name="RtlOverlay.Widget.AppCompat.SearchView.MagIcon" parent="android:Widget">
+        <item name="android:layout_marginStart">@dimen/abc_dropdownitem_text_padding_left</item>
+    </style>
+    <style name="RtlUnderlay.Widget.AppCompat.ActionButton" parent="android:Widget">
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+    </style>
+    <style name="RtlUnderlay.Widget.AppCompat.ActionButton.Overflow" parent="Base.Widget.AppCompat.ActionButton">
+        <item name="android:paddingStart">@dimen/abc_action_bar_overflow_padding_start_material</item>
+        <item name="android:paddingEnd">@dimen/abc_action_bar_overflow_padding_end_material</item>
+    </style>
+</resources>

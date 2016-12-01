@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/animator/raise.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/animator/raise.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/animator/scale_with_alpha.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/me.relex/circleindicator/1.2.1/res/animator/scale_with_alpha.xml"
+    }
+]

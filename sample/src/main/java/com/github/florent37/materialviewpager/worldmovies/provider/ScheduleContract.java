@@ -367,7 +367,7 @@ public final class ScheduleContract {
     private static final String PATH_PEOPLE_IVE_MET = "people_ive_met";
 
     public static final String[] TOP_LEVEL_PATHS = {
-           /* PATH_BLOCKS,
+            /*PATH_BLOCKS,
             PATH_TAGS,
             PATH_ROOMS,
             PATH_SESSIONS,

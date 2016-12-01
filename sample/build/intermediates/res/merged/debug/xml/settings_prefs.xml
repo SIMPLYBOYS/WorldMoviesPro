@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="連線帳號">
+        <SwitchPreference
+            android:key="connect_account"
+            android:checked="false"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="界面">
+        <SwitchPreference
+            android:key="notification_model"
+            android:checked="true"
+            android:defaultValue="true" />
+        <SwitchPreference
+            android:key="repeat"
+            android:checked="false"
+            android:defaultValue="false" />
+        <SwitchPreference
+            android:key="background_play"
+            android:checked="false"
+            android:defaultValue="false" />
+        <SwitchPreference
+            android:key="play_by_spotify"
+            android:checked="false"
+            android:defaultValue="false" />
+        <com.github.florent37.materialviewpager.worldmovies.framework.SpinnerPreference
+            android:title="SpinnerPreference"
+            android:summary="This is a spinner preference"
+            android:key="country_spinner"
+            app:entries="@array/entries"
+            app:entryValues="@array/entryValues"
+            app:showValueInSummary="false"/>
+        <Preference
+            android:key="logout"
+            android:checked="false"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/interpolator/slow_out_fast_in.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/interpolator/slow_out_fast_in.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/interpolator/trim_start_interpolator.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/interpolator/trim_start_interpolator.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/interpolator/trim_end_interpolator.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/interpolator/trim_end_interpolator.xml"
+    }
+]

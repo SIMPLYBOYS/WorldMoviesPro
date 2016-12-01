@@ -75,7 +75,7 @@ import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.m
 
 /**
  * {@link ContentProvider} that stores {@link ScheduleContract} data. Data is
- * usually inserted by {@link com.google.samples.apps.iosched.sync.SyncHelper}, and queried using
+ * usually inserted by {@link com.github.florent37.materialviewpager.worldmovies.sync.SyncHelper}, and queried using
  * {@link android.app.LoaderManager} pattern.
  */
 public class ScheduleProvider extends ContentProvider {
@@ -485,9 +485,9 @@ public class ScheduleProvider extends ContentProvider {
      * <p/>
      * We only notify changes if the uri wasn't called by the sync adapter, to avoid issuing a large
      * amount of notifications while doing a sync. The
-     * {@link com.google.samples.apps.iosched.sync.ConferenceDataHandler} notifies all top level
+     * {@link com.github.florent37.materialviewpager.worldmovies.sync.ConferenceDataHandler} notifies all top level
      * conference paths once the conference data sync is done, and the
-     * {@link com.google.samples.apps.iosched.sync.userdata.AbstractUserDataSyncHelper} notifies all
+     * {@link com.github.florent37.materialviewpager.worldmovies.sync.userdata.AbstractUserDataSyncHelper} notifies all
      * user data related paths once the user data sync is done.
      */
     private void notifyChange(Uri uri) {

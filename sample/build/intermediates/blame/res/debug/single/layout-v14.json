@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout-v14/md_stub_progress_indeterminate.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout-v14/md_stub_progress_indeterminate.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout-v14/md_stub_progress.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout-v14/md_stub_progress.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout-v14/md_stub_progress_indeterminate_horizontal.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout-v14/md_stub_progress_indeterminate_horizontal.xml"
+    }
+]

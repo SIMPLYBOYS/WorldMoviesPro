@@ -1,7 +1,6 @@
 package com.github.florent37.materialviewpager.worldmovies.trends;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -9,21 +8,18 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -71,8 +67,7 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
     LinearLayout bookmarkActionView;
     private ShineButton bookmarkView = null;
     private List<TrendsObject.GalleryItem> list = null;
-    private MenuItem searchItem, shareItem;
-    private SearchView searchView = null;
+    private MenuItem shareItem;
     public static final String FILM_NAME = "filmName";
     private SimpleCursorAdapter mAdapter;
     private static String[] MOVIES = {};
@@ -159,22 +154,15 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
         bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
         // Retrieve the share menu item
         shareItem = menu.findItem(R.id.action_share);
-        searchItem = menu.findItem(R.id.action_search);
         bookmarkItem = menu.findItem(R.id.action_bookmark);
         bookmarkItem.setActionView(bookmarkView);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setIconifiedByDefault(true);
-        searchView.setSubmitButtonEnabled(true);
-        AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
-        mQueryTextView.setTextColor(Color.WHITE);
-        mQueryTextView.setHintTextColor(Color.WHITE);
 
         if (trendsObject.getBookmark()) {
             bookmarkView.setChecked(true);
             bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
         } else {
             bookmarkView.setChecked(false);
-            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_not_white);
         }
 
         bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
@@ -185,51 +173,10 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
                 if (checked)
                     bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
                 else
-                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_not_white);
                 //TODO bookmark info for the user's acccount
             }
         });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.d("0504", "submit query text: " + query);
-                //if you want to collapse the searchview
-                requestDataRefresh(query);
-                invalidateOptionsMenu();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String query) {
-                Log.d("0418", "query text change!");
-                giveSuggestions(query);
-                return false;
-            }
-        });
-
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-            @Override
-            public boolean onSuggestionSelect(int position) {
-                Log.d("0419", "suggesion select1");
-                return true;
-            }
-
-            @Override
-            public boolean onSuggestionClick(int position) {
-                Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
-                final String feedName = cursor.getString(1);
-                searchView.post(new Runnable(){
-                    @Override
-                    public void run() {
-                        searchView.setQuery(feedName, true);
-                    }
-                });
-                return true;
-            }
-        });
-
-        searchView.setSuggestionsAdapter(mAdapter);
 
         return true;
     }
@@ -300,17 +247,6 @@ public class TrendsSlideActivity extends AppCompatActivity implements AdapterVie
         jsonRequest.setTag(REQUEST_TAG);
 
         mQueue.add(jsonRequest); //trigger volley request
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (searchView != null && !searchView.isIconified()) {
-            MenuItemCompat.collapseActionView(searchItem);
-            searchView.setIconified(true);
-            return;
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override

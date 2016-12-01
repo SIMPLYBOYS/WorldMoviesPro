@@ -15,6 +15,8 @@ public class CredentialsHandler {
     private static final String ACCESS_CODE = "access_code";
     private static final String EXPIRES_AT = "expires_at";
     private static final String SERACH_COUNTRY = "search_country";
+    private static final String SEARCH_GENRE = "search_genre";
+    private static final String SEARCH_YEAR = "search_year";
 
     public static void setToken(Context context, String token, long expiresIn, TimeUnit unit) {
         Context appContext = context.getApplicationContext();
@@ -72,6 +74,14 @@ public class CredentialsHandler {
         editor.apply();
     }
 
+    public static void setSearchYear(Context context, String year) {
+        Context appContext = context.getApplicationContext();
+        SharedPreferences sharedPref = getSharedPreferences(appContext);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(SEARCH_YEAR, year);
+        editor.apply();
+    }
+
     public static String getRefreshToken(Context context) {
         Context appContext = context.getApplicationContext();
         SharedPreferences sharedPref = getSharedPreferences(appContext);
@@ -102,6 +112,14 @@ public class CredentialsHandler {
         String countryCode = sharedPref.getString(SERACH_COUNTRY, "14");
 
         return countryCode;
+    }
+
+    public static String getSearchYear(Context context) {
+        Context appContext = context.getApplicationContext();
+        SharedPreferences sharedPref = getSharedPreferences(appContext);
+        String year = sharedPref.getString(SEARCH_YEAR, "All");
+
+        return year;
     }
 
     public static void clearToken(Context context) {

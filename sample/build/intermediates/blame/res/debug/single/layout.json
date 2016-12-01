@@ -1,0 +1,854 @@
+[
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/tools_list_item_card_small.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.florent37/materialviewpager/1.2.0/res/layout/tools_list_item_card_small.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_navigation_menu.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_navigation_menu.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/genre_item_even.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/genre_item_even.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/gallery_pic.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/gallery_pic.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_menu_item_action_area.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_menu_item_action_area.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/list_item_review.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/list_item_review.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/psts_tab.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.jpardogo.materialtabstrip/library/1.1.0/res/layout/psts_tab.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_search_dropdown_item_icons_2line.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_search_dropdown_item_icons_2line.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/material_view_pager_moving_header.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.florent37/materialviewpager/1.2.0/res/layout/material_view_pager_moving_header.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/com_facebook_activity_layout.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.17.0/res/layout/com_facebook_activity_layout.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/select_dialog_multichoice_material.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/select_dialog_multichoice_material.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_search.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_search.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_nytimes.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_nytimes.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/movies_favorite_detail.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/movies_favorite_detail.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/select_dialog_item_material.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/select_dialog_item_material.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/settings_act.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/settings_act.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/imdb_list_item_card_small.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/imdb_list_item_card_small.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_slide.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_slide.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/include_all_button.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/include_all_button.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/pager_slide.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/pager_slide.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/search_row.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/search_row.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/tools_material_view_pager_pagertitlestrip.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.florent37/materialviewpager/1.2.0/res/layout/tools_material_view_pager_pagertitlestrip.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/header_logo.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/header_logo.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/com_facebook_login_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.17.0/res/layout/com_facebook_login_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/include_more_button.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/include_more_button.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/detail_imdb_genre.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/detail_imdb_genre.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/notification_template_lines_media.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/notification_template_lines_media.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/trends_info_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/trends_info_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_top250.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_top250.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/com_facebook_smart_device_dialog_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.17.0/res/layout/com_facebook_smart_device_dialog_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/detail_spotify.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/detail_spotify.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/bottom_navigation_bar_container.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.ashokvarma.android/bottom-navigation-bar/1.3.0/res/layout/bottom_navigation_bar_container.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/album_pic.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/album_pic.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/explore_movies_alt_drawer_layout.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/explore_movies_alt_drawer_layout.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_action_bar_title_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_action_bar_title_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/preference_spinner.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/preference_spinner.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/list_item_card_big.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/list_item_card_big.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_bottom_sheet_dialog.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_bottom_sheet_dialog.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_dialog_list.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_dialog_list.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/cast_list_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/cast_list_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/notification_template_media_custom.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/notification_template_media_custom.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/notification_media_action.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/notification_media_action.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/trends_big_card.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/trends_big_card.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_dialog_progress.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_dialog_progress.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/com_facebook_device_auth_dialog_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.17.0/res/layout/com_facebook_device_auth_dialog_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_navigation_item_header.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_navigation_item_header.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_setting.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_setting.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/preference_category.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/preference-v7/25.0.0/res/layout/preference_category.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_list_menu_item_layout.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_list_menu_item_layout.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/notification_template_part_time.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/notification_template_part_time.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_stub_titleframe_lesspadding.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_stub_titleframe_lesspadding.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/nytimes_favorite_item_detail.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/nytimes_favorite_item_detail.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/notification_template_big_media.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/notification_template_big_media.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/detail_gallery.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/detail_gallery.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/loading_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/loading_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/trailer_thumbnail.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/trailer_thumbnail.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_action_menu_item_layout.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_action_menu_item_layout.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/tools_list_items.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.florent37/materialviewpager/1.2.0/res/layout/tools_list_items.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/update_dialog.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/update_dialog.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/catloading_main.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.roger.catloadinglibrary/catloadinglibrary/1.0.1/res/layout/catloading_main.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_listitem_singlechoice.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_listitem_singlechoice.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/preference_recyclerview.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/preference-v7/25.0.0/res/layout/preference_recyclerview.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_navigation_item_subheader.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_navigation_item_subheader.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/facebook_favorite.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/facebook_favorite.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_list_menu_item_radio.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_list_menu_item_radio.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/messenger_button_send_white_small.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.17.0/res/layout/messenger_button_send_white_small.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/shifting_bottom_navigation_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.ashokvarma.android/bottom-navigation-bar/1.3.0/res/layout/shifting_bottom_navigation_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_listitem_multichoice.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_listitem_multichoice.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/movie_detail.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/movie_detail.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/list_item_account.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/list_item_account.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/imdb_info_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/imdb_info_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/notification_template_big_media_custom.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/notification_template_big_media_custom.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/preference_dialog_edittext.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/preference-v7/25.0.0/res/layout/preference_dialog_edittext.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/include_trends_card.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/include_trends_card.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/notification_template_media.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/notification_template_media.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/mini_placeholder.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/mini_placeholder.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/material_view_pager_pagertitlestrip_newstand.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.florent37/materialviewpager/1.2.0/res/layout/material_view_pager_pagertitlestrip_newstand.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_screen_toolbar.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_screen_toolbar.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_text_input_password_icon.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_text_input_password_icon.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/header_logo_2.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/header_logo_2.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/messenger_button_send_white_round.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.17.0/res/layout/messenger_button_send_white_round.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_main.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/list_item_search_result.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/list_item_search_result.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/nytimes_favorite_detail.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/nytimes_favorite_detail.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_layout_tab_icon.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_layout_tab_icon.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_stub_titleframe.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_stub_titleframe.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/fixed_bottom_navigation_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.ashokvarma.android/bottom-navigation-bar/1.3.0/res/layout/fixed_bottom_navigation_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/welcome_account_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/welcome_account_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/explore_sessions_list_item_livestream2_alt_drawer.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/explore_sessions_list_item_livestream2_alt_drawer.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_layout_snackbar.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_layout_snackbar.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/material_view_pager_pagertitlestrip_standard.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.florent37/materialviewpager/1.2.0/res/layout/material_view_pager_pagertitlestrip_standard.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_genre_detail.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_genre_detail.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/messenger_button_send_blue_large.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.17.0/res/layout/messenger_button_send_blue_large.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/facebook_favorite_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/facebook_favorite_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/list_item_user.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/list_item_user.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/material_view_pager_layout.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.florent37/materialviewpager/1.2.0/res/layout/material_view_pager_layout.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/list_item_movie.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/list_item_movie.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_screen_simple_overlay_action_mode.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_screen_simple_overlay_action_mode.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/social_image.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/social_image.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/music_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/music_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_dialog_progress_indeterminate_horizontal.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_dialog_progress_indeterminate_horizontal.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_upcoming.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_upcoming.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/detail_trailer.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/detail_trailer.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/fragment_login.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/fragment_login.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_detail.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_detail.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/drawer.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/drawer.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/navdrawer_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/navdrawer_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/include_favorite_card.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/include_favorite_card.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/preference_widget_switch_compat.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/preference-v7/25.0.0/res/layout/preference_widget_switch_compat.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_screen_simple.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_screen_simple.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/com_spotify_sdk_login_dialog.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.spotify.sdk/spotify-auth/1.0.0-beta13/res/layout/com_spotify_sdk_login_dialog.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/support_simple_spinner_dropdown_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/support_simple_spinner_dropdown_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/youtube_customlightbox.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/youtube_customlightbox.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/preference_information.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/preference-v7/25.0.0/res/layout/preference_information.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_list_menu_item_icon.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_list_menu_item_icon.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/header_logo_full.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/header_logo_full.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/header_logo_text.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/header_logo_text.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/fragment_list.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/fragment_list.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/explore_sessions_list_item_livestream1_alt_drawer.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/explore_sessions_list_item_livestream1_alt_drawer.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_nytims_detail.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_nytims_detail.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/no_search_results.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/no_search_results.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_dialog_input.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_dialog_input.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_dialog_basic.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_dialog_basic.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_activity_chooser_view_list_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_activity_chooser_view_list_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/list_item_card_small.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/list_item_card_small.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_explore_people.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_explore_people.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_action_bar_up_container.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_action_bar_up_container.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/imdb_list_item_card_big.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/imdb_list_item_card_big.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/bookmark_image.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/bookmark_image.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/toolbar_actionbar.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/toolbar_actionbar.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/slide_pic.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/slide_pic.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/movies_favorite_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/movies_favorite_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_album.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_album.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_about.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_about.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/genre_item_odd.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/genre_item_odd.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_popup_menu_item_layout.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_popup_menu_item_layout.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_screen_content_include.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_screen_content_include.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/com_spotify_sdk_login_activity.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.spotify.sdk/spotify-auth/1.0.0-beta13/res/layout/com_spotify_sdk_login_activity.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/detail_imdb_summery.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/detail_imdb_summery.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/material_view_pager_viewpager.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.florent37/materialviewpager/1.2.0/res/layout/material_view_pager_viewpager.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/notification_template_part_chronometer.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/notification_template_part_chronometer.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_action_mode_close_item_material.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_action_mode_close_item_material.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/hint_row.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/hint_row.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/detail_trends_genre.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/detail_trends_genre.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/nytimes_favorite_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/nytimes_favorite_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/movies_favorite.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/movies_favorite.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_welcome.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_welcome.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/welcome_tos_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/welcome_tos_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/notification_template_big_media_narrow_custom.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/notification_template_big_media_narrow_custom.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_navigation_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_navigation_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/messenger_button_send_blue_small.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.17.0/res/layout/messenger_button_send_blue_small.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/select_dialog_singlechoice_material.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/select_dialog_singlechoice_material.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/detail_trends_summery.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/detail_trends_summery.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/material_view_pager_placeholder.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.florent37/materialviewpager/1.2.0/res/layout/material_view_pager_placeholder.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/welcome_conduct_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/welcome_conduct_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_dialog_custom.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_dialog_custom.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_action_bar_view_list_nav_layout.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_action_bar_view_list_nav_layout.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/preference_list_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/preference-v7/25.0.0/res/layout/preference_list_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/messenger_button_send_blue_round.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.17.0/res/layout/messenger_button_send_blue_round.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/fragment_recyclerview.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/fragment_recyclerview.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/material_view_pager_imageview_header.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.florent37/materialviewpager/1.2.0/res/layout/material_view_pager_imageview_header.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/preference_widget_checkbox.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/preference-v7/25.0.0/res/layout/preference_widget_checkbox.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_expanded_menu_layout.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_expanded_menu_layout.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_popup_menu_header_item_layout.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_popup_menu_header_item_layout.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_alert_dialog_button_bar_material.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_alert_dialog_button_bar_material.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/detail_imdb_chart.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/detail_imdb_chart.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/nytimes_favorite.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/nytimes_favorite.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_stub_actionbuttons.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_stub_actionbuttons.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/review_list_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/review_list_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_bottom_navigation_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_bottom_navigation_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/navdrawer.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/navdrawer.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_alert_dialog_material.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_alert_dialog_material.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_navigation_menu_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_navigation_menu_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/material_view_pager_mini_placeholder.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/material_view_pager_mini_placeholder.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/pager_list_items.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/pager_list_items.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/favorite_info_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/favorite_info_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/notification_media_cancel_action.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/notification_media_cancel_action.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/tools_list_item_card_big.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.florent37/materialviewpager/1.2.0/res/layout/tools_list_item_card_big.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/navdrawer_separator.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/navdrawer_separator.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_dialog_progress_indeterminate.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_dialog_progress_indeterminate.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/include_list_card.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/include_list_card.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_genre.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_genre.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/list_item_header.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/list_item_header.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_activity_chooser_view.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_activity_chooser_view.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_dialog_title_material.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_dialog_title_material.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/header_circle.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/header_circle.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_favorite.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_favorite.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/explore_sessions_list_item_alt_drawer.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/explore_sessions_list_item_alt_drawer.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_select_dialog_material.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_select_dialog_material.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/explore_sessions_list_item_alt_header.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/explore_sessions_list_item_alt_header.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/notification_template_big_media_narrow.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/notification_template_big_media_narrow.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_search_view.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_search_view.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/search_list_item.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/search_list_item.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_webview.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_webview.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/preference_base.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/preference_base.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_navigation_item_separator.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_navigation_item_separator.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_action_menu_layout.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_action_menu_layout.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/trends_small_card.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/trends_small_card.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_list_menu_item_checkbox.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_list_menu_item_checkbox.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/md_listitem.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.8/res/layout/md_listitem.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/activity_login.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/activity_login.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/fragment_webview.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/fragment_webview.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/com_facebook_tooltip_bubble.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.17.0/res/layout/com_facebook_tooltip_bubble.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_layout_snackbar_include.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_layout_snackbar_include.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/detail_imdb_plot.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/detail_imdb_plot.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/welcome_attending_fragment.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/welcome_attending_fragment.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/deprecated_include_butter_bar.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/deprecated_include_butter_bar.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/messenger_button_send_white_large.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.17.0/res/layout/messenger_button_send_white_large.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/fragment_scroll.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/fragment_scroll.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/design_layout_tab_text.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/design/25.0.0/res/layout/design_layout_tab_text.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/list_item_person.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/layout/list_item_person.xml"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/layout/abc_action_mode_bar.xml",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/25.0.0/res/layout/abc_action_mode_bar.xml"
+    }
+]

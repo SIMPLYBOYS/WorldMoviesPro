@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -118,7 +117,7 @@ public class TrendsMusicTabFragment extends Fragment implements Search.View {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getActivity(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
                 }
             });
 

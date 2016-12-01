@@ -29,7 +29,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.MainActivity;
 import com.github.florent37.materialviewpager.worldmovies.R;
-import com.github.florent37.materialviewpager.worldmovies.adapter.TrendsFavoriteRecycleViewAdapter;
+import com.github.florent37.materialviewpager.worldmovies.adapter.FavoriteMoviesRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.genre.GenreActivity;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
@@ -52,15 +52,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.checkMoviesBookmark;
+
 /**
  * Created by aaron on 2016/9/16.
  */
 public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener {
     private final String TRENDS_FAVORITE = "TRENDS_FAVORITE";
-    private RecyclerView trendsRecyclerView;
+    private RecyclerView moviesRecyclerView;
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
-    private TrendsFavoriteRecycleViewAdapter trendsFavoriteAdapter;
-    private List<Movie> trendsList;
+    private FavoriteMoviesRecycleViewAdapter FavoritemoviesAdapter;
+    private List<Movie> moviesList;
     private BottomNavigationBar bottomNavigationBar;
     private int lastSelectedPosition = 0;
     private BadgeItem numberBadgeItem;
@@ -81,11 +84,10 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
     protected final int NAV_ITEM_GENRE = 4;
     private MoviesFavoritePreference moviesFavor;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.trends_favorite_detail);
+        setContentView(R.layout.movies_favorite_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(toolbar);
         moviesFavor = new MoviesFavoritePreference();
@@ -111,13 +113,13 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
         mQueue = CustomVolleyRequestQueue.getInstance(getApplicationContext()).getRequestQueue();
 //        user = UsersUtils.getCurrentUser(getApplicationContext());
         user = (User) getIntent().getSerializableExtra("user");
-        trendsList = new ArrayList<>();
-        trendsRecyclerView = (RecyclerView)findViewById(R.id.trends_recyclerview);
-        trendsRecyclerView.getItemAnimator().setAddDuration(1000);
-        trendsRecyclerView.getItemAnimator().setChangeDuration(1000);
-        trendsRecyclerView.getItemAnimator().setMoveDuration(1000);
-        trendsRecyclerView.getItemAnimator().setRemoveDuration(1000);
-        trendsFavoriteAdapter = new TrendsFavoriteRecycleViewAdapter(trendsList);
+        moviesList = new ArrayList<>();
+        moviesRecyclerView = (RecyclerView)findViewById(R.id.trends_recyclerview);
+        moviesRecyclerView.getItemAnimator().setAddDuration(1000);
+        moviesRecyclerView.getItemAnimator().setChangeDuration(1000);
+        moviesRecyclerView.getItemAnimator().setMoveDuration(1000);
+        moviesRecyclerView.getItemAnimator().setRemoveDuration(1000);
+        FavoritemoviesAdapter = new FavoriteMoviesRecycleViewAdapter(moviesList);
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
         bottomNavigationBar
@@ -129,12 +131,12 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
                 .setFirstSelectedPosition(lastSelectedPosition)
                 .setBarBackgroundColor(R.color.material_grey_900)
                 .initialise();
-        fetch_trends();
+        fetch_movies();
         bottomNavigationBar.setTabSelectedListener(this);
     }
 
-    private void fetch_trends() {
-        CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(HOST_NAME + "my_trends/"+user.id, new Response.Listener<JSONArray>() {
+    private void fetch_movies() {
+        CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(HOST_NAME + "my_movies/"+user.id, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 JSONArray contents = ((JSONArray) response);
@@ -143,32 +145,36 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
                         JSONObject movieObj = contents.getJSONObject(i);
                         String title = movieObj.getString("title");
                         String link = movieObj.getString("link");
-                        int channel = movieObj.getInt("channel");
+                        int channel = 14;
                         String picUrl = movieObj.getString("picUrl");
                         Movie movie = new Movie(title, null, null, link, picUrl, null, null);
+                        if (movieObj.has("channel"))
+                            channel = movieObj.getInt("channel");
+                        if (movieObj.has("country"))
+                            movie.setCountry(movieObj.getString("country"));
                         movie.setChannel(channel);
-                        trendsList.add(trendsList.size(), movie);
+                        moviesList.add(moviesList.size(), movie);
                     }
 
                     staggeredGridLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
                     //------- deserialize Gallery JSON object -------//
-                    trendsRecyclerView.setLayoutManager(staggeredGridLayoutManager);
-                    trendsRecyclerView.setAdapter(trendsFavoriteAdapter);
-                    trendsFavoriteAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    moviesRecyclerView.setLayoutManager(staggeredGridLayoutManager);
+                    moviesRecyclerView.setAdapter(FavoritemoviesAdapter);
+                    FavoritemoviesAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            final Movie movie = trendsList.get(position);
+                            final Movie movie = moviesList.get(position);
                             String url = UIUtils.getTrendsUrl(movie);
-
+                            LOGD("1115", url);
                             CustomJSONObjectRequest jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                     try {
                                         JSONArray contents = response.getJSONArray("contents");
-                                        TrendsObject item = BuildModelUtils.buildTrendsModel(contents, true, movie.getChannel());
+                                        TrendsObject item = BuildModelUtils.buildTrendsModel(contents, true, -1);
                                         Intent intent = new Intent(MoviesFavoriteDetail.this, TrendsDetail.class);
                                         String title = item.getTitle();
-                                        if (checkMoviesBookmark(title))
+                                        if (checkMoviesBookmark(title, moviesFavor, getApplicationContext()))
                                             item.setBookmark(true);
                                         intent.putExtra(TrendsDetail.TRENDS_OBJECT, item);
                                         ActivityCompat.startActivity(MoviesFavoriteDetail.this, intent, null);
@@ -199,20 +205,6 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
         });
         mQueue.add(jsonRequest);
     }
-
-    private boolean checkMoviesBookmark(String headline) {
-        headline = headline.indexOf(":") != -1 ? headline.split(":")[1].trim() : headline;
-        ArrayList list = moviesFavor.loadFavorites(getApplicationContext());
-
-        if (list == null)
-            return false;
-
-        for (int i=0; i<list.size(); i++) {
-            if (headline.compareTo((String) list.get(i)) == 0) return true;
-        }
-
-        return false;
-    };
 
     @Override
     public void onTabSelected(int position) {

@@ -1,7 +1,6 @@
 package com.github.florent37.materialviewpager.worldmovies.imdb;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -9,19 +8,16 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -73,9 +69,8 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
     private LinearLayoutManager linearLayoutManager;
     private ImdbSlideRecycleViewAdapter imdbSlideAdapter;
     private List<ImdbObject.GalleryItem> list = null;
-    private MenuItem searchItem, shareItem;
+    private MenuItem shareItem;
     private MenuItem bookmarkItem = null;
-    private SearchView searchView = null;
     public static final String FILM_NAME = "filmName";
     public static final String FILM_DESCRIPTION = "filmDescription";
     public static final String FILM_POSTER = "filmPoster";
@@ -138,7 +133,6 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
 
         myRecyclerView.setAdapter(imdbSlideAdapter);
         imdbSlideAdapter.setOnItemClickListener(this);
-        loadHints(); //chaching for search hint
     }
 
     @Override
@@ -164,22 +158,15 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
         bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
         // Retrieve the share menu item
         shareItem = menu.findItem(R.id.action_share);
-        searchItem = menu.findItem(R.id.action_search);
         bookmarkItem = menu.findItem(R.id.action_bookmark);
         bookmarkItem.setActionView(bookmarkView);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setIconifiedByDefault(true);
-        searchView.setSubmitButtonEnabled(true);
-        AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
-        mQueryTextView.setTextColor(Color.WHITE);
-        mQueryTextView.setHintTextColor(Color.WHITE);
 
         if (imdbObject.getBookmark()) {
             bookmarkView.setChecked(true);
             bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
         } else {
             bookmarkView.setChecked(false);
-            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_not_white);
         }
 
         bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
@@ -199,52 +186,11 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
                     bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
                     LOGD("0812", imdbObject.getTitle());
                 } else {
-                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_not_white);
                     //TODO bookmark info for the user's acccount
                 }
             }
         });
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.d("0504", "submit query text: " + query);
-                //if you want to collapse the searchview
-                requestDataRefresh(query);
-                invalidateOptionsMenu();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String query) {
-                Log.d("0418", "query text change!");
-                giveSuggestions(query);
-                return false;
-            }
-        });
-
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-            @Override
-            public boolean onSuggestionSelect(int position) {
-                Log.d("0419", "suggesion select1");
-                return true;
-            }
-
-            @Override
-            public boolean onSuggestionClick(int position) {
-                Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
-                final String feedName = cursor.getString(1);
-                searchView.post(new Runnable(){
-                    @Override
-                    public void run() {
-                        searchView.setQuery(feedName, true);
-                    }
-                });
-                return true;
-            }
-        });
-
-        searchView.setSuggestionsAdapter(mAdapter);
 
         return true;
     }
@@ -260,40 +206,6 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
             e.printStackTrace();
         }
         mAdapter.changeCursor(cursor);
-    }
-
-    private void loadHints() {
-        final String[] from = new String [] {FILM_NAME};
-        final int[] to = new int[] { R.id.text1};
-        final CustomJSONObjectRequest jsonRequest;
-
-        mAdapter = new ImageCursorAdapter(this,
-                R.layout.search_row,
-                null,
-                from,
-                to,
-                "detail");
-
-        mQueue = CustomVolleyRequestQueue.getInstance(this)
-                .getRequestQueue();
-
-        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "imdb_title", new JSONObject(), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONArray contents = ((JSONObject) response).getJSONArray("contents");
-                    MOVIES = BaseActivity.getJsonObjectArray(contents);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(SlideActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mQueue.add(jsonRequest);
     }
 
     public void requestDataRefresh(String Query) {
@@ -340,17 +252,6 @@ public class SlideActivity extends AppCompatActivity implements AdapterView.OnIt
         jsonRequest.setTag(REQUEST_TAG);
 
         mQueue.add(jsonRequest); //trigger volley request
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (searchView != null && !searchView.isIconified()) {
-            MenuItemCompat.collapseActionView(searchItem);
-            searchView.setIconified(true);
-            return;
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override

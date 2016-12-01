@@ -23,7 +23,7 @@ import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.TrendsCardRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.model.TrendsObject;
 import com.github.florent37.materialviewpager.worldmovies.trends.TrendsDetail;
-import com.github.florent37.materialviewpager.worldmovies.trends.TrendsFavoritePreference;
+import com.github.florent37.materialviewpager.worldmovies.trends.MoviesFavoritePreference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,13 +63,14 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     private static final String TAG_STAFF = "staff";
     private int visibleThreshold = 1;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private TrendsFavoritePreference favor;
+    private MoviesFavoritePreference favor;
     private RecyclerView mRecyclerView;
     private ProgressBar progressBar;
     private LinearLayoutManager layoutManager;
     private TrendsCardRecycleViewAdapter trendsCardAdapter;
     private boolean loading;
     private int lastVisibleItem, totalItemCount, channel;
+    private View headerLogo;
 
     // initially offset will be 0, later will be updated while parsing the json
     private int offSet = 0;
@@ -97,6 +98,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
         if (getActivity() instanceof Listener) {
             ((Listener) getActivity()).onFragmentViewCreated(this);
         }
+
     }
 
     @Override
@@ -217,6 +219,14 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
                 posterUrl = c.getString(TAG_POSTER_URL);
             if (c.has(TAG_TOMATO))
                 tomato = c.getJSONObject(TAG_TOMATO);
+            if (c.has(TAG_STORY))
+                story = c.getString(TAG_STORY);
+            if (c.has(TAG_TRAILER))
+                trailerUrl = c.getString(TAG_TRAILER);
+            if (c.has(TAG_RATING))
+                rating = c.getJSONObject(TAG_RATING);
+            if (c.has(TAG_RELEASE))
+                releaseDate = c.getString(TAG_RELEASE);
             if (c.has(TAG_COUNTRY)) {
                 country = c.getString(TAG_COUNTRY);
                 JSONObject jsonObj = new JSONObject();
@@ -224,10 +234,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
                 data.put(2, jsonObj);
             }
 
-            story = c.getString(TAG_STORY);
-            trailerUrl = c.getString(TAG_TRAILER);
-            rating = c.getJSONObject(TAG_RATING);
-            releaseDate = c.getString(TAG_RELEASE);
             TrendsObject item = null;
             item = new TrendsObject(title, String.valueOf(top), detailUrl, posterUrl, trailerUrl, cast.toString(), review.toString(),
                     staff.toString(), data.toString(), story, mainInfo, gallery.toString(), rating.toString(), releaseDate, tomato.toString());
@@ -239,6 +245,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
                 return item; // only one item in case of query by title
             trendsCardAdapter.addItem(i, item);
         }
+
         arrangeModel();
         trendsCardAdapter.notifyDataSetChanged();
         return null;
@@ -253,7 +260,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
         mRecyclerView.getItemAnimator().setChangeDuration(1000);
         mRecyclerView.getItemAnimator().setMoveDuration(1000);
         mRecyclerView.getItemAnimator().setRemoveDuration(1000);
-
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
 //        layoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -264,7 +270,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
         trendsCardAdapter.setOnItemClickListener(this); //onItemClick
         mRecyclerView.setAdapter(trendsCardAdapter);
         MaterialViewPagerHelper.registerRecyclerView(getActivity(), mRecyclerView);
-        favor = new TrendsFavoritePreference();
+        favor = new MoviesFavoritePreference();
         return rootView;
     }
 
@@ -272,6 +278,8 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     public void onStart() {
         super.onStart();
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_refresh_layout);
+        if (isVisible() && channel > 1)
+            requestDataRefresh(false, null, null);
     }
 
     private boolean checkBookmark(String title) {

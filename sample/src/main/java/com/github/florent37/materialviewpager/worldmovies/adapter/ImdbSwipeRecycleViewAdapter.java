@@ -66,7 +66,7 @@ public class ImdbSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVi
         private TextView rattingView;
         private TextView votesView;
         private TextView deltaView;
-        private ImageView posterView, arrowView;
+        private ImageView posterView, arrowView, starView;
 
         public ContentViewHolder(View itemView, MyViewHolderClick listener) {
             super(itemView);
@@ -82,9 +82,9 @@ public class ImdbSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVi
             deltaView = (TextView) itemView.findViewById(R.id.delta);
             desciptionView = (TextView) itemView.findViewById(R.id.description);
             posterView = (ImageView) itemView.findViewById(R.id.poster);
-            ImageView lineColorCode = (ImageView)itemView.findViewById(R.id.thumbnail);
+            starView = (ImageView)itemView.findViewById(R.id.thumbnail);
             int color = Color.parseColor("#F3CE13"); //The color u want
-            lineColorCode.setColorFilter(color);
+            starView.setColorFilter(color);
             Picasso.with(posterView.getContext()).load(R.drawable.parisguidetower).into(posterView);
         }
 
@@ -109,6 +109,11 @@ public class ImdbSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 ratingItem = gson.fromJson(jsonElement, ImdbObject.RatingItem.class);
                 rattingView.setText(ratingItem.getScore());
                 votesView.setText(imdbObject.getVotes());
+
+                if (ratingItem.getScore() != null) {
+                    rattingView.setText(ratingItem.getScore());
+                    starView.setVisibility(View.VISIBLE);
+                }
             }
 
             if (titleView == null)
@@ -244,7 +249,6 @@ public class ImdbSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVi
                         public void onClick(View v) {
                             bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
                             Snackbar.make(v, "Bookmark !!", Snackbar.LENGTH_LONG).show();
-                            //TODO
                         }
                     });*/
                 }

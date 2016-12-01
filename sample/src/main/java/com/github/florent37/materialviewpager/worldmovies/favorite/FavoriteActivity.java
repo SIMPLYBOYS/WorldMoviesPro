@@ -21,22 +21,23 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.github.florent37.materialviewpager.worldmovies.MainActivity;
 import com.github.florent37.materialviewpager.worldmovies.R;
+import com.github.florent37.materialviewpager.worldmovies.fragment.FansTabFragment;
 import com.github.florent37.materialviewpager.worldmovies.fragment.FavoriteInfoTabFragment;
-import com.github.florent37.materialviewpager.worldmovies.fragment.TabFragment;
 import com.github.florent37.materialviewpager.worldmovies.framework.ContentWebViewActivity;
 import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
@@ -49,8 +50,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
 
 /**
  * Created by aaron on 2016/6/21.
@@ -72,40 +71,23 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
     ShareActionProvider shareActionProvider;
     private ShineButton socialView = null;
     private MenuItem socialItem, shareItem, settingItem;
+    private RelativeLayout user_profile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
         user = (User) getIntent().getSerializableExtra("user");
+
+        if (user == null)
+            user = UsersUtils.getCurrentUser(getApplicationContext());
+        
         setupToolbar();
         setupViewPager();
         setupCollapsingToolbar();
         bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
         userName = (TextView) findViewById(R.id.name);
-        userImage = (ImageView) findViewById(R.id.avatar);
-
-        if (user != null) {
-            userName.setText(user.name);
-            Picasso.with(userImage.getContext())
-                    .load(user.pictureUrl)
-                    .placeholder(R.drawable.person_image_empty)
-                    .fit()
-                    .centerCrop()
-                    .into(userImage);
-        }
-
         refresh();
         bottomNavigationBar.setTabSelectedListener(this);
-        userImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LOGD("0917", user.link);
-                Context context = v.getContext();
-                Intent intent = new Intent(context, ContentWebViewActivity.class);
-                intent.putExtra("url", user.link);
-                context.startActivity(intent);
-            }
-        });
     }
 
     private void refresh() {
@@ -121,7 +103,7 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
         bottomNavigationBar
                 .addItem(new BottomNavigationItem(R.drawable.ic_trending_up, R.string.navdrawer_item_explore).setActiveColorResource(R.color.material_orange_900).setBadgeItem(numberBadgeItem))
                 .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
-                .addItem(new BottomNavigationItem(R.drawable.ic_theaters, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
+                .addItem(new BottomNavigationItem(R.drawable.imdb, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
                 .addItem(new BottomNavigationItem(R.drawable.nytimes, "NyTimes").setActiveColorResource(R.color.material_brown_300))
                 .addItem(new BottomNavigationItem(R.drawable.ic_person, "Profile").setActiveColorResource(R.color.material_red_900))
 //                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_light_blue_A100))
@@ -166,9 +148,33 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
         socialView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(FavoriteActivity.this, "Function Coming soon!", Toast.LENGTH_LONG).show();
+//                Toast.makeText(FavoriteActivity.this, "Function Coming soon!", Toast.LENGTH_LONG).show();
+                createBackStack(new Intent(getApplicationContext(), ExplorePeopleActivity.class));
             }
         });
+
+        userImage = (ImageView) findViewById(R.id.avatar);
+        user_profile = (RelativeLayout) findViewById(R.id.user_profile);
+        user_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, ContentWebViewActivity.class);
+                Log.d("1120", user.link);
+                intent.putExtra("url", user.link);
+                context.startActivity(intent);
+            }
+        });
+
+        if (user != null) {
+            userName.setText(user.name);
+            Picasso.with(userImage.getContext())
+                    .load(user.pictureUrl)
+                    .placeholder(R.drawable.person_image_empty)
+                    .fit()
+                    .centerCrop()
+                    .into(userImage);
+        }
 
         socialItem.setActionView(socialView);
 //        settingItem.setActionView(settingView);
@@ -208,7 +214,7 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
     private void setupCollapsingToolbar() {
         final CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(
                 R.id.collapse_toolbar);
-        collapsingToolbar.setTitleEnabled(false);
+        collapsingToolbar.setTitleEnabled(true);
     }
 
     private void setupViewPager() {
@@ -223,13 +229,19 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(FavoriteInfoTabFragment.newInstance(user), "Collection");
-        adapter.addFrag(new TabFragment(), "Fans");
-        adapter.addFrag(new TabFragment(), "Following");
+        adapter.addFrag(FansTabFragment.newInstance("fans"), "Fans");
+        adapter.addFrag(FansTabFragment.newInstance("follow"), "Following");
         viewPager.setAdapter(adapter);
     }
 

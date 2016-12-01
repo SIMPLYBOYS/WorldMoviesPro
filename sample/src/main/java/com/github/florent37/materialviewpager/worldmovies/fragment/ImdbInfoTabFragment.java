@@ -280,7 +280,8 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         super.onDestroy();
         if (mQueue != null)
             mQueue.cancelAll(REQUEST_TAG);
-        youTubeThumbnailView.destroyDrawingCache();
+        if (youTubeThumbnailView != null)
+            youTubeThumbnailView.destroyDrawingCache();
     }
 
     /**

@@ -39,17 +39,13 @@ import com.github.florent37.materialviewpager.worldmovies.framework.SpinnerPrefe
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.login.LoginActivity;
-import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.service.QuickstartPreferences;
-import com.github.florent37.materialviewpager.worldmovies.service.RegistrationIntentService;
-import com.github.florent37.materialviewpager.worldmovies.service.UnRegistrationIntentService;
 import com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.DrawShadowFrameLayout;
 import com.github.florent37.materialviewpager.worldmovies.util.AccountUtils;
 import com.github.florent37.materialviewpager.worldmovies.util.UIUtils;
 import com.github.florent37.materialviewpager.worldmovies.util.UsersUtils;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -58,7 +54,6 @@ import com.spotify.sdk.android.player.Spotify;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
@@ -70,7 +65,7 @@ public class SettingsActivity extends BaseActivity {
     private Toolbar toolbar;
     private static final int REQUEST_CODE = 1337;
     private String TAG = SettingsFragment.class.getSimpleName();
-    public static String spotiryToken;
+    public static String spotifyToken;
     private RequestQueue mQueue;
     private Context mContext;
 
@@ -159,7 +154,7 @@ public class SettingsActivity extends BaseActivity {
                 // Response was successful and contains auth token
                 case TOKEN:
                     LOGD(TAG, "Got token: " + response.getAccessToken());
-                    spotiryToken = response.getAccessToken();
+                    spotifyToken = response.getAccessToken();
                     CredentialsHandler.setToken(this, response.getAccessToken(), response.getExpiresIn(), TimeUnit.SECONDS);
 //                        startMainActivity(response.getAccessToken());
                     break;
@@ -198,36 +193,6 @@ public class SettingsActivity extends BaseActivity {
             mPlayBySpotify = (SwitchPreference) findPreference(Setting.PLAY_BY_SPOTIFY);
             mRepeat = (SwitchPreference) findPreference(Setting.REPEAT);
             mBackgroundPlay = (SwitchPreference) findPreference(Setting.BACKGROUND_PLAY);
-            mLogout = findPreference(Setting.LOGOUT);
-            mLogout.setSummary("登出");
-            mLogout.setOnPreferenceClickListener(this);
-            mSpotify.setIcon(R.drawable.spotify);
-            mSpotify.setSummary("Spotify");
-            mSpotify.setOnPreferenceClickListener(this);
-            spinner.setTitle("預設國家");
-            spinner.setSummary("Choose default country for searching");
-            mNotificationType.setOnPreferenceClickListener(this);
-            mNotificationType.setSummary("接收推播");
-            mPlayBySpotify.setOnPreferenceClickListener(this);
-            mPlayBySpotify.setSummary("" + "Play by Spotify");
-            mRepeat.setOnPreferenceClickListener(this);
-            mRepeat.setSummary("自動重播");
-            mBackgroundPlay.setOnPreferenceClickListener(this);
-            mBackgroundPlay.setSummary("背景播放");
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            boolean gcmToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
-            spotiryToken = CredentialsHandler.getToken(getActivity());
-
-            if (spotiryToken == null)
-                mSpotify.setChecked(false);
-            else
-                mSpotify.setChecked(true);
-
-            if (gcmToken)
-                mNotificationType.setChecked(true);
-            else
-                mNotificationType.setChecked(false);
-
         }
 
         private void setContentTopClearance(int clearance) {
@@ -240,9 +205,9 @@ public class SettingsActivity extends BaseActivity {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             if (mSpotify == preference) {
-                if (spotiryToken != null) {
+                if (spotifyToken != null) {
                     CredentialsHandler.clearToken(getActivity());
-                    spotiryToken = null;
+                    spotifyToken = null;
                 } else {
                     final AuthenticationRequest request = new AuthenticationRequest.Builder(Config.CLIENT_ID, AuthenticationResponse.Type.CODE, Config.REDIRECT_URI)
                             .setScopes(new String[]{"user-read-private", "streaming"})
@@ -254,14 +219,13 @@ public class SettingsActivity extends BaseActivity {
                 return true;
             } else if (mNotificationType == preference) {
                 mNotificationType.setChecked(mNotificationType.isChecked());
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 if (mNotificationType.isChecked()) {
-                    Activity activity = getActivity();
-                    Intent intent = new Intent(activity, RegistrationIntentService.class);
-                    activity.startService(intent);
+                    sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
+                    FirebaseMessaging.getInstance().subscribeToTopic("global");
                 } else {
-                    Activity activity = getActivity();
-                    Intent intent = new Intent(activity, UnRegistrationIntentService.class);
-                    activity.startService(intent);
+                    sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false).apply();
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic("global");
                 }
                 mSetting.setNotificationModel(mNotificationType.isChecked() ? Notification.FLAG_AUTO_CANCEL : Notification.FLAG_ONGOING_EVENT);
                 Log.i(TAG, mSetting.getAutoUpdate() + "");
@@ -280,9 +244,6 @@ public class SettingsActivity extends BaseActivity {
                 mSetting.setPlayBySpotify(mPlayBySpotify.isChecked());
             } else if (mLogout == preference) {
                 UsersUtils.clearCurrentUser(activity);
-                String friends = UsersUtils.getCurrentFriends(activity);
-                Gson gson = new Gson();
-                List<User> friendslist = gson.fromJson(friends, new TypeToken<List<User>>(){}.getType());
                 UsersUtils.clearCurrentFriends(activity);
                 AccountUtils.clearActiveAccount(activity);
                 LoginManager.getInstance().logOut();
@@ -309,6 +270,35 @@ public class SettingsActivity extends BaseActivity {
         @Override
         public void onResume() {
             super.onResume();
+            mLogout = findPreference(Setting.LOGOUT);
+            mLogout.setSummary("登出");
+            mLogout.setOnPreferenceClickListener(this);
+            mSpotify.setIcon(R.drawable.spotify);
+            mSpotify.setSummary("Spotify");
+            mSpotify.setOnPreferenceClickListener(this);
+            spinner.setTitle("預設國家");
+            spinner.setSummary("Choose default country for searching");
+            mNotificationType.setOnPreferenceClickListener(this);
+            mNotificationType.setSummary("接收推播");
+            mPlayBySpotify.setOnPreferenceClickListener(this);
+            mPlayBySpotify.setSummary("" + "Play by Spotify");
+            mRepeat.setOnPreferenceClickListener(this);
+            mRepeat.setSummary("自動重播");
+            mBackgroundPlay.setOnPreferenceClickListener(this);
+            mBackgroundPlay.setSummary("背景播放");
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            boolean gcmToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+            spotifyToken = CredentialsHandler.getToken(getActivity());
+
+            if (spotifyToken == null)
+                mSpotify.setChecked(false);
+            else
+                mSpotify.setChecked(true);
+
+            if (gcmToken)
+                mNotificationType.setChecked(true);
+            else
+                mNotificationType.setChecked(false);
             // configure the fragment's top clearance to take our overlaid controls (Action Bar
             // and spinner box) into account.
             int actionBarSize = UIUtils.calculateActionBarSize(getActivity());
@@ -319,7 +309,6 @@ public class SettingsActivity extends BaseActivity {
             }
             setContentTopClearance(actionBarSize);
         }
-
 
         private void showUpdateDialog() {
             //将 SeekBar 放入 Dialog 的方案 http://stackoverflow.com/questions/7184104/how-do-i-put-a-seek-bar-in-an-alert-dialog

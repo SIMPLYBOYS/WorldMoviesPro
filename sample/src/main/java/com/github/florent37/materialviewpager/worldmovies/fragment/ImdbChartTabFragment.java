@@ -105,10 +105,13 @@ public class ImdbChartTabFragment extends Fragment implements Response.ErrorList
                         positionChart = (LineChartView) mActivity.findViewById(R.id.postitionChart);
                         ratingPreview = (PreviewLineChartView) mActivity.findViewById(R.id.rating_preview);
                         positionPreView = (PreviewLineChartView) mActivity.findViewById(R.id.position_preview);
+
+                        if (ratingChart == null || positionChart == null || ratingPreview == null || positionPreView == null )
+                            return;
+
                         generateData(records);
                         ratingChart.setLineChartData(ratingData);
                         positionChart.setLineChartData(positionData);
-
                         // Disable zoom/scroll for previewed chart, visible chart ranges depends on preview chart viewport so
                         // zoom/scroll is unnecessary.
                         ratingChart.setZoomEnabled(false);
@@ -117,7 +120,6 @@ public class ImdbChartTabFragment extends Fragment implements Response.ErrorList
                         ratingPreview.setViewportChangeListener(new ViewportListener());
                         ratingPreview.setZoomType(ZoomType.HORIZONTAL_AND_VERTICAL);
                         previewX(ratingChart, ratingPreview, false);
-
                         positionChart.setZoomEnabled(false);
                         positionChart.setScrollEnabled(false);
                         positionPreView.setLineChartData(positionPreviewData);

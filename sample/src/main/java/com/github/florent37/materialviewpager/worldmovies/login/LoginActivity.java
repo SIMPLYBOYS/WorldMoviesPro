@@ -90,13 +90,18 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
     private static final int SELECT_FACEBOOK_ACCOUNT_RESULT = 64206;
     private GoogleApiClient mGoogleApiClient;
     private CallbackManager callbackManager;
+    private List<PagerObject> postPapers;
     private RequestQueue mQueue;
     private AccessToken accessToken;
     private String HOST_NAME = Config.HOST_NAME;
     private static final String TAG = makeLogTag(LoginActivity.class);
     private AccessTokenTracker accessTokenTracker;
     private ProgressDialog mProgressDialog;
+    private CustomPagerAdapter postPaperAdapter;
+    private ViewPager viewpager;
     private ProfileTracker profileTracker;
+    private CircleIndicator indicator;
+    private String [] slogan = {"音樂x電影", "中西電影資料搜尋", "世界電影趨勢x評論", "IMDB 即時排行榜", "NewYork Times 電影分析"};
     // the LoginAndAuthHelper handles signing in to Google Play Services and OAuth
     private LoginAndAuthHelper mLoginAndAuthHelper;
 
@@ -120,18 +125,19 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
                     WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
 
-        ViewPager viewpager = (ViewPager) findViewById(R.id.viewpager);
-        CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
-        viewpager.setAdapter(new CustomPagerAdapter(LoginActivity.this, dataSource()));
-        indicator.setViewPager(viewpager);
-        viewpager.setCurrentItem(2);
+        viewpager = (ViewPager) findViewById(R.id.viewpager);
+        indicator = (CircleIndicator) findViewById(R.id.indicator);
+        postPapers = new ArrayList<>();
+        postPaperAdapter = new CustomPagerAdapter(LoginActivity.this, postPapers);
+        viewpager.setAdapter(postPaperAdapter);
+        fetchPostPapers();
         TextView textView = new TextView(this);
         LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewPager.LayoutParams.MATCH_PARENT, getStatusBarHeight());
         textView.setBackgroundColor(Color.TRANSPARENT);
         textView.setLayoutParams(lParams);
         ViewGroup view = (ViewGroup) getWindow().getDecorView();
+        LoginButton fbButton = (LoginButton) view.findViewById(R.id.fb_login);
         view.addView(textView);
-
         getSupportFragmentManager().addOnBackStackChangedListener(
                 new FragmentManager.OnBackStackChangedListener() {
                     @Override public void onBackStackChanged() {
@@ -173,15 +179,13 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
             }
         };
 
-        LoginButton fbButton = (LoginButton) view.findViewById(R.id.fb_login);
-
         fbButton.setOnClickListener(
                 new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
                         if (!AccountUtils.enforceActiveFaceBookAccount(LoginActivity.this, SELECT_FACEBOOK_ACCOUNT_RESULT)) {
-                            Log.d("0314", "EnforceActiveFaceBookAccount returned false");
+                            LOGD("0314", "EnforceActiveFaceBookAccount returned false");
                             return;
                         }
                     }
@@ -212,7 +216,7 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
             public void onClick(View v) {
                 showProgressDialog();
                 if (!AccountUtils.enforceActiveGoogleAccount(LoginActivity.this, mGoogleApiClient, SELECT_GOOGLE_ACCOUNT_RESULT)) {
-                    Log.d("0314", "EnforceActiveGoogleAccount returned false");
+                    LOGD("0314", "EnforceActiveGoogleAccount returned false");
                     hideProgressDialog();
                     return;
                 }
@@ -222,15 +226,33 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
         //----------- google login -------------//
     }
 
-    private List<PagerObject> dataSource() {
-        List<PagerObject> data = new ArrayList<PagerObject>();
-        //TODO poster provider api for splash screen
-        data.add(new PagerObject("http://ia.media-imdb.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX640_SY720_.jpg", "音樂x電影"));
-        data.add(new PagerObject("https://s.yimg.com/vu/movies/fp/mpost/64/55/6455.jpg", "中西電影資料搜尋"));
-        data.add(new PagerObject("https://s.yimg.com/vu/movies/fp/mpost/63/83/6383.jpg", "世界電影趨勢x評論"));
-        data.add(new PagerObject("https://s.yimg.com/vu/movies/fp/mpost/63/90/6390.jpg", "IMDB 即時排行榜"));
-        data.add(new PagerObject("https://images-na.ssl-images-amazon.com/images/M/MV5BMTUzNTc0NTAyM15BMl5BanBnXkFtZTgwMTk1ODA5OTE@._V1_SY1000_CR0,0,675,1000_AL_.jpg", "NewYork Times 電影分析"));
-        return data;
+    private void fetchPostPapers() {
+        mQueue = CustomVolleyRequestQueue.getInstance(LoginActivity.this).getRequestQueue();
+        CustomJSONObjectRequest jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "postPages", new JSONObject(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray contents = response.getJSONArray("contents");
+                    for (int i = 0; i < contents.length(); i++) {
+                        JSONObject postObj = contents.getJSONObject(i);
+                        String posterUrl = postObj.getString("posterUrl");
+                        postPapers.add(new PagerObject(posterUrl, slogan[i]));
+                    }
+                    postPaperAdapter.notifyDataSetChanged();
+                    indicator.setViewPager(viewpager);
+                    viewpager.setCurrentItem(2);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener () {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Remote Server not response!", Toast.LENGTH_LONG).show();
+            }
+        });
+        mQueue.add(jsonRequest_q);
+        return;
     }
 
     @Override
@@ -340,7 +362,7 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
                     new GraphRequest.Callback() {
                         public void onCompleted(GraphResponse response) {
                             if(response.getError() == null) {
-                                List<User> FriendList = new ArrayList<>();;
+                                List<User> FriendList = new ArrayList<>();
                                 JSONObject jsonObj = response.getJSONObject();
                                 JSONArray data = jsonObj.optJSONArray("data");
 
@@ -360,9 +382,7 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
                                 AccountUtils.setActiveAccount(getApplicationContext(), user.name);
                                 onAuthSuccess(user.name, true);
                             } else {
-                                Toast.makeText(LoginActivity.this,
-                                        response.getError().getErrorMessage(),
-                                        Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, response.getError().getErrorMessage(), Toast.LENGTH_SHORT).show();
                                 startActivityForVersion(new Intent(getApplicationContext(), MainActivity.class));
                                 finish();
                             }
@@ -466,8 +486,6 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
             SyncHelper.requestManualSync(account);
         }
 
-        //TODO register api for google account
-
         mQueue = CustomVolleyRequestQueue.getInstance(LoginActivity.this).getRequestQueue();
         User user = UsersUtils.getCurrentUser(getApplicationContext());
         String user_name = user.name;
@@ -502,7 +520,6 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
         });
 
         mQueue.add(jsonRequest_q);
-//        registerGCMClient();
     }
 
     @Override

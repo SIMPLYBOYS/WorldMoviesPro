@@ -15,7 +15,6 @@
         <!-- Material Theme -->
         <item name="colorPrimary">@color/io15_blue_grey_100</item>
         <item name="colorPrimaryDark">@color/material_grey_800</item>
-        <item name="colorAccent">@color/io15_grey</item>
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:actionOverflowMenuStyle" tools:targetApi="21">@style/myMenuStyle</item>
         <item name="android:statusBarColor" tools:targetApi="21">@color/transparent_black</item>
@@ -247,6 +246,47 @@
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="Widget.IOSched.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="searchHintIcon">@null</item>
+        <item name="queryBackground">@null</item>
+        <item name="submitBackground">@null</item>
+    </style>
+
+    <style name="Theme.IOSched.Search" parent="Theme.IOSched">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="autoCompleteTextViewStyle">@style/Widget.IOSched.Search.AutoCompleteTextView</item>
+        <item name="searchViewStyle">@style/Widget.IOSched.SearchView</item>
+        <item name="colorControlNormal">@color/app_body_text_2</item>
+        <item name="colorControlActivated">@color/theme_accent_1</item>
+    </style>
+
+    <style name="Widget.IOSched.Search.AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:textColorHint">@color/app_body_text_2</item>
+        <!-- If set to @null the cursor will be displayed using android:textColor -->
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+
+    <style name="Widget.Plaid" parent="android:Widget" />
+
+    <style name="Widget.Plaid.EmptyText">
+        <item name="android:textAppearance">@style/TextAppearance.DialogContent</item>
+        <item name="lineHeightHint">24sp</item>
+        <item name="android:textColor">@color/text_primary_light</item>
+    </style>
+
+    <style name="TextAppearance.DialogContent" parent="@android:style/TextAppearance.Material.Subhead">
+        <item name="android:textColor">@color/text_secondary_dark</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+
+    <style name="ExpandedFabTheme" parent="@android:style/ThemeOverlay.Material.Light">
+        <item name="android:textColorPrimary">@color/dark_icon</item>
+        <item name="android:textColorPrimaryDisableOnly">@color/dark_icon</item>
+        <item name="android:colorControlActivated">@color/dark_icon</item>
+    </style>
 
 </resources>
 

@@ -98,7 +98,8 @@ public class ImdbReviewRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof ContentViewHolder) {
-            final ReviewItem item = reviewList.get(position - mPlaceholderSize);
+            ReviewItem item = reviewList.get(position - mPlaceholderSize);
+            String avatarPath = item.getAvatar().equals("") ? "http://img.eiga.k-img.com/images/profile/noimg/100.png?1423551130" : item.getAvatar();
             ContentViewHolder myHolder = (ContentViewHolder) viewHolder;
             myHolder.mReviewerView.setText(item.getViewer().compareTo("null") != 0 ? item.getViewer() : "");
             myHolder.mDateView.setText(item.getDate());
@@ -117,7 +118,7 @@ public class ImdbReviewRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
                 }
             });
 
-            Picasso.with(myHolder.mImageView.getContext()).load(item.getAvatar()).placeholder(R.drawable.person_image_empty)
+            Picasso.with(myHolder.mImageView.getContext()).load(avatarPath).placeholder(R.drawable.person_image_empty)
                     .fit()
                     .centerCrop()
                     .into(myHolder.mImageView);

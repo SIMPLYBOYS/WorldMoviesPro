@@ -1,40 +1,11 @@
 {
   "project_info": {
     "project_number": "445633336078",
-    "project_id": "worldmoviespro"
+    "firebase_url": "https://worldmoviespro.firebaseio.com",
+    "project_id": "worldmoviespro",
+    "storage_bucket": "worldmoviespro.appspot.com"
   },
   "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:445633336078:android:3fcb86a22049567e",
-        "android_client_info": {
-          "package_name": "com.worldmovies.pro"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "445633336078-01pv9ls7dknrbrnq2j564fpccvap5gnm.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDgZtqmd4rI4SFjNUDWQz6sKFllAZf6sCg"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 1
-        }
-      }
-    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:445633336078:android:a23d01de03a4afd2",
@@ -52,6 +23,10 @@
           }
         },
         {
+          "client_id": "445633336078-r2gn7l1koc356brbpfq9q3mh0vlt7kk5.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
           "client_id": "445633336078-01pv9ls7dknrbrnq2j564fpccvap5gnm.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -66,11 +41,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "445633336078-r2gn7l1koc356brbpfq9q3mh0vlt7kk5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

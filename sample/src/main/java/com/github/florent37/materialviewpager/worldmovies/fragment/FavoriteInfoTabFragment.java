@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
-import com.github.florent37.materialviewpager.worldmovies.adapter.TrendsFavoriteRecycleViewAdapter;
+import com.github.florent37.materialviewpager.worldmovies.adapter.FavoriteMoviesRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.adapter.nyTimesFavoriteRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.favorite.MoviesFavoriteDetail;
 import com.github.florent37.materialviewpager.worldmovies.favorite.MoviesFavoritePreference;
@@ -45,7 +46,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.checkMoviesBookmark;
 
 /**
  * Created by aaron on 2016/8/13.
@@ -57,12 +60,12 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
     private ImageView nyTimesPicNumView, trendsPicNumView;
 //    private ImageView facebookPicNumView;
     private User user;
-    private RecyclerView nytimesRecyclerview, trendsRecyclerview;
+    private RecyclerView nytimesRecyclerview, moviesRecyclerview;
 //    private RecyclerView facebookRecyclerview;
     private FlatButton nyTimesAllButton, trendsAllButton;
 //    private FlatButton facebookAllButton;
     private nyTimesFavoriteRecycleViewAdapter nyTimesFavoriteAdapter;
-    private TrendsFavoriteRecycleViewAdapter trendsFavoriteAdapter;
+    private FavoriteMoviesRecycleViewAdapter moviesFavoriteAdapter;
 //    private FacebookFavoriteRecycleViewAdapter facebookFavoriteRecycleViewAdapter;
     private LinearLayoutManager nylinearLayoutManager, trlinearLayoutManager;
 //    private LinearLayoutManager fbLayoutManager;
@@ -86,6 +89,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("1118", "onCreateView");
         View view = inflater.inflate(R.layout.favorite_info_fragment, container, false);
         nyTimesList = new ArrayList<>();
         trendsList = new ArrayList<>();
@@ -121,24 +125,10 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         return false;
     };
 
-    private boolean checkMoviesBookmark(String headline) {
-        headline = headline.indexOf(":") != -1 ? headline.split(":")[1].trim() : headline;
-        ArrayList list = moviesFavor.loadFavorites(getActivity().getApplicationContext());
-
-        if (list == null)
-            return false;
-
-        for (int i=0; i<list.size(); i++) {
-            if (headline.compareTo((String) list.get(i)) == 0) return true;
-        }
-
-        return false;
-    };
-
     @Override
     public void onResume() {
         super.onResume();
-
+        Log.d("1118", "onResume");
         nyTimesAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,18 +151,21 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        LOGD("1118", "onActivityCreated");
         nytimesRecyclerview = (RecyclerView) getView().findViewById(R.id.nytimes_recyclerview);
-        trendsRecyclerview = (RecyclerView) getView().findViewById(R.id.trends_recyclerview);
+        moviesRecyclerview = (RecyclerView) getView().findViewById(R.id.trends_recyclerview);
         nytimesRecyclerview.setLayoutManager(nylinearLayoutManager);
-        trendsRecyclerview.setLayoutManager(trlinearLayoutManager);
+        moviesRecyclerview.setLayoutManager(trlinearLayoutManager);
         /*facebookRecyclerview = (RecyclerView) getView().findViewById(R.id.facebook_recyclerview);
         facebookRecyclerview.setLayoutManager(fbLayoutManager);
         facebookFavoriteRecycleViewAdapter = new FacebookFavoriteRecycleViewAdapter(facebookList);
         facebookRecyclerview.setAdapter(facebookFavoriteRecycleViewAdapter);*/
         nyTimesFavoriteAdapter = new nyTimesFavoriteRecycleViewAdapter(nyTimesList);
-        trendsFavoriteAdapter = new TrendsFavoriteRecycleViewAdapter(trendsList);
+        moviesFavoriteAdapter = new FavoriteMoviesRecycleViewAdapter(trendsList);
         nytimesRecyclerview.setAdapter(nyTimesFavoriteAdapter);
-        trendsRecyclerview.setAdapter(trendsFavoriteAdapter);
+        nytimesRecyclerview.setNestedScrollingEnabled(false);
+        moviesRecyclerview.setAdapter(moviesFavoriteAdapter);
+        moviesRecyclerview.setNestedScrollingEnabled(false);
 
         nyTimesFavoriteAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -221,11 +214,12 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
             }
         });
 
-        trendsFavoriteAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        moviesFavoriteAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Movie movie = trendsList.get(position);
                 String url = UIUtils.getTrendsUrl(movie);
+                Log.d("1115", url);
 
                 CustomJSONObjectRequest jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
                     @Override
@@ -235,7 +229,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                             TrendsObject item = BuildModelUtils.buildTrendsModel(contents, true, movie.getChannel());
                             String title = item.getTitle();
                             Intent intent = new Intent(getActivity(), TrendsDetail.class);
-                            if (checkMoviesBookmark(title))
+                            if (checkMoviesBookmark(title, moviesFavor, getApplicationContext()))
                                 item.setBookmark(true);
                             intent.putExtra(TrendsDetail.TRENDS_OBJECT, item);
                             ActivityCompat.startActivity(getActivity(), intent, null);
@@ -267,9 +261,8 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         fetch_watched_movies();*/
         if (user != null) {
             fetch_nytimes();
-            fetch_trends();
+            fetch_movies();
         }
-
     }
 
     private void fetch_watched_movies() {
@@ -307,6 +300,13 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("1118","onDestory");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("1118","onStart");
     }
 
     private void fetch_nytimes() {
@@ -327,6 +327,10 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                         Movie movie = new Movie(head, null, null, link, picUrl, null, null);
                         nyTimesList.add(nyTimesList.size(), movie);
                     }
+
+                    if (getView() == null)
+                        return;
+
                     nytimes_picNum = (TextView) getView().findViewById(R.id.nytimes_picNum);
                     nytimes_picNum.setText("  "+nyTimesList.size());
                     nylinearLayoutManager.scrollToPositionWithOffset(1,650);
@@ -343,8 +347,8 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         mQueue.add(jsonRequest);
     }
 
-    private void fetch_trends() {
-        CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "my_trends/"+user.id, new Response.Listener<JSONArray>() {
+    private void fetch_movies() {
+        CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "my_movies/"+user.id, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 JSONArray contents = ((JSONArray) response);
@@ -353,13 +357,20 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                         JSONObject movieObj = contents.getJSONObject(i);
                         String title = movieObj.getString("title");
                         String link = movieObj.getString("link");
-                        int channel = movieObj.getInt("channel");
+                        int channel = 14;
                         moviesFavor.addFavorite(getActivity(), title);
                         String picUrl = movieObj.getString("picUrl");
                         Movie movie = new Movie(title, null, null, link, picUrl, null, null);
+                        if (movieObj.has("channel"))
+                            channel = movieObj.getInt("channel");
+                        if (movieObj.has("country"))
+                            movie.setCountry(movieObj.getString("country"));
                         movie.setChannel(channel);
                         trendsList.add(trendsList.size(), movie);
                     }
+
+                    if (getView() == null)
+                        return;
                     trends_picNum = (TextView) getView().findViewById(R.id.trends_picNum);
                     trendsPicNumView = (ImageView) getView().findViewById(R.id.trends_media);
                     Picasso.with(trendsPicNumView.getContext()).load(R.drawable.ic_movie).into(trendsPicNumView);

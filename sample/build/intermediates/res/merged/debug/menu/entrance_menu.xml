@@ -1,0 +1,65 @@
+<!--
+  Copyright 2015 Google Inc. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_miniCard"
+        android:title="MiniCard"
+        android:visible="true"
+        android:orderInCategory="30"
+        app:actionViewClass="android.widget.CheckBox"
+        android:checkable="true"
+        android:drawable="@drawable/ic_check_box"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/menu_refresh"
+        android:title="@string/action_refresh"
+        android:orderInCategory="1"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/menu_smooth_zero"
+        android:title="@string/action_smooth_zero"
+        android:orderInCategory="2"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/menu_smooth_end"
+        android:title="@string/action_smooth_end"
+        android:orderInCategory="3"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/menu_ascending"
+        android:title="@string/action_ascending"
+        android:visible="true"
+        android:orderInCategory="4"
+        android:checkable="true"
+        app:actionViewClass="android.widget.CheckBox"
+        android:drawable="@drawable/ic_check_box"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/action_search"
+        android:textColor="@color/io15_white"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_filter"
+        android:icon="@drawable/ic_action_filter"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="1"
+        android:title="@string/description_filter"/>
+
+</menu>

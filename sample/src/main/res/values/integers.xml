@@ -33,6 +33,10 @@
     <integer name="video_library_columns">1</integer>
     <integer name="shown_videos">5</integer>
 
+    <integer name="rapid_animation">120</integer>
+    <integer name="fab_expand_duration">360</integer>
+    <integer name="comment_expand_collapse_duration">120</integer>
+
     <!-- Number of grid columns spanned by the hero on wide layout.
     Recommended: 1 less than explore_1st_level_grid_columns -->
     <integer name="deprecated_explore_wide_layout_hero_weight">1</integer>

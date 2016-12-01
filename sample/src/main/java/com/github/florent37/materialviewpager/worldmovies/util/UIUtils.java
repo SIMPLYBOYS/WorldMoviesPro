@@ -46,6 +46,7 @@ import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -55,6 +56,7 @@ import android.widget.TextView;
 import com.github.florent37.materialviewpager.worldmovies.BuildConfig;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
+import com.github.florent37.materialviewpager.worldmovies.favorite.MoviesFavoritePreference;
 import com.github.florent37.materialviewpager.worldmovies.model.ScheduleItem;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract;
@@ -66,6 +68,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
@@ -656,6 +659,20 @@ public class UIUtils {
         return paintDrawable;
     }
 
+    public static boolean checkMoviesBookmark(String headline, MoviesFavoritePreference moviesFavor, Context context) {
+        headline = headline.indexOf(":") != -1 ? headline.split(":")[1].trim() : headline;
+        ArrayList list = moviesFavor.loadFavorites(context);
+
+        if (list == null)
+            return false;
+
+        for (int i=0; i<list.size(); i++) {
+            if (headline.compareTo((String) list.get(i)) == 0) return true;
+        }
+
+        return false;
+    };
+
     public static String getTrendsUrl(Movie movie) {
         String url = "";
         String Query = movie.getHeadline();
@@ -688,6 +705,10 @@ public class UIUtils {
             case 6:
                 url = Config.HOST_NAME + "gmTrends?title=" + Query;
                 break;
+            default:
+                Log.d("1115", movie.getCountry());
+                int country = getCountryCode(movie.getCountry());
+                url = Config.HOST_NAME + "world/"+country+"/?title=" + Query;
         }
 
         return url;
@@ -734,9 +755,130 @@ public class UIUtils {
             case 13:
                 Picasso.with(view.getContext()).load(R.drawable.thailand).into((ImageView) view.findViewById(R.id.pic));
                 break;
+            case 15:
+                Picasso.with(view.getContext()).load(R.drawable.uk).into((ImageView) view.findViewById(R.id.pic));
+                break;
             default:
                 Picasso.with(view.getContext()).load(R.drawable.usa).into((ImageView) view.findViewById(R.id.pic));
                 break;
         }
+    }
+
+    public static int getCountryCode(String country) {
+        int code = 0;
+        Log.d("1115", country);
+        switch (country) {
+            case "France":
+            case "Français":
+                code = 3;
+                break;
+            case "Germany":
+            case "Deutschland":
+            case "West Germany":
+            case "德國":
+                code = 4;
+                break;
+            case "일본":
+            case "日本":
+            case "Japan":
+                code = 8;
+                break;
+            case "Brazil":
+                code = 14;
+                break;
+            case "Italy":
+            case "義大利":
+                code = 7;
+                break;
+            case "New Zealand":
+                code = 14;
+                break;
+            case "한국":
+            case "Korea":
+            case "South Korea":
+                code = 9;
+                break;
+            case "UK":
+            case "Britannique":
+                code = 15;
+                break;
+            case "Iran":
+                code = 14;
+                break;
+            case "India":
+            case "印度":
+                code = 6;
+                break;
+            case "Lebanon":
+                code = 14;
+                break;
+            case "Spain":
+            case "西班牙":
+            case "Espagne":
+                code = 11;
+                break;
+            case "Turkey":
+                code = 14;
+                break;
+            case "Sweden":
+                code = 14;
+                break;
+            case "Argentina":
+                code = 14;
+                break;
+            case "Canada":
+                code = 14;
+                break;
+            case "Australia":
+            case "澳大利亞":
+                code = 1;
+                break;
+            case "Ireland":
+                code = 14;
+                break;
+            case "Mexico":
+                code = 14;
+                break;
+            case "Soviet Union":
+                code = 14;
+                break;
+            case "Hong Kong":
+            case "香港":
+            case "中國香港":
+                code = 5;
+                break;
+            case "China":
+            case "中國大陸":
+                code = 2;
+                break;
+            case "Denmark":
+                code = 14;
+                break;
+            case "Taiwan":
+            case "臺灣":
+                code = 12;
+                break;
+            case "Thailand":
+            case "泰國":
+                code = 13;
+                break;
+            case "Russia":
+                code = 14;
+                break;
+            case "Américain":
+            case "미국":
+            case "アメリカ":
+            case "USA":
+                code = 14;
+                break;
+            case "Poland":
+            case "波蘭":
+                code = 10;
+                break;
+            default:
+                code = 14;
+                break;
+        }
+        return code;
     }
 }

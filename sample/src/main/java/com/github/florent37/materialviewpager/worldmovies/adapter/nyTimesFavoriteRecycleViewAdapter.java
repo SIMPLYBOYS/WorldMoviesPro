@@ -101,7 +101,6 @@ public class nyTimesFavoriteRecycleViewAdapter extends RecyclerView.Adapter<nyTi
         }
 
         public void bind(NyTimesItemHolder itemHolder, Movie item, final ProgressBar mProgressBar) {
-
             Picasso.with(pictureView.getContext()).load(item.getPicUrl()).placeholder(R.drawable.placeholder)
                     .transform(ImageTrasformation.getTransformation(itemHolder.pictureView))
                     .into(pictureView, new Callback() {

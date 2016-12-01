@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Copyright 2014 Google Inc. All rights reserved.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<!-- Layout used to display data from a MessageCardData object. -->
+
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="3dp"
+    android:layout_marginRight="3dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="1dp"
+    app:cardCornerRadius="@dimen/stream_card_corner_radius"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="true"
+    app:contentPadding="0dp">
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context="lecho.lib.hellocharts.samples.PreviewLineChartActivity"
+        tools:ignore="MergeRootFrame">
+
+        <LinearLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            style="@style/Widget.CardContent"
+            android:id="@+id/chart_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical">
+                <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_xlarge"
+                    android:textAppearance="@style/TextAppearance.SessionTitle"
+                    android:text="Movie Music"
+                    android:textColor="@color/material_blue_A100"
+                    app:font="Roboto-Black.ttf"/>
+            </RelativeLayout>
+
+            <SearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:iconifiedByDefault="false"
+                android:queryHint="@string/search_hint"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/search_results"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+
+</android.support.v7.widget.CardView>
+
+

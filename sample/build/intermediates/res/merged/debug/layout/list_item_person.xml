@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView android:id="@+id/cardlist_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:orientation="vertical"
+    card_view:cardCornerRadius="5dp"
+    card_view:cardElevation="@dimen/cardview_default_elevation">
+
+    <LinearLayout
+        android:background="@drawable/popup_item_background"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/listPreferredItemHeight"
+        android:gravity="center_vertical"
+        android:backgroundTint="@color/app_body_text_1"
+        android:paddingBottom="6dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="6dp"
+        android:id="@+id/linearLayout"
+        android:weightSum="1">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatar"
+            android:src="@drawable/parisguidetower"
+            android:layout_width="@dimen/list_item_avatar_size"
+            android:layout_height="@dimen/list_item_avatar_size"
+            android:layout_marginRight="16dp"/>
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="205dp"
+            android:layout_height="wrap_content">
+            <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
+                android:id="@+id/listitem_name"
+                android:layout_width="wrap_content"
+                android:text="11111"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/abc_text_size_subhead_material"
+                android:textColor="@color/app_body_text_1"
+                card_view:font="Roboto-Bold.ttf"
+                android:textAppearance="?attr/textAppearanceListItem"/>
+
+            <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
+                android:id="@+id/listitem_description"
+                android:layout_width="wrap_content"
+                android:text="Animation, Drama, War"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textColor="@color/material_grey_500"
+                card_view:font="Roboto-Light.ttf"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true" />
+
+            <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
+                android:id="@+id/listitem_total"
+                android:layout_width="wrap_content"
+                android:text="共20部電影紀錄"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textColor="@color/material_grey_400"
+                card_view:font="Roboto-Light.ttf"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/follow"
+            android:background="@drawable/item_click_background"
+            android:layout_width="@dimen/list_item_avatar_size"
+            android:layout_height="@dimen/list_item_avatar_size"
+            android:layout_alignParentRight="true"
+            android:layout_toEndOf="@+id/listitem_genre" />
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
+

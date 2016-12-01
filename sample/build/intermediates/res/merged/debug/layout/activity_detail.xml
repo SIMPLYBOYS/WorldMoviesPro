@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/explore_io_card_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/card"
+    android:fitsSystemWindows="true">
+
+    <com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/explore_io_clickable_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="sessionDetailItemClicked"
+        android:orientation="vertical"
+        android:foreground="?android:selectableItemBackground">
+
+        <LinearLayout style="@style/HeaderBar"
+            android:id="@+id/headerbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/tab_background"
+            android:orientation="vertical"
+            android:theme="@style/ActionBarThemeOverlay">
+            <include layout="@layout/toolbar_actionbar" />
+        </LinearLayout>
+
+        <com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:aspectRatio="@dimen/aspect_16_9">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/io_logo"
+                android:scaleType="centerCrop" />
+
+        </com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/explore_io_keynote_card_padding_start"
+            android:layout_marginStart="@dimen/explore_io_keynote_card_padding_start"
+            android:layout_marginTop="@dimen/explore_io_keynote_card_padding_top"
+            android:layout_marginEnd="@dimen/explore_io_keynote_card_padding_end"
+            android:layout_marginRight="@dimen/explore_io_keynote_card_padding_end"
+            android:layout_marginBottom="@dimen/explore_io_keynote_card_desc_padding"
+            android:maxLines="2"
+            android:textSize="@dimen/text_size_xlarge"
+            android:text="@string/placeholder_session_title" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/explore_io_keynote_card_padding_start"
+            android:layout_marginStart="@dimen/explore_io_keynote_card_padding_start"
+            android:layout_marginEnd="@dimen/explore_io_keynote_card_padding_end"
+            android:layout_marginRight="@dimen/explore_io_keynote_card_padding_end"
+            android:layout_marginBottom="@dimen/explore_io_keynote_card_padding_bottom"
+            android:textAppearance="@style/TextAppearance.SessionTitle"
+            android:text="@string/placeholder_session_subtitle" />
+
+    </com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout>
+</FrameLayout>

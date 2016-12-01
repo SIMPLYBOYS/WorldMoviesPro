@@ -59,8 +59,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import im.delight.android.webview.AdvancedWebView;
-
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
 
 /**
@@ -73,7 +71,6 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
     protected final int NAV_ITEM_NYTIMES = 3;
     protected final int NAV_ITEM_GENRE = 4;
     private ProgressBar progressBar;
-    private AdvancedWebView mWebView;
     private MenuItem searchItem, shareItem, bookmarkItem;
     private SimpleCursorAdapter mAdapter;
     private SearchView searchView = null;
@@ -85,7 +82,6 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
     private RequestQueue mQueue;
     public static String FILM_NAME = "filmName";
     public static String REQUEST_TAG = "reviewRequest";
-    private static String[] MOVIES = {};
     int lastSelectedPosition = 3;
     BottomNavigationBar bottomNavigationBar;
     BadgeItem numberBadgeItem;
@@ -284,7 +280,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
 
                     mQueue.add(jsonRequest_q);
                 } else if (!checked && movie.getBookmark()) {
-                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_not_white);
                     movie.setBookmark(false);
                     User user = UsersUtils.getCurrentUser(getApplicationContext());
                     String headline = movie.getHeadline().indexOf(":") != -1 ? movie.getHeadline().split(":")[1].trim() : movie.getHeadline();

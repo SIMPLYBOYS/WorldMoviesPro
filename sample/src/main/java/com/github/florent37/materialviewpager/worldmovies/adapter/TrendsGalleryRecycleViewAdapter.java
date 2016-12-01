@@ -37,7 +37,7 @@ public class TrendsGalleryRecycleViewAdapter extends RecyclerView.Adapter<Trends
     }
 
     /*
-     * A common adapter modification or reset mechanism. As with ListAdapter,
+     * A common adapter modification or reset mechanism. As with LearderBoardListAdapter,
      * calling notifyDataSetChanged() will trigger the RecyclerView to update
      * the view. However, this method will not trigger any of the RecyclerView
      * animation features.

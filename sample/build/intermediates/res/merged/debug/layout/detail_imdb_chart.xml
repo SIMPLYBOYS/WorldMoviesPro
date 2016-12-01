@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nested_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:context="lecho.lib.hellocharts.samples.PreviewLineChartActivity"
+                tools:ignore="MergeRootFrame">
+
+                <LinearLayout
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    style="@style/Widget.CardContent"
+                    android:id="@+id/chart_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:orientation="vertical">
+                        <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_size_xlarge"
+                            android:textAppearance="@style/TextAppearance.SessionTitle"
+                            android:text="Rating Charts"
+                            android:textColor="@color/material_blue_A100"
+                            app:font="Roboto-Black.ttf"/>
+                    </RelativeLayout>
+
+                    <lecho.lib.hellocharts.view.LineChartView
+                        android:id="@+id/ratingChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="280dp"
+                        android:layout_weight="1" >
+                    </lecho.lib.hellocharts.view.LineChartView>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@android:color/darker_gray" />
+
+                    <lecho.lib.hellocharts.view.PreviewLineChartView
+                        android:id="@+id/rating_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="280dp"
+                        android:layout_weight="1" >
+                    </lecho.lib.hellocharts.view.PreviewLineChartView>
+
+                    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:orientation="vertical">
+                        <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/text_size_xlarge"
+                            android:textAppearance="@style/TextAppearance.SessionTitle"
+                            android:text="Position Charts"
+                            android:textColor="@color/material_blue_A100"
+                            app:font="Roboto-Black.ttf"/>
+
+                    </RelativeLayout>
+
+                    <lecho.lib.hellocharts.view.LineChartView
+                        android:id="@+id/postitionChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="280dp"
+                        android:layout_weight="1" >
+                    </lecho.lib.hellocharts.view.LineChartView>
+
+                    <View
+                        android:id="@+id/gapview"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_below="@+id/postitionChart"
+                        android:background="@android:color/darker_gray" />
+
+                    <lecho.lib.hellocharts.view.PreviewLineChartView
+                        android:id="@+id/position_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="280dp"
+                        android:layout_below="@+id/gapview"
+                        android:layout_weight="1" >
+                    </lecho.lib.hellocharts.view.PreviewLineChartView>
+
+                </LinearLayout>
+            </FrameLayout>
+    </android.support.v4.widget.NestedScrollView>
+</FrameLayout>
+
+
+
+
+

@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.ImdbReviewRecycleViewAdapter;
+import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
@@ -38,6 +38,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,13 +57,14 @@ public class ImdbReviewTabFragment extends Fragment implements Response.ErrorLis
     public static RecyclerView movieReview;
     public static LinearLayoutManager linearLayoutManager;
     private ImdbReviewRecycleViewAdapter rAdapter;
-    public String HOST_NAME = Config.HOST_NAME;
+    private String HOST_NAME = Config.HOST_NAME;
     private ProgressBar progressBar;
     private ArrayList<ReviewItem> reviewItems;
     private RequestQueue mQueue;
     private int offSet = 0;
     private int maxSize = 0;
-    int curSize = 0;
+    private String searchChannel = "12";
+    private int curSize = 0;
 
     public static ImdbReviewTabFragment newInstance(ImdbObject imdbObject) {
         ImdbReviewTabFragment fragment = new ImdbReviewTabFragment();
@@ -84,8 +87,7 @@ public class ImdbReviewTabFragment extends Fragment implements Response.ErrorLis
         movieReview.setAdapter(rAdapter);
         movieReview.addItemDecoration(new HorizontalDividerItemDecoration.Builder(movieReview.getContext()).build());
 
-        mQueue = CustomVolleyRequestQueue.getInstance(getActivity())
-                .getRequestQueue();
+        mQueue = CustomVolleyRequestQueue.getInstance(getActivity()).getRequestQueue();
 
         movieReview.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -99,7 +101,7 @@ public class ImdbReviewTabFragment extends Fragment implements Response.ErrorLis
                 if (!rAdapter.loading && rAdapter.totalItemCount <= (rAdapter.lastVisibleItem + rAdapter.visibleThreshold)) {
                     // End has been reached
                     if (maxSize == 0 || rAdapter.totalItemCount < maxSize) {
-                        fetchReviews();
+                        fetchReviews(false);
                         rAdapter.loading = true;
                     }
                 }
@@ -111,7 +113,7 @@ public class ImdbReviewTabFragment extends Fragment implements Response.ErrorLis
             }
         });
 
-        fetchReviews();
+        fetchReviews(true);
         return movieReview;
     }
 
@@ -154,24 +156,32 @@ public class ImdbReviewTabFragment extends Fragment implements Response.ErrorLis
         return correctUrl;
     }
 
-    public void fetchReviews() {
+    public void fetchReviews(final boolean first) {
+        if (!first) {
+            reviewItems.add(null);
+            rAdapter.notifyItemInserted(reviewItems.size() - 1);
+        }
 
-        reviewItems.add(null);
-        rAdapter.notifyItemInserted(reviewItems.size() - 1);
         String title = imdbObject.getTitle();
-        title = title.replaceAll(" ", "%20");
-        String url = Config.HOST_NAME + "imdbReview?title=" + title + "&ascending=1&start=" + offSet;
+        searchChannel = CredentialsHandler.getCountry(getActivity());
+        String url;
+        try {
+            url = Config.HOST_NAME + "worldReview/" + searchChannel + "?title=" + URLEncoder.encode(title, "UTF-8") + "&ascending=1&start=" + offSet;
+        }  catch (UnsupportedEncodingException e) {
+            throw new AssertionError("UTF-8 is unknown");
+        }
         CustomJSONObjectRequest jsonRequest_q = null;
         jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    if (reviewItems.size() > 0)
+                    if (reviewItems.size() > 0 && !first) {
                         reviewItems.remove(reviewItems.size() - 1);
-                    rAdapter.notifyItemRemoved(reviewItems.size());
+                        rAdapter.notifyItemRemoved(reviewItems.size());
+                    }
                     JSONArray contents = response.getJSONArray("review");
                     maxSize = response.getInt("size");
-                    Log.d("0725", String.valueOf(maxSize));
+                    LOGD("0725", String.valueOf(maxSize));
                     for (int i = 0; i < contents.length(); i++) {
                         JSONObject reviewObj = contents.getJSONObject(i);
                         String avatar = reviewObj.getString("avatar");

@@ -37,15 +37,11 @@ package="com.github.florent37.materialviewpager.worldmovies">
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 <uses-permission android:name="android.permission.CAMERA" />
-<uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.VIBRATE" />
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
 <uses-permission android:name="android.permission.READ_SYNC_STATS" />
 <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-<!-- [START gcm_permission] -->
-<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-<!-- [END gcm_permission] -->
 
 
 <application
@@ -85,10 +81,16 @@ package="com.github.florent37.materialviewpager.worldmovies">
         android:label="@string/description_favorite"
         android:parentActivityName="com.github.florent37.materialviewpager.worldmovies.MainActivity"
         android:theme="@style/AppTheme"
+        android:screenOrientation="portrait"
         android:exported="false">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="com.github.florent37.materialviewpager.worldmovies.MainActivity" />
+    </activity>
+
+    <activity
+        android:name="com.github.florent37.materialviewpager.worldmovies.favorite.ExplorePeopleActivity"
+        android:screenOrientation="portrait"
+        android:parentActivityName="com.github.florent37.materialviewpager.worldmovies.favorite.FavoriteActivity"
+        android:theme="@style/AppTheme"
+        android:label="@string/description_explore_people">
     </activity>
 
     <activity android:name="com.github.florent37.materialviewpager.worldmovies.favorite.MoviesFavoriteDetail"
@@ -197,7 +199,7 @@ package="com.github.florent37.materialviewpager.worldmovies">
     <activity
         android:name="com.github.florent37.materialviewpager.worldmovies.settings.SettingsActivity"
         android:label="@string/navdrawer_item_settings"
-        android:parentActivityName="com.github.florent37.materialviewpager.worldmovies.MainActivity"
+        android:parentActivityName="com.github.florent37.materialviewpager.worldmovies.favorite.FavoriteActivity"
         android:screenOrientation="portrait"
         android:theme="@style/AppTheme.ActionBar.Transparent"
         android:exported="false">
@@ -275,6 +277,22 @@ package="com.github.florent37.materialviewpager.worldmovies">
         android:name="com.spotify.sdk.android.authentication.LoginActivity"
         android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
+    <activity
+        android:name="com.github.florent37.materialviewpager.worldmovies.ui.SearchActivity"
+        android:launchMode="singleTop"
+        android:theme="@style/Theme.IOSched.Search">
+        <intent-filter>
+            <action android:name="android.intent.action.SEARCH" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="com.google.android.gms.actions.SEARCH_ACTION" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+        <meta-data
+            android:name="android.app.searchable"
+            android:resource="@xml/searchable" />
+    </activity>
+
     <service
         android:name="com.github.florent37.materialviewpager.worldmovies.sync.SyncService"
         android:exported="true"
@@ -290,43 +308,20 @@ package="com.github.florent37.materialviewpager.worldmovies">
 
     <service android:name="com.github.florent37.materialviewpager.worldmovies.service.PlayerService"/>
 
-    <!-- [START gcm_receiver] -->
-    <receiver
-        android:name="com.google.android.gms.gcm.GcmReceiver"
-        android:exported="true"
-        android:permission="com.google.android.c2dm.permission.SEND" >
-        <intent-filter>
-            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-            <category android:name="com.github.florent37.materialviewpager.sample" />
-        </intent-filter>
-    </receiver>
-    <!-- [END gcm_receiver] -->
-
-    <!-- [START gcm_listener] -->
     <service
-        android:name="com.github.florent37.materialviewpager.worldmovies.service.MyGcmListenerService"
-        android:exported="false" >
+        android:name="com.github.florent37.materialviewpager.worldmovies.service.MyFirebaseInstanceIDService">
         <intent-filter>
-           <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
         </intent-filter>
     </service>
-    <!-- [END gcm_listener] -->
 
-    <!-- [START instanceId_listener] -->
     <service
-        android:name="com.github.florent37.materialviewpager.worldmovies.service.MyInstanceIDListenerService"
-        android:exported="false">
+        android:name="com.github.florent37.materialviewpager.worldmovies.service.MyFcmListenerService">
         <intent-filter>
-            <action android:name="com.google.android.gms.iid.InstanceID"/>
+            <action android:name="com.google.firebase.MESSAGING_EVENT" />
         </intent-filter>
     </service>
-    <!-- [END instanceId_listener] -->
 
-    <service
-        android:name="com.github.florent37.materialviewpager.worldmovies.service.RegistrationIntentService"
-        android:exported="false">
-    </service>
     <service
         android:name="com.github.florent37.materialviewpager.worldmovies.service.UnRegistrationIntentService"
         android:exported="false">

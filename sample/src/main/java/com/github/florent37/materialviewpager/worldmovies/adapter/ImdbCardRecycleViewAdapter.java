@@ -26,6 +26,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+
 /**
  * Created by aaron on 2016/3/31.
  */
@@ -234,10 +236,10 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
         SharedPreferences settings = context.getSharedPreferences("settings", 0);
         Boolean cardType = settings.getBoolean("miniCard", false);
 
-        Log.d("0216", "viewType: " + viewType);
+        LOGD("0216", "viewType: " + viewType);
         switch (viewType) {
             case TYPE_PLACEHOLDER: {
-                Log.d("0320", "PAGER PLACEHOLDER");
+                LOGD("0320", "PAGER PLACEHOLDER");
                 if (cardType)
                     root = inflater.inflate(R.layout.mini_placeholder, container, false);
                 else
@@ -248,7 +250,7 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
                 return new ContentViewHolder(root, this);
             }
             case TYPE_HEADER: {
-                Log.d("0320", "TOP HEADER");
+                LOGD("0320", "TOP HEADER");
                 if (cardType)
                     root = inflater.inflate(R.layout.imdb_list_item_card_small, container, false);
                 else
@@ -258,7 +260,7 @@ public class ImdbCardRecycleViewAdapter extends RecyclerView.Adapter<ImdbCardRec
                 return new ContentViewHolder(root, this);
             }
             case TYPE_CELL: {
-                Log.d("0320", "TOP CELL");
+                LOGD("0320", "TOP CELL");
                 if (cardType)
                     root = inflater.inflate(R.layout.imdb_list_item_card_small, container, false);
                 else

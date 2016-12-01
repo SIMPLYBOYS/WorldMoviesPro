@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
 import com.github.florent37.materialviewpager.worldmovies.model.TrendsObject;
-import com.github.florent37.materialviewpager.worldmovies.trends.TrendsFavoritePreference;
+import com.github.florent37.materialviewpager.worldmovies.trends.MoviesFavoritePreference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,11 +47,11 @@ public class BuildModelUtils {
     private static final String TAG_TRAILER = "trailerUrl";
     private static final String TAG_GALLERY_FULL = "gallery_full";
     private static final String TAG_DELTA = "delta";
-    private static TrendsFavoritePreference favor;
+    private static MoviesFavoritePreference favor;
     private static Context context;
 
     public static TrendsObject buildTrendsModel(JSONArray contents, boolean byTitle, int channel) throws JSONException {
-        favor = new TrendsFavoritePreference();
+        favor = new MoviesFavoritePreference();
         JSONObject c = contents.getJSONObject(0);
         String title = c.getString(TAG_TITLE);
         int top = 0;

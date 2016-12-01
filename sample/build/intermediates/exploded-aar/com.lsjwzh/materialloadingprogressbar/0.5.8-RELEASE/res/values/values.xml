@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CircleProgressBar"><attr format="dimension" name="mlpb_inner_radius"/><attr format="color" name="mlpb_background_color"/><attr format="color" name="mlpb_progress_color"/><attr format="dimension" name="mlpb_progress_stoke_width"/><attr format="boolean" name="mlpb_show_arrow"/><attr format="boolean" name="mlpb_enable_circle_background"/><attr format="dimension" name="mlpb_arrow_width"/><attr format="dimension" name="mlpb_arrow_height"/><attr format="integer" name="mlpb_progress"/><attr format="integer" name="mlpb_max"/><attr format="dimension" name="mlpb_progress_text_size"/><attr format="color" name="mlpb_progress_text_color"/><attr format="enum" name="mlpb_progress_text_visibility"><enum name="visible" value="0"/><enum name="invisible" value="1"/></attr></declare-styleable>
+</resources>

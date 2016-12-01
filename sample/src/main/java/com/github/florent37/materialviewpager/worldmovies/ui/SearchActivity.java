@@ -24,15 +24,20 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.BaseColumns;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,46 +45,85 @@ import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
+import com.github.florent37.materialviewpager.worldmovies.adapter.ImageCursorAdapter;
+import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
+import com.github.florent37.materialviewpager.worldmovies.genre.GenreDetailActivity;
+import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRequest;
+import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
+import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
+import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
+import com.github.florent37.materialviewpager.worldmovies.imdb.MovieDetailActivity;
+import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract;
+import com.github.florent37.materialviewpager.worldmovies.util.BuildModelUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
 
 //import com.github.florent37.materialviewpager.worldmovies.util.AnalyticsHelper;
 
 public class SearchActivity extends BaseActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
-
     private static final String TAG = makeLogTag("SearchActivity");
     private static final String SCREEN_LABEL = "Search";
     private static final String ARG_QUERY = "query";
-
     private SearchView mSearchView;
+    private ImageView closeButton;
     private String mQuery = "";
     private ListView mSearchResults;
+    private boolean Initail = false;
     private SimpleCursorAdapter mResultsAdapter;
+    private Handler completeHandler;
+    private ImageCursorAdapter cursorAdapter;
+    private JSONObject[] MOVIES = {};
+    private String searchChannel = "12";
+    private CustomJSONArrayRequest jsonRequest;
+    private RequestQueue mQueue;
+    private String[] from = new String [] {FILM_NAME};
+    private int[] to = new int[] {-1000303};
+    private int lastSelectedPosition = 0;
+    private ProgressBar mProgressBar;
+    private String lauchBy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
         mSearchView = (SearchView) findViewById(R.id.search_view);
         setupSearchView();
         mSearchResults = (ListView) findViewById(R.id.search_results);
+        mProgressBar = (ProgressBar) findViewById(android.R.id.progress);
+        cursorAdapter = new ImageCursorAdapter(this, R.layout.search_row, null, from, to, "main");
         mResultsAdapter = new SimpleCursorAdapter(this,
                 R.layout.list_item_search_result, null,
-                new String[]{ScheduleContract.SearchTopicSessionsColumns.SEARCH_SNIPPET},
+                new String[]{ScheduleContract.SearchTopicSessionsColumns.TAG_OR_SESSION_ID},
                 new int[]{R.id.search_result}, 0);
         mSearchResults.setAdapter(mResultsAdapter);
         mSearchResults.setOnItemClickListener(this);
         Toolbar toolbar = getActionBarToolbar();
-
         Drawable up = DrawableCompat.wrap(ContextCompat.getDrawable(this, R.drawable.ic_up));
         DrawableCompat.setTint(up, getResources().getColor(R.color.app_body_text_2));
+        closeButton = (ImageView) mSearchView.findViewById(R.id.search_close_btn);
         toolbar.setNavigationIcon(up);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,8 +131,10 @@ public class SearchActivity extends BaseActivity implements
                 navigateUpOrBack(SearchActivity.this, null);
             }
         });
-
+        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
         String query = getIntent().getStringExtra(SearchManager.QUERY);
+        lastSelectedPosition = getIntent().getIntExtra("lastSelectedPosition",3);
+        lauchBy = getIntent().getStringExtra("lauchBy");
         query = query == null ? "" : query;
         mQuery = query;
 
@@ -100,7 +146,55 @@ public class SearchActivity extends BaseActivity implements
             doEnterAnim();
         }
 
+        completeHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                giveSuggestions((String) msg.obj);
+            }
+        };
+
         overridePendingTransition(0, 0);
+    }
+
+    private void giveSuggestions(String query) {
+        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        cursorAdapter.changeCursor(cursor);
+        String url;
+        searchChannel = CredentialsHandler.getCountry(this);
+        try {
+            closeButton.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.VISIBLE);
+            url = Config.HOST_NAME + "search/"+ searchChannel+"/" + URLEncoder.encode(query, "UTF-8"); //TODO muti-channel support
+        }  catch (UnsupportedEncodingException e) {
+            throw new AssertionError("UTF-8 is unknown");
+        }
+
+        jsonRequest = new CustomJSONArrayRequest(url, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                JSONArray contents = ((JSONArray) response);
+                MOVIES = getJsonObjectArray(contents);
+                String posterUrl;
+                try {
+                    for (int i = 0; i < MOVIES.length; i++) {
+                        JSONObject obj = MOVIES[i].getJSONObject("_source");
+                        posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
+                        cursor.addRow(new Object[]{i, obj.getString("title"), obj.getString("description"), posterUrl});
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mSearchResults.setAdapter(cursorAdapter);
+                mProgressBar.setVisibility(View.GONE);
+                closeButton.setVisibility(View.VISIBLE);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                Toast.makeText(MainActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mQueue.add(jsonRequest);
     }
 
     /**
@@ -117,7 +211,9 @@ public class SearchActivity extends BaseActivity implements
         if (intent.hasExtra(SearchManager.QUERY)) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (!TextUtils.isEmpty(query)) {
-                searchFor(query);
+//                searchFor(query);
+                completeHandler.removeMessages(MESSAGE_TEXT_CHANGE);
+                completeHandler.sendMessageDelayed(completeHandler.obtainMessage(MESSAGE_TEXT_CHANGE, query), mAutoCompleteDelay);
                 mSearchView.setQuery(query, false);
             }
         }
@@ -126,19 +222,50 @@ public class SearchActivity extends BaseActivity implements
     private void setupSearchView() {
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView.setIconifiedByDefault(true);
+        mSearchView.setFocusable(true);
         mSearchView.setIconified(false);
+        mSearchView.setSubmitButtonEnabled(true);
+        mSearchView.requestFocusFromTouch();
         // Set the query hint.
         mSearchView.setQueryHint(getString(R.string.search_hint));
+        mSearchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        mSearchView.setImeOptions(mSearchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH |
+                EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
+            public boolean onQueryTextSubmit(String query) {
                 mSearchView.clearFocus();
+                mSearchView.setVisibility(View.INVISIBLE);
+                mSearchView.setVisibility(View.VISIBLE);
                 return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
-                searchFor(s);
+            public boolean onQueryTextChange(String query) {
+                if (TextUtils.isEmpty(query)) {
+                    searchFor(query);
+                    switch (lauchBy) {
+                        case "main":
+                            cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "main");
+                            break;
+                        case "imdb":
+                            cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "imdb");
+                            break;
+                        case "genre":
+                            cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "genre");
+                            break;
+                        case "upcoming":
+                            cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "upcoming");
+                            break;
+                        default:
+                            cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "detail");
+                            break;
+                    }
+                } else {
+                    completeHandler.removeMessages(MESSAGE_TEXT_CHANGE);
+                    completeHandler.sendMessageDelayed(completeHandler.obtainMessage(MESSAGE_TEXT_CHANGE, query), mAutoCompleteDelay);
+                }
                 return true;
             }
         });
@@ -147,6 +274,25 @@ public class SearchActivity extends BaseActivity implements
             public boolean onClose() {
                 dismiss(null);
                 return false;
+            }
+        });
+        mSearchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return true;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                Cursor cursor = (Cursor) mSearchView.getSuggestionsAdapter().getItem(position);
+                final String feedName = cursor.getString(1);
+                mSearchView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSearchView.setQuery(feedName, true);
+                    }
+                });
+                return true;
             }
         });
         if (!TextUtils.isEmpty(mQuery)) {
@@ -251,18 +397,19 @@ public class SearchActivity extends BaseActivity implements
     private void searchFor(String query) {
         // ANALYTICS EVENT: Start a search on the Search activity
         // Contains: Nothing (Event params are constant:  Search query not included)
-//        AnalyticsHelper.sendEvent(SCREEN_LABEL, "Search", "");
         Bundle args = new Bundle(1);
         if (query == null) {
             query = "";
         }
-        args.putString(ARG_QUERY, query);
-        if (TextUtils.equals(query, mQuery)) {
+        args.putString("query", query);
+        if (!Initail) {
+            LOGD("1103", "initLoader");
             getLoaderManager().initLoader(SearchTopicsSessionsQuery.TOKEN, args, this);
+            Initail = true;
         } else {
+            LOGD("1103", "restartLoader");
             getLoaderManager().restartLoader(SearchTopicsSessionsQuery.TOKEN, args, this);
         }
-        mQuery = query;
     }
 
     @Override
@@ -290,40 +437,87 @@ public class SearchActivity extends BaseActivity implements
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mResultsAdapter.swapCursor(data);
-        mSearchResults.setVisibility(data.getCount() > 0 ? View.VISIBLE : View.GONE);
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mResultsAdapter.swapCursor(cursor);
+        mSearchResults.setAdapter(mResultsAdapter);
+        mSearchResults.setVisibility(cursor.getCount() > 0 ? View.VISIBLE : View.GONE);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Cursor c = mResultsAdapter.getCursor();
-        c.moveToPosition(position);
-        boolean isTopicTag = c.getInt(SearchTopicsSessionsQuery.IS_TOPIC_TAG) == 1;
-        String tagOrSessionId = c.getString(SearchTopicsSessionsQuery.TAG_OR_SESSION_ID);
-        /*if (isTopicTag) {
-            Intent intent = new Intent(this, ExploreSessionsActivity.class);
-            intent.putExtra(ExploreSessionsActivity.EXTRA_FILTER_TAG, tagOrSessionId);
-            startActivity(intent);
-        } else if (tagOrSessionId != null) {
-            Intent intent = new Intent(this, SessionDetailActivity.class);
-            intent.setData(ScheduleContract.Sessions.buildSessionUri(tagOrSessionId));
-            startActivity(intent);
-        }*/
+        Cursor cursor = mResultsAdapter.getCursor();
+        cursor.moveToPosition(position);
+
+        if (cursorAdapter.getCursor() == null) {
+            String tagOrSessionId = cursor.getString(SearchTopicsSessionsQuery.TAG_OR_SESSION_ID);
+            String searchYear = CredentialsHandler.getCountry(this);
+            LOGD("1103", "onItemClik " + tagOrSessionId);
+            Intent intent = new Intent(SearchActivity.this, GenreDetailActivity.class);
+            intent.putExtra("genreType", tagOrSessionId);
+            intent.putExtra("lastSelectedPosition", lastSelectedPosition);
+            intent.putExtra("searchYear", searchYear);
+            ActivityCompat.startActivity(SearchActivity.this, intent, null);
+        } else {
+            Cursor imageCusor = cursorAdapter.getCursor();
+            int titleCol = imageCusor.getColumnIndex("filmName");
+            LOGD("1103", "title "+ imageCusor.getString(titleCol)+"\n"+lauchBy);
+            requestDataRefresh(imageCusor.getString(titleCol));
+        }
+
     }
 
     private interface SearchTopicsSessionsQuery {
         int TOKEN = 0x4;
         String[] PROJECTION = ScheduleContract.SearchTopicsSessions.DEFAULT_PROJECTION;
-
         int _ID = 0;
         int TAG_OR_SESSION_ID = 1;
         int SEARCH_SNIPPET = 2;
         int IS_TOPIC_TAG = 3;
+    }
+
+    public void requestDataRefresh(String Query) {
+        final CustomJSONObjectRequest jsonRequest = null;
+        mQueue = CustomVolleyRequestQueue.getInstance(SearchActivity.this).getRequestQueue();
+        CustomJSONObjectRequest jsonRequest_q = null;
+        String url = null;
+        String searchChannel = CredentialsHandler.getCountry(this);
+
+        if (Query != null) {
+            // launch query from searchview
+            try {
+                Query = URLEncoder.encode(Query, "UTF-8");
+                url= Config.HOST_NAME + "world/"+searchChannel+"?title=" + Query + "&ascending=1"; //TODO search by country with year
+            } catch (UnsupportedEncodingException e) {
+                throw new AssertionError("UTF-8 is unknown");
+            }
+
+            jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        JSONArray contents = response.getJSONArray("contents");
+                        ImdbObject item = BuildModelUtils.buildImdbModel(contents);
+                        Intent intent = new Intent(SearchActivity.this, MovieDetailActivity.class);
+                        intent.putExtra(ImdbActivity.IMDB_OBJECT, item);
+                        ActivityCompat.startActivity(SearchActivity.this, intent, null);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(SearchActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            mQueue.add(jsonRequest_q);
+            return;
+        }
+
+        mQueue.add(jsonRequest); //trigger volley request
     }
 }

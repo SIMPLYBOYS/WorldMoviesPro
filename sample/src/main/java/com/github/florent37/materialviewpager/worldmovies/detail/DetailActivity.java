@@ -142,7 +142,6 @@ public class DetailActivity extends AppCompatActivity implements Response.Listen
             }
 
             Picasso.with(imageView.getContext()).load(contentList.get(0).get(TAG_IMAGE_URL)).centerCrop().fit().into(imageView);
-//            Picasso.with(imageView.getContext()).load(R.drawable.parisguidetower).into(imageView);
 
         } catch (JSONException e) {
             e.printStackTrace();

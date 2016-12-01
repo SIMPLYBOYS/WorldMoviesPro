@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -116,7 +115,7 @@ public class ImdbMusicTabFragment extends Fragment implements Search.View {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getContext(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -203,7 +202,7 @@ public class ImdbMusicTabFragment extends Fragment implements Search.View {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mActionListener.getCurrentQuery() != null) {
+        if (mActionListener!= null) {
             outState.putString(KEY_CURRENT_QUERY, mActionListener.getCurrentQuery());
         }
     }

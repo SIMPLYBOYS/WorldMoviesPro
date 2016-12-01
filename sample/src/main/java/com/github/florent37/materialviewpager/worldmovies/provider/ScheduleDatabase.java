@@ -170,6 +170,74 @@ public class ScheduleDatabase extends SQLiteOpenHelper {
         String BODY = "body";
     }
 
+    interface SessionsColumns {
+
+        /** Unique string identifying this session. */
+        String SESSION_ID = "session_id";
+        /** Difficulty level of the session. */
+        String SESSION_LEVEL = "session_level";
+        /** Start time of this track. */
+        String SESSION_START = "session_start";
+        /** End time of this track. */
+        String SESSION_END = "session_end";
+        /** Title describing this track. */
+        String SESSION_TITLE = "session_title";
+        /** Body of text explaining this session in detail. */
+        String SESSION_ABSTRACT = "session_abstract";
+        /** Requirements that attendees should meet. */
+        String SESSION_REQUIREMENTS = "session_requirements";
+        /** Kewords/tags for this session. */
+        String SESSION_KEYWORDS = "session_keywords";
+        /** Hashtag for this session. */
+        String SESSION_HASHTAG = "session_hashtag";
+        /** Full URL to session online. */
+        String SESSION_URL = "session_url";
+        /** Full URL to YouTube. */
+        String SESSION_YOUTUBE_URL = "session_youtube_url";
+        /** Full URL to PDF. */
+        String SESSION_PDF_URL = "session_pdf_url";
+        /** Full URL to official session notes. */
+        String SESSION_NOTES_URL = "session_notes_url";
+        /** User-specific flag indicating starred status. */
+        String SESSION_IN_MY_SCHEDULE = "session_in_my_schedule";
+        /** Key for session Calendar event. (Used in ICS or above) */
+        String SESSION_CAL_EVENT_ID = "session_cal_event_id";
+        /** The YouTube live stream URL. */
+        String SESSION_LIVESTREAM_ID = "session_livestream_url";
+        /** The Moderator URL. */
+        String SESSION_MODERATOR_URL = "session_moderator_url";
+        /** The set of tags the session has. This is a comma-separated list of tags. */
+        String SESSION_TAGS = "session_tags";
+        /** The names of the speakers on this session, formatted for display. */
+        String SESSION_SPEAKER_NAMES = "session_speaker_names";
+        /** The order (for sorting) of this session's type. */
+        String SESSION_GROUPING_ORDER = "session_grouping_order";
+        /** The hashcode of the data used to create this record. */
+        String SESSION_IMPORT_HASHCODE = "session_import_hashcode";
+        /** The session's main tag. */
+        String SESSION_MAIN_TAG = "session_main_tag";
+        /** The session's branding color. */
+        String SESSION_COLOR = "session_color";
+        /** The session's captions URL (for livestreamed sessions). */
+        String SESSION_CAPTIONS_URL = "session_captions_url";
+        /** The session interval when using the interval counter query. */
+        String SESSION_INTERVAL_COUNT = "session_interval_count";
+        /** The session's photo URL. */
+        String SESSION_PHOTO_URL = "session_photo_url";
+        /** The session's related content (videos and call to action links). */
+        String SESSION_RELATED_CONTENT = "session_related_content";
+    }
+
+    interface RoomsColumns {
+
+        /** Unique string identifying this room. */
+        String ROOM_ID = "room_id";
+        /** Name describing this room. */
+        String ROOM_NAME = "room_name";
+        /** Building floor this room exists on. */
+        String ROOM_FLOOR = "room_floor";
+    }
+
     /** Fully-qualified field names. */
     private interface Qualified {
         String SESSIONS_SEARCH = Tables.SESSIONS_SEARCH + "(" + SessionsSearchColumns.SESSION_ID
@@ -228,16 +296,16 @@ public class ScheduleDatabase extends SQLiteOpenHelper {
                 + TagsColumns.TAG_ABSTRACT + " TEXT NOT NULL,"
                 + "UNIQUE (" + TagsColumns.TAG_ID + ") ON CONFLICT REPLACE)");
 
-        /*db.execSQL("CREATE TABLE " + Tables.ROOMS + " ("
+        db.execSQL("CREATE TABLE " + Tables.ROOMS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + RoomsColumns.ROOM_ID + " TEXT NOT NULL,"
                 + RoomsColumns.ROOM_NAME + " TEXT,"
                 + RoomsColumns.ROOM_FLOOR + " TEXT,"
-                + "UNIQUE (" + RoomsColumns.ROOM_ID + ") ON CONFLICT REPLACE)");*/
+                + "UNIQUE (" + RoomsColumns.ROOM_ID + ") ON CONFLICT REPLACE)");
 
-        /*db.execSQL("CREATE TABLE " + Tables.SESSIONS + " ("
+        db.execSQL("CREATE TABLE " + Tables.SESSIONS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + SyncColumns.UPDATED + " INTEGER NOT NULL,"
+                + ScheduleContract.SyncColumns.UPDATED + " INTEGER NOT NULL,"
                 + SessionsColumns.SESSION_ID + " TEXT NOT NULL,"
                 + Sessions.ROOM_ID + " TEXT " + References.ROOM_ID + ","
                 + SessionsColumns.SESSION_START + " INTEGER NOT NULL,"
@@ -264,7 +332,7 @@ public class ScheduleDatabase extends SQLiteOpenHelper {
                 + SessionsColumns.SESSION_CAPTIONS_URL + " TEXT,"
                 + SessionsColumns.SESSION_PHOTO_URL + " TEXT,"
                 + SessionsColumns.SESSION_RELATED_CONTENT + " TEXT,"
-                + "UNIQUE (" + SessionsColumns.SESSION_ID + ") ON CONFLICT REPLACE)");*/
+                + "UNIQUE (" + SessionsColumns.SESSION_ID + ") ON CONFLICT REPLACE)");
 
         /*db.execSQL("CREATE TABLE " + Tables.SPEAKERS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -278,21 +346,21 @@ public class ScheduleDatabase extends SQLiteOpenHelper {
                 + SpeakersColumns.SPEAKER_IMPORT_HASHCODE + " TEXT NOT NULL DEFAULT '',"
                 + "UNIQUE (" + SpeakersColumns.SPEAKER_ID + ") ON CONFLICT REPLACE)");*/
 
-        /*db.execSQL("CREATE TABLE " + Tables.MY_SCHEDULE + " ("
+        db.execSQL("CREATE TABLE " + Tables.MY_SCHEDULE + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + MySchedule.SESSION_ID + " TEXT NOT NULL " + References.SESSION_ID + ","
-                + MySchedule.MY_SCHEDULE_ACCOUNT_NAME + " TEXT NOT NULL,"
-                + MySchedule.MY_SCHEDULE_DIRTY_FLAG + " INTEGER NOT NULL DEFAULT 1,"
-                + MySchedule.MY_SCHEDULE_IN_SCHEDULE + " INTEGER NOT NULL DEFAULT 1,"
-                + "UNIQUE (" + MySchedule.SESSION_ID + ","
-                + MySchedule.MY_SCHEDULE_ACCOUNT_NAME + ") ON CONFLICT REPLACE)");
+                + ScheduleContract.MySchedule.SESSION_ID + " TEXT NOT NULL " + References.SESSION_ID + ","
+                + ScheduleContract.MySchedule.MY_SCHEDULE_ACCOUNT_NAME + " TEXT NOT NULL,"
+                + ScheduleContract.MySchedule.MY_SCHEDULE_DIRTY_FLAG + " INTEGER NOT NULL DEFAULT 1,"
+                + ScheduleContract.MySchedule.MY_SCHEDULE_IN_SCHEDULE + " INTEGER NOT NULL DEFAULT 1,"
+                + "UNIQUE (" + ScheduleContract.MySchedule.SESSION_ID + ","
+                + ScheduleContract.MySchedule.MY_SCHEDULE_ACCOUNT_NAME + ") ON CONFLICT REPLACE)");
 
         db.execSQL("CREATE TABLE " + Tables.SESSIONS_SPEAKERS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + SessionsSpeakers.SESSION_ID + " TEXT NOT NULL " + References.SESSION_ID + ","
                 + SessionsSpeakers.SPEAKER_ID + " TEXT NOT NULL " + References.SPEAKER_ID + ","
                 + "UNIQUE (" + SessionsSpeakers.SESSION_ID + ","
-                + SessionsSpeakers.SPEAKER_ID + ") ON CONFLICT REPLACE)");*/
+                + SessionsSpeakers.SPEAKER_ID + ") ON CONFLICT REPLACE)");
 
         db.execSQL("CREATE TABLE " + Tables.SESSIONS_TAGS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"

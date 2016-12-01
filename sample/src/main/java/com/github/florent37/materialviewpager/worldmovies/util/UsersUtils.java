@@ -1,6 +1,7 @@
 package com.github.florent37.materialviewpager.worldmovies.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.google.gson.Gson;
@@ -10,6 +11,7 @@ import java.util.List;
 public class UsersUtils {
 
     public static void setCurrentUser(User currentUser, Context context) {
+        Log.d("1115", "setCurrentUser");
         ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(context, "user_prefs", 0);
         complexPreferences.putObject("current_user_value", currentUser);
         complexPreferences.commit();

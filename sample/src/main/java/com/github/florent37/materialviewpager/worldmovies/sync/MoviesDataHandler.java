@@ -3,6 +3,7 @@ package com.github.florent37.materialviewpager.worldmovies.sync;
 /**
  * Created by aaron on 2016/2/24.
  */
+
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.github.florent37.materialviewpager.worldmovies.io.JSONHandler;
+import com.github.florent37.materialviewpager.worldmovies.io.SessionsHandler;
 import com.github.florent37.materialviewpager.worldmovies.io.TagsHandler;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract;
 import com.google.gson.JsonParser;
@@ -37,6 +39,7 @@ public class MoviesDataHandler {
     // Shared settings_prefs key under which we store the timestamp that corresponds to
     // the data we currently have in our content provider.
     private static final String SP_KEY_DATA_TIMESTAMP = "data_timestamp";
+    private static final String DATA_KEY_SESSIONS = "sessions";
 
     // symbolic timestamp to use when we are missing timestamp data (which means our data is
     // really old or nonexistent)
@@ -44,13 +47,15 @@ public class MoviesDataHandler {
     private static final String DATA_KEY_TAGS = "tags";
 
     private static final String[] DATA_KEYS_IN_ORDER = {
-            DATA_KEY_TAGS
+            DATA_KEY_TAGS,
+            DATA_KEY_SESSIONS
     };
 
     Context mContext = null;
 
     // Handlers for each entity type:
     TagsHandler mTagsHandler = null;
+    SessionsHandler mSessionsHandler = null;
 
     // Convenience map that maps the key name to its corresponding handler (e.g.
     // "blocks" to mBlocksHandler (to avoid very tedious if-elses)
@@ -78,6 +83,7 @@ public class MoviesDataHandler {
 
         // create handlers for each data type
         mHandlerForKey.put(DATA_KEY_TAGS, mTagsHandler = new TagsHandler(mContext));
+        mHandlerForKey.put(DATA_KEY_SESSIONS, mSessionsHandler = new SessionsHandler(mContext));
 
         // process the jsons. This will call each of the handlers when appropriate to deal
         // with the objects we see in the data.
@@ -88,8 +94,8 @@ public class MoviesDataHandler {
         }
 
         // the sessions handler needs to know the tag and speaker maps to process sessions
-       /* mSessionsHandler.setTagMap(mTagsHandler.getTagMap());
-        mSessionsHandler.setSpeakerMap(mSpeakersHandler.getSpeakerMap());*/
+        mSessionsHandler.setTagMap(mTagsHandler.getTagMap());
+//        mSessionsHandler.setSpeakerMap(mSpeakersHandler.getSpeakerMap());
 
         // produce the necessary content provider operations
         ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();

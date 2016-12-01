@@ -18,10 +18,18 @@ public class ImageTrasformation {
 
                 double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
                 int targetHeight = (int) (targetWidth * aspectRatio);
-                Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
+                Bitmap result;
+
+                if (targetWidth == 0 && targetHeight == 0) {
+                    result = Bitmap.createScaledBitmap(source, 400, 400, false);
+                } else {
+                    result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
+                }
+
                 if (result != source) {
                     source.recycle();
                 }
+
                 return result;
             }
 

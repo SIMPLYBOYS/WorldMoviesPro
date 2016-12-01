@@ -678,7 +678,7 @@
   </string>
 
     <!-- Hint that the user can search across sessions -->
-    <string name="search_hint">搜索會議</string>
+    <string name="search_hint">搜索電影</string>
 
     <!-- Search label that shows the type of data being searched for when the user clicks the
     Search button. -->

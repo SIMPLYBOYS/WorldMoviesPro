@@ -22,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,25 +72,6 @@ import java.util.Set;
  * Created by aaron on 2016/7/13.
  */
 public class GenreActivity extends BaseActivity implements Response.ErrorListener {
-    private final String TAG_TITLE = "title";
-    private final String TAG_YEAR = "year";
-    private final String TAG_TOP = "top";
-    private final String TAG_POSTER_URL = "posterUrl";
-    private final String TAG_RATING = "rating";
-    private final String TAG_CAST = "cast";
-    private final String TAG_DESCRIPTION = "description";
-    private final String TAG_DETAIL_URL = "detailUrl";
-    private final String TAG_SUMMERY = "summery";
-    private final String TAG_PLOT = "plot";
-    private final String TAG_GENRE = "genres";
-    private final String TAG_VOTES = "votes";
-    private final String TAG_RUNTIME = "runtime";
-    private final String TAG_METASCORE = "metascore";
-    private final String TAG_SLATE = "slate";
-    private final String TAG_COUNTRY = "country";
-    private final String TAG_TRAILER = "trailerUrl";
-    private final String TAG_GALLERY_FULL = "gallery_full";
-    private final String TAG_DELTA = "delta";
     public final String REQUEST_TAG = "genreRequest";
     private Toolbar toolbar;
     public final String TAG = "genresActivity";
@@ -291,7 +273,6 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
                 }
                 genreList.add(item);
             }
-
             genreAdapter = new GenreSwipeRecyclerViewAdapter(genreList);
             recyclerView.setRequestedColumnCount(2);
             recyclerView.setDebugging(false);
@@ -403,7 +384,7 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
 
     private void loadHints() {
         final String[] from = new String [] {FILM_NAME};
-        final int[] to = new int[] { R.id.text1};
+        final int[] to = new int[] {-100};
         final CustomJSONObjectRequest jsonRequest;
 
         mAdapter = new ImageCursorAdapter(this,
@@ -489,6 +470,7 @@ public class GenreActivity extends BaseActivity implements Response.ErrorListene
                     public void onClick(View v) {
 //                        Toast.makeText(activity, String.valueOf(position), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(GenreActivity.this, GenreDetailActivity.class);
+                        Log.d("1107", item.getTopic());
                         intent.putExtra("genreType", item.getTopic());
                         ActivityCompat.startActivity(GenreActivity.this, intent, null);
                     }

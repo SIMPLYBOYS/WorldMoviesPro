@@ -1,32 +1,27 @@
 package com.github.florent37.materialviewpager.worldmovies.upcoming;
 
+import android.app.ActivityOptions;
 import android.app.LoaderManager;
-import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.BaseColumns;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -49,10 +43,8 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
-import com.github.florent37.materialviewpager.worldmovies.adapter.ImageCursorAdapter;
 import com.github.florent37.materialviewpager.worldmovies.adapter.upComingSwipeRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
-import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
@@ -60,6 +52,7 @@ import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
 import com.github.florent37.materialviewpager.worldmovies.model.TagFilterHolder;
 import com.github.florent37.materialviewpager.worldmovies.model.TagMetadata;
 import com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity;
+import com.github.florent37.materialviewpager.worldmovies.ui.SearchActivity;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionView;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionViewCallbacks;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.MultiSwipeRefreshLayout;
@@ -69,8 +62,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -97,7 +88,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
     private boolean mActionBarShown = true;
     private int mProgressBarTopWhenActionBarShown;
     private CustomJSONObjectRequest jsonRequest;
-    private ImageCursorAdapter cursorAdapter;
     private RequestQueue mQueue;
     public static int [] monthList;
     // JSON Node names
@@ -121,7 +111,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
     private final String TAG_TRAILER = "trailerUrl";
     private final String TAG_GALLERY_FULL = "gallery_full";
     private final String TAG_DELTA = "delta";
-    private SearchView searchView = null;
     private int lastSelectedPosition = 1;
     private int skipSize = 0;
     private BottomNavigationBar bottomNavigationBar;
@@ -136,11 +125,7 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
     private final int GROUP_LIVE_STREAM = 1;
     private final int GROUP_COUNTRY = 2;
     private String searchChannel = "14";
-    private CustomJSONArrayRequest jsonArrayRequest;
-    private Handler completeHandler;
-    private static JSONObject[] MOVIES = {};
-    private String[] from = new String [] {FILM_NAME};
-    private int[] to = new int[] { R.id.text1};
+    private TagAdapter tagAdapter;
 
     // The OnClickListener for the Switch widgets on the navigation filter.
     private final View.OnClickListener mDrawerItemCheckBoxClickListener =
@@ -171,6 +156,14 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
                         mTagFilterHolder.remove(theTag.getId(), theTag.getCategory());
                         CredentialsHandler.setCountry(getApplicationContext(), searchChannel);
                     }
+
+                    mDrawerLayout.closeDrawer(GravityCompat.END);
+
+                    //------------------//
+                    tagAdapter = new TagAdapter();
+                    mDrawerCollectionView.setCollectionAdapter(tagAdapter);
+                    mDrawerCollectionView.updateInventory(tagAdapter.getInventory());
+                    //------------------//
                 }
             };
 
@@ -206,10 +199,8 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(ViewPager.LayoutParams.MATCH_PARENT, getStatusBarHeight());
         textView.setBackgroundColor(Color.parseColor("#FF26C6DA"));
         textView.setLayoutParams(lParams);
-        // 获得根视图并把TextView加进去。
         ViewGroup view = (ViewGroup) getWindow().getDecorView();
         view.addView(textView);
-        cursorAdapter = new ImageCursorAdapter(this, R.layout.search_row, null, from, to, "upcoming");
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_movie_layout);
         movieList = new ArrayList<>();
         linearLayoutManager = new LinearLayoutManager(this);
@@ -256,14 +247,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         getLoaderManager().initLoader(TAG_METADATA_TOKEN, null, this);
         refresh();
         bottomNavigationBar.setTabSelectedListener(this);
-
-        completeHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                giveSuggestions((String) msg.obj);
-            }
-        };
-
         overridePendingTransition(0, 0);
     }
 
@@ -324,7 +307,7 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             }
         }
 
-        TagAdapter tagAdapter = new TagAdapter();
+        tagAdapter = new TagAdapter();
         mDrawerCollectionView.setCollectionAdapter(tagAdapter);
         mDrawerCollectionView.updateInventory(tagAdapter.getInventory());
     }
@@ -341,7 +324,7 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         bottomNavigationBar
                 .addItem(new BottomNavigationItem(R.drawable.ic_trending_up, R.string.navdrawer_item_explore).setActiveColorResource(R.color.material_orange_900).setBadgeItem(numberBadgeItem))
                 .addItem(new BottomNavigationItem(R.drawable.ic_movie, R.string.navdrawer_item_up_coming).setActiveColorResource(R.color.material_teal_A200))
-                .addItem(new BottomNavigationItem(R.drawable.ic_theaters, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
+                .addItem(new BottomNavigationItem(R.drawable.imdb, R.string.navdrawer_item_imdb).setActiveColorResource(R.color.material_blue_300))
                 .addItem(new BottomNavigationItem(R.drawable.nytimes, "nyimes").setActiveColorResource(R.color.material_brown_400))
                 .addItem(new BottomNavigationItem(R.drawable.ic_person, "Profile").setActiveColorResource(R.color.material_red_900))
 //                .addItem(new BottomNavigationItem(R.drawable.ic_genre, R.string.navdrawer_item_genre).setActiveColorResource(R.color.material_red_900))
@@ -388,68 +371,10 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         MenuItem filter = menu.findItem(R.id.action_filter);
         Drawable image = filter.getIcon();
         image.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(true);
-        searchView.setSubmitButtonEnabled(true);
-        AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
-        mQueryTextView.setTextColor(Color.WHITE);
-        mQueryTextView.setHintTextColor(Color.WHITE);
-        mQueryTextView.setHint("movie title or cast name");
         miniCard.setChecked(settings.getBoolean("miniCard", true));
         ascending.setChecked(settings.getBoolean("ascending", false));
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                //if you want to collapse the searchview
-                requestDataRefresh(query);
-                invalidateOptionsMenu();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String query) {
-                if (!query.trim().isEmpty()) {
-                    completeHandler.removeMessages(MESSAGE_TEXT_CHANGE);
-                    completeHandler.sendMessageDelayed(completeHandler.obtainMessage(MESSAGE_TEXT_CHANGE, query), mAutoCompleteDelay);
-                }
-                return false;
-            }
-        });
-
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-            @Override
-            public boolean onSuggestionSelect(int position) {
-                return true;
-            }
-
-            @Override
-            public boolean onSuggestionClick(int position) {
-                Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(position);
-                final String feedName = cursor.getString(1);
-                searchView.post(new Runnable(){
-                    @Override
-                    public void run() {
-                        searchView.setQuery(feedName, true);
-                    }
-                });
-                return true;
-            }
-        });
-
-        searchView.setSuggestionsAdapter(cursorAdapter);
         return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (!searchView.isIconified()) {
-            searchView.setIconified(true);
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
@@ -490,6 +415,15 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
                 return true;
             case R.id.action_filter:
                 mDrawerLayout.openDrawer(GravityCompat.END);
+                return true;
+            case R.id.action_search:
+                View searchMenuView = toolbar.findViewById(R.id.action_search);
+                Bundle options = ActivityOptions.makeSceneTransitionAnimation(this, searchMenuView,
+                        getString(R.string.transition_search_back)).toBundle();
+                Intent intent = new Intent(upComingActivity.this, SearchActivity.class);
+                intent.putExtra("lastSelectedPosition", lastSelectedPosition);
+                intent.putExtra("lauchBy", "upcoming");
+                ActivityCompat.startActivity(upComingActivity.this, intent, null);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -636,42 +570,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         fetchMovies(true);
     }
 
-    private void giveSuggestions(String query) {
-        final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
-        String url;
-
-        try {
-            url = Config.HOST_NAME + "search/"+ searchChannel+"/" + URLEncoder.encode(query, "UTF-8"); //TODO muti-channel support
-        }  catch (UnsupportedEncodingException e) {
-            throw new AssertionError("UTF-8 is unknown");
-        }
-
-        jsonArrayRequest = new CustomJSONArrayRequest(url, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                JSONArray contents = ((JSONArray) response);
-                MOVIES = getJsonObjectArray(contents);
-                String posterUrl;
-                try {
-                    for (int i = 0; i < MOVIES.length; i++) {
-                        JSONObject obj = MOVIES[i].getJSONObject("_source");
-                        posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
-                        cursor.addRow(new Object[]{i, obj.getString("title"), obj.getString("description"), posterUrl});
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                cursorAdapter.changeCursor(cursor);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-//                Toast.makeText(ImdbActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mQueue.add(jsonArrayRequest);
-    }
-
     public void fetchMovies(final boolean swipe) {
         // showing refresh animation before making http call
         if (swipe)
@@ -681,45 +579,8 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             adapter.notifyItemInserted(movieList.size() - 1);
         }
 
-        int count = adapter.getItemCount();
         Calendar c = Calendar.getInstance();
-
-        /*if (monthList == null)
-            return; //skip fetching when network not avaliable.*/
-
-        int end = 14, start = c.get(Calendar.MONTH)%end;
-
         jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/upcoming?release_from=" + getReleaseDate(c.get(Calendar.MONTH), 0, 1)+"&skip="+skipSize, new JSONObject(), this, this);
-
-        /*if (count < monthList[start]) {
-            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 0, 1)) +' ' +String.valueOf(getReleaseDate(start, 0, 30)));
-            jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(start, 0, 1) + "&release_to=" + getReleaseDate(start, 0, 30), new JSONObject(), this, this);
-        } else if (count < monthList[c.get(Calendar.MONTH)%end] + monthList[(c.get(Calendar.MONTH)+1)%end]) {
-            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 1, 1)) +' ' +String.valueOf(getReleaseDate(start, 1, 31)));
-            jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(start, 1, 1) + "&release_to=" + getReleaseDate(start, 1, 30), new JSONObject(), this, this);
-        } else if (count < monthList[c.get(Calendar.MONTH)%end] + monthList[(c.get(Calendar.MONTH)+1)%end] + monthList[(c.get(Calendar.MONTH)+2)%end]) {
-            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 2, 1)) +' ' +String.valueOf(getReleaseDate(start, 2, 31)));
-            jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(start, 2, 1) + "&release_to=" + getReleaseDate(start, 2, 30), new JSONObject(), this, this);
-        } else if (count < monthList[c.get(Calendar.MONTH)%end] + monthList[(c.get(Calendar.MONTH)+1)%end] + monthList[(c.get(Calendar.MONTH)+2)%end] + monthList[(c.get(Calendar.MONTH)+3)%end]) {
-            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 3, 1)) +' ' +String.valueOf(getReleaseDate(start, 3, 30)));
-            jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(start, 3, 1) + "&release_to=" + getReleaseDate(start, 3, 30), new JSONObject(), this, this);
-        } else if (count < monthList[c.get(Calendar.MONTH)%end] + monthList[(c.get(Calendar.MONTH)+1)%end] + monthList[(c.get(Calendar.MONTH)+2)%end] + monthList[(c.get(Calendar.MONTH)+3)%end] + monthList[(c.get(Calendar.MONTH)+4)%end]) {
-            Log.d("0607", "count: " + count + " " + String.valueOf(getReleaseDate(start, 4, 1)) +' ' +String.valueOf(getReleaseDate(start, 4, 31)));
-            jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME +
-                    "/imdb?release_from=" + getReleaseDate(start, 4, 1) + "&release_to=" + getReleaseDate(start, 4, 30), new JSONObject(), this, this);
-        }*/
-
-        /*if (count > monthList[c.get(Calendar.MONTH)%end] + monthList[(c.get(Calendar.MONTH)+1)%end] + monthList[(c.get(Calendar.MONTH)+2)%end] + monthList[(c.get(Calendar.MONTH)+3)%end] +
-                monthList[(c.get(Calendar.MONTH)+4)%end]) {
-            movieList.remove(movieList.size()-1);
-            adapter.notifyItemRemoved(movieList.size());
-        } else {
-            mQueue.add(jsonRequest);
-        }*/
         mQueue.add(jsonRequest);
     }
 
@@ -764,7 +625,8 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             String title = c.getString(TAG_TITLE);
             JSONObject d = null;
 
-            if (c.has("detailContent")) d = c.getJSONObject("detailContent");
+            if (c.has("detailContent"))
+                d = c.getJSONObject("detailContent");
 
             int top = 0;
             String detailPosterUrl = "";
@@ -781,6 +643,7 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             String summery = d != null ? d.getString(TAG_SUMMERY) : c.getString("mainInfo");
             String country = d != null ? d.getString(TAG_COUNTRY) : c.getString(TAG_COUNTRY);
             String year = c.getString(TAG_YEAR);
+            String releaseDate = String.valueOf(c.getInt(TAG_RELEASE));;
             String trailerUrl;
             String slate;
 
@@ -792,11 +655,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             JSONArray cast = new JSONArray();
             galleryFullUrl.put(jo);
             //----- end dummy GalleryUrl ----
-
-            if (c.has(TAG_RELEASE) && !c.has(TAG_TOP)) {
-                year = String.valueOf(c.getInt(TAG_RELEASE));
-                year = year.substring(4, 8);
-            }
 
             if (c.has(TAG_DELTA))
                 delta = c.getString(TAG_DELTA);
@@ -826,7 +684,7 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             else
                 slate = "N/A";
 
-            ImdbObject item = new ImdbObject(title, String.valueOf(top), year, description, rating, posterUrl,
+            ImdbObject item = new ImdbObject(title, String.valueOf(top), releaseDate, description, rating, posterUrl,
                     slate, summery, plot, genre, votes, runTime, metaScore, delta, country, trailerUrl, cast.toString(),
                     galleryFullUrl.toString(), detailUrl);
             SharedPreferences settings = getSharedPreferences("settings", 0);
@@ -858,16 +716,15 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
     private class TagAdapter implements CollectionViewCallbacks {
 
         public CollectionView.Inventory getInventory() {
-            Log.d("1018", "getInventory");
-            List<TagMetadata.Tag> countries = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_TOPIC);
+            List<TagMetadata.Tag> genres = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_GENRE);
             CollectionView.Inventory inventory = new CollectionView.Inventory();
-            CollectionView.InventoryGroup themeGroup = new CollectionView.InventoryGroup(GROUP_TOPIC_TYPE_OR_THEME)
+            /*CollectionView.InventoryGroup themeGroup = new CollectionView.InventoryGroup(GROUP_TOPIC_TYPE_OR_THEME)
                     .setDisplayCols(1)
                     .setDataIndexStart(0)
                     .setShowHeader(false);
 
-            if (countries != null && countries.size() > 0) {
-                for (TagMetadata.Tag country : countries) {
+            if (genres != null && genres.size() > 0) {
+                for (TagMetadata.Tag country : genres) {
                     themeGroup.addItemWithTag(country);
                 }
                 inventory.addGroup(themeGroup);
@@ -879,20 +736,20 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
                     .setShowHeader(true)
                     .addItemWithTag("Livestreamed");
 
-            inventory.addGroup(liveStreamGroup);
+            inventory.addGroup(liveStreamGroup);*/
 
-            CollectionView.InventoryGroup topicsGroup = new CollectionView.InventoryGroup(GROUP_COUNTRY)
+            CollectionView.InventoryGroup countryGroup = new CollectionView.InventoryGroup(GROUP_COUNTRY)
                     .setDataIndexStart(0)
-                    .setShowHeader(true);
+                    .setShowHeader(false);
 
-            List<TagMetadata.Tag> topics = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
+            List<TagMetadata.Tag> countries = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
 
-            if (topics != null && topics.size() > 0) {
-                for (TagMetadata.Tag topic : topics) {
-                    Log.d("1018", String.valueOf(topic));
-                    topicsGroup.addItemWithTag(topic);
+            if (countries != null && countries.size() > 0) {
+                for (TagMetadata.Tag country : countries) {
+                    LOGD("1018", String.valueOf(country));
+                    countryGroup.addItemWithTag(country);
                 }
-                inventory.addGroup(topicsGroup);
+                inventory.addGroup(countryGroup);
             }
 
             return inventory;
@@ -915,7 +772,7 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         @Override
         public View newCollectionItemView(Context context, int groupId, ViewGroup parent) {
             return LayoutInflater.from(context).inflate(groupId == GROUP_LIVE_STREAM ?
-                    R.layout.explore_sessions_list_item_livestream_alt_drawer :
+                    R.layout.explore_sessions_list_item_livestream1_alt_drawer :
                     R.layout.explore_sessions_list_item_alt_drawer, parent, false);
         }
 

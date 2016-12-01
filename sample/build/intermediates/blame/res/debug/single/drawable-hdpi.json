@@ -1,0 +1,62 @@
+[
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/ic_more.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/ic_more.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/ic_share.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/ic_share.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/ic_launcher.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/ic_play_circle.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/ic_play_circle.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/lebanon.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/lebanon.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/ic_photo_album.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/ic_photo_album.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/ic_details.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/ic_details.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/facebook.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/facebook.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/ic_global.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/ic_global.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/gm.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/gm.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/uk.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/uk.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/ic_share_white.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/ic_share_white.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/ic_genre.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/ic_genre.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/ic_movie.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/ic_movie.png"
+    },
+    {
+        "merged": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/build/intermediates/res/merged/debug/drawable-hdpi/ic_favorite.png",
+        "source": "/home/aaron/OpenSourceProjects/WorldMoviesPro/sample/src/main/res/drawable-hdpi/ic_favorite.png"
+    }
+]

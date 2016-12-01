@@ -175,27 +175,28 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                         arrowView.setVisibility(View.GONE);
                     }*/
 
+                    String desciption = "";
+
                     if (staffInfo.size() > 0) {
                         jsonElement = staffInfo.get(0);
                         staffItem = gson.fromJson(jsonElement, TrendsObject.StaffItem.class);
-                        String desciption;
+
                         if (staffItem.getStaff().indexOf(':') != -1)
                             desciption = staffItem.getStaff().split(":")[1] + " (dir)";
                         else
                             desciption = staffItem.getStaff() + " (dir)";
-
-                        for(int i=0; i<castInfo.size(); i++ ) {
-                            jsonElement = castInfo.get(i);
-                            castItem = gson.fromJson(jsonElement, TrendsObject.CastItem.class);
-                            if (castItem.getCast().indexOf(':') != -1)
-                                desciption += ", " + castItem.getCast().split(":")[0];
-                            else
-                                desciption += ", " + castItem.getCast();
-                        }
-                        desciptionView.setText(desciption);
-                    } else {
-                        desciptionView.setText("");
                     }
+
+                    for(int i=0; i<castInfo.size(); i++ ) {
+                        jsonElement = castInfo.get(i);
+                        castItem = gson.fromJson(jsonElement, TrendsObject.CastItem.class);
+                        if (castItem.getCast().indexOf(':') != -1)
+                            desciption += ", " + castItem.getCast().split(":")[0];
+                        else
+                            desciption += ", " + castItem.getCast();
+                    }
+
+                    desciptionView.setText(desciption);
 
                     String path = trendsObject.getPosterUrl();
                     Log.d("0921", path);

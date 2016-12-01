@@ -80,7 +80,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     private BottomNavigationBar bottomNavigationBar;
     private BadgeItem numberBadgeItem;
     private static final String TAG = makeLogTag(nyTimesActivity.class);
-    private String[] MOVIES = {};
     private int mProgressBarTopWhenActionBarShown;
     // initially offset will be 0, later will be updated while parsing the json
     private int offSet = 0;
@@ -391,12 +390,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     @Override
     public void onResume() {
         super.onResume();
-        /*movieList.clear();
-        rvMovies.setAdapter(rAdapter);
-        offSet = 0;
-        rAdapter.notifyDataSetChanged();
-        fetchMovies(true);
-        LOGD("0816", "onResume");*/
     }
 
     @Override

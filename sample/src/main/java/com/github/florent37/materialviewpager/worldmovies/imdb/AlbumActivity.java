@@ -1,22 +1,17 @@
 package com.github.florent37.materialviewpager.worldmovies.imdb;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.BaseColumns;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -39,7 +33,6 @@ import com.github.florent37.materialviewpager.worldmovies.adapter.ImdbGalleryRec
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
-import com.github.florent37.materialviewpager.worldmovies.util.BuildModelUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -50,10 +43,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
@@ -64,7 +54,6 @@ import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.L
 public class AlbumActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
         Response.Listener, Response.ErrorListener {
 
-    private ShareActionProvider shareActionProvider;
     private final String IMDB_OBJECT = "IMDB_OBJECT";
     private ImdbObject imdbObject;
     private RecyclerView myRecyclerView;
@@ -73,18 +62,13 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
     LinearLayout bookmarkActionView;
     private ShineButton bookmarkView = null;
     private List<ImdbObject.GalleryItem> list = null;
-    private MenuItem searchItem, shareItem;
     private MenuItem bookmarkItem = null;
-    private SearchView searchView = null;
     public static final String FILM_NAME = "filmName";
     private SimpleCursorAdapter mAdapter;
     private static String[] MOVIES = {};
     private RequestQueue mQueue;
-    public static ArrayList<HashMap<String, String>> contentList;
-    public static ArrayList<HashMap<String, String>> galleryList;
     private String HOST_NAME = Config.HOST_NAME;
     public static final String REQUEST_TAG = "titleRequest";
-    private static final String TAG_TOP = "top";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +77,8 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         imdbObject = (ImdbObject) getIntent().getSerializableExtra(IMDB_OBJECT);
         setSupportActionBar(toolbar);
-
         final ActionBar actionBar = getSupportActionBar();
+
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
@@ -134,15 +118,10 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
         //------- deserialize Gallery JSON object -------//
         myRecyclerView.setAdapter(imdbGalleryAdapter);
         imdbGalleryAdapter.setOnItemClickListener(this);
-        loadHints(); //chaching for search hint
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-
-        getMenuInflater().inflate(R.menu.album_menu, menu);
-
+    public boolean onPrepareOptionsMenu(Menu menu) {
         for(int i = 0; i < menu.size(); i++) {
             Drawable drawable = menu.getItem(i).getIcon();
             if(drawable != null) {
@@ -158,23 +137,15 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
         bookmarkView.getLayoutParams().width=96;
         bookmarkView.setColorFilter(getResources().getColor(R.color.app_white));
         bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
-        shareItem = menu.findItem(R.id.action_share); // Retrieve the share menu item
-        searchItem = menu.findItem(R.id.action_search);
         bookmarkItem = menu.findItem(R.id.action_bookmark);
         bookmarkItem.setActionView(bookmarkView);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setIconifiedByDefault(true);
-        searchView.setSubmitButtonEnabled(true);
-        AutoCompleteTextView mQueryTextView = (AutoCompleteTextView) searchView.findViewById(R.id.search_src_text);
-        mQueryTextView.setTextColor(Color.WHITE);
-        mQueryTextView.setHintTextColor(Color.WHITE);
 
         if (imdbObject.getBookmark()) {
             bookmarkView.setChecked(true);
             bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
         } else {
             bookmarkView.setChecked(false);
-            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+            bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_not_white);
         }
 
         bookmarkView.setOnCheckStateChangeListener(new ShineButton.OnCheckedChangeListener() {
@@ -194,45 +165,20 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
                     bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_black);
                     LOGD("0812", imdbObject.getTitle());
                 } else {
-                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in);
+                    bookmarkView.setBackgroundResource(R.drawable.ic_turned_in_not_white);
                     //TODO bookmark info for the user's acccount
                 }
             }
         });
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                    //if you want to collapse the searchview
-                    requestDataRefresh(query);
-                    invalidateOptionsMenu();
-                return false;
-            }
+        return true;
+    }
 
-            @Override
-            public boolean onQueryTextChange(String query) {
-                giveSuggestions(query);
-                return false;
-            }
-        });
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
 
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-            @Override
-            public boolean onSuggestionSelect(int position) {
-                return true;
-            }
-
-            @Override
-            public boolean onSuggestionClick(int position) {
-                Cursor cursor = (Cursor)searchView.getSuggestionsAdapter().getItem(position);
-                String feedName = cursor.getString(1);
-                searchView.setQuery(feedName, false);
-                return true;
-            }
-        });
-
-        searchView.setSuggestionsAdapter(mAdapter);
-
+        getMenuInflater().inflate(R.menu.album_menu, menu);
         return true;
     }
 
@@ -261,63 +207,6 @@ public class AlbumActivity extends AppCompatActivity implements AdapterView.OnIt
 
         jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb_title", new JSONObject(), this, this);
         mQueue.add(jsonRequest);
-    }
-
-    public void requestDataRefresh(String Query) {
-        final CustomJSONObjectRequest jsonRequest = null;
-        contentList = new ArrayList<HashMap<String, String>>();
-        galleryList = new ArrayList<HashMap<String, String>>();
-
-        mQueue = CustomVolleyRequestQueue.getInstance(AlbumActivity.this)
-                .getRequestQueue();
-
-        CustomJSONObjectRequest jsonRequest_q = null;
-
-        if (Query != null) {
-            // launch query from searchview
-            try {
-                Query = URLEncoder.encode(Query, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new AssertionError("UTF-8 is unknown");
-            }
-            jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "/imdb?title=" + Query + "&ascending=1", new JSONObject(), new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        JSONArray contents = response.getJSONArray("contents");
-                        JSONObject c = contents.getJSONObject(0);
-                        LOGD("0504", "title onResponse" + contents);
-                        ImdbObject movie = BuildModelUtils.buildImdbModel(contents);
-                        if (c.has(TAG_TOP))
-                            movie.setType("imdb");
-                        else
-                            movie.setType("genre");
-                        Intent intent = new Intent(AlbumActivity.this, MovieDetailActivity.class);
-                        intent.putExtra(ImdbActivity.IMDB_OBJECT, movie);
-                        ActivityCompat.startActivity(AlbumActivity.this, intent, null);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, this);
-            mQueue.add(jsonRequest_q);
-            return;
-        }
-
-        jsonRequest.setTag(REQUEST_TAG);
-
-        mQueue.add(jsonRequest); //trigger volley request
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (searchView != null && !searchView.isIconified()) {
-            MenuItemCompat.collapseActionView(searchItem);
-            searchView.setIconified(true);
-            return;
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override

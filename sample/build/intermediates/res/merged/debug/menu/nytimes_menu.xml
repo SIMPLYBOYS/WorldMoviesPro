@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:myapp="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools">
+
+    <item android:id="@+id/menu_smooth_zero"
+        android:title="@string/action_smooth_zero"
+        android:orderInCategory="2"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/menu_smooth_end"
+        android:title="@string/action_smooth_end"
+        android:orderInCategory="3"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/action_search"
+        android:textColor="@color/io15_white"
+        myapp:actionViewClass="android.support.v7.widget.SearchView"
+        myapp:showAsAction="ifRoom" />
+</menu>
