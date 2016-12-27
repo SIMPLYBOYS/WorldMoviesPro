@@ -311,7 +311,6 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
                 .setText("" + lastSelectedPosition);
 
 //        bottomNavigationBar.setFab(fab);
-
         bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         bottomNavigationBar.setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC);
         bottomNavigationBar
@@ -358,7 +357,6 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
         if (mTagFilterHolder == null) {
             // Use the Intent Extras to set up the TagFilterHolder
             mTagFilterHolder = new TagFilterHolder();
-
             String tag = getIntent().getStringExtra(EXTRA_FILTER_TAG); //TODO get tag from preference
             TagMetadata.Tag userTag = mTagMetadata.getTag(tag);
             String userTagCategory = userTag == null ? null : userTag.getCategory();
@@ -496,16 +494,17 @@ public class MovieDetailActivity extends AppCompatActivity implements KenBurnsVi
     private void setupViewPager(final ViewPager viewPager) {
         final ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        if (imdbObject == null) {
+        if (imdbObject == null)
             imdbObject = (ImdbObject) getIntent().getSerializableExtra(IMDB_OBJECT);
-        }
 
         adapter.addFrag(ImdbInfoTabFragment.newInstance(imdbObject), "Info");
         adapter.addFrag(ImdbCastTabFragment.newInstance(imdbObject), "Cast");
         adapter.addFrag(ImdbReviewTabFragment.newInstance(imdbObject), "Review");
         adapter.addFrag(ImdbMusicTabFragment.newInstance(imdbObject), "Music");
+
         if (imdbObject.getType().compareTo("imdb") == 0)
             adapter.addFrag(ImdbChartTabFragment.newInstance(imdbObject), "Chart");
+
         viewPager.setAdapter(adapter);
     }
 

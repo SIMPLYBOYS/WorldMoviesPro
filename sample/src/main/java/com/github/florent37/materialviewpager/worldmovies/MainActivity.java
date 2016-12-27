@@ -34,7 +34,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,8 +52,10 @@ import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.crashlytics.android.Crashlytics;
 import com.github.florent37.materialviewpager.MaterialViewPager;
+import com.github.florent37.materialviewpager.worldmovies.adapter.TagAdapter;
 import com.github.florent37.materialviewpager.worldmovies.adapter.TrendsCardRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.fragment.DefaultFragment;
+import com.github.florent37.materialviewpager.worldmovies.fragment.HomeFragment;
 import com.github.florent37.materialviewpager.worldmovies.fragment.RecyclerViewFragment;
 import com.github.florent37.materialviewpager.worldmovies.fragment.TrendsFragment;
 import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
@@ -66,9 +67,7 @@ import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContr
 import com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity;
 import com.github.florent37.materialviewpager.worldmovies.ui.SearchActivity;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionView;
-import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionViewCallbacks;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.MultiSwipeRefreshLayout;
-import com.github.florent37.materialviewpager.worldmovies.util.UIUtils;
 
 import org.json.JSONArray;
 
@@ -84,41 +83,36 @@ import io.fabric.sdk.android.Fabric;
 
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
-import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.drawCountryFlag;
 
 public class MainActivity extends BaseActivity implements RecyclerViewFragment.Listener,
         BottomNavigationBar.OnTabSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
     private MaterialViewPager mViewPager;
     private final String REQUEST_TAG = "MainVolleyActivity";
-    private SwipeRefreshLayout mSwipeRefreshLayout;// SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
     private boolean mActionBarShown = true;
+    private boolean Initail = false;
+    private SwipeRefreshLayout mSwipeRefreshLayout;// SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
     private Toolbar toolbar;
     private RequestQueue mQueue;
     private View headerLogo;
     private ImageView headerLogoContent;
-    private long mExitTime = 0;
-    private int lastSelectedPosition = 0;
-    private int mProgressBarTopWhenActionBarShown;
-    private boolean Initail = false;
     private BottomNavigationBar bottomNavigationBar;
     private BadgeItem numberBadgeItem;
-    private int mViewPagerScrollState = ViewPager.SCROLL_STATE_IDLE;
     private TagMetadata mTagMetadata;
     private TagFilterHolder mTagFilterHolder;
     private Set<RecyclerViewFragment> mMyRecyclerViewFragments = new HashSet<RecyclerViewFragment>();
-    private static final long GET_DATA_INTERVAL = 10000;
     private Handler mHandler;
     private TimerTask tTask;
     private Timer tTimer;
+    private int mViewPagerScrollState = ViewPager.SCROLL_STATE_IDLE;
+    private int lastSelectedPosition = 0;
+    private int mProgressBarTopWhenActionBarShown;
     private int SlideIndex;
-    private FragmentStatePagerAdapter pagerAdapter;
-    private SharedPreferences sp;
-    private DrawerLayout mDrawerLayout;
-    private CollectionView mDrawerCollectionView;
+    private long mExitTime = 0;
     private final int TAG_METADATA_TOKEN = 0x8;
     private final int TAG_METADATA_GENRE = 0x7;
-    private final int tabCount = 7;
+    private final int tabCount = 8;
     private final String TAG = makeLogTag(MainActivity.class);
+    private static final long GET_DATA_INTERVAL = 10000;
     private static final int GROUP_TOPIC_TYPE_OR_THEME = 0;
     private static final int GROUP_LIVE_STREAM = 1;
     private static final int GROUP_COUNTRY = 2;
@@ -127,6 +121,10 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     private String searchYear = "All";
     private MaterialDialog.Builder builder;
     private MaterialDialog dialog;
+    private FragmentStatePagerAdapter pagerAdapter;
+    private SharedPreferences sp;
+    private DrawerLayout mDrawerLayout;
+    private CollectionView mDrawerCollectionView;
     private TagAdapter tagAdapter;
 
     // The OnClickListener for the Switch widgets on the navigation filter.
@@ -147,7 +145,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                         // one of the category_type tags.
                         mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
                         mTagFilterHolder.add("All", "THEME");
-                        CredentialsHandler.setSearchYear(getApplicationContext(), theTag.getId());
                         List<TagMetadata.Tag> tags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
 
                         for (TagMetadata.Tag tag : tags) {
@@ -159,19 +156,19 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                         }
 
                     } else {
-                        searchChannel = "12";
+                        searchChannel = "14";
                         mTagFilterHolder.remove(theTag.getId(), theTag.getCategory());
                         CredentialsHandler.setCountry(getApplicationContext(), searchChannel);
                     }
 
-                    /*if (theTag.getCategory().equals("COUNTRY"))
+                    if (theTag.getCategory().equals("COUNTRY"))
                         mDrawerLayout.closeDrawer(GravityCompat.END);
 
                     //------------------//
-                    tagAdapter = new TagAdapter();
+                    tagAdapter = new TagAdapter(mTagMetadata, mDrawerItemCheckBoxClickListener, mTagFilterHolder);
                     mDrawerCollectionView.setCollectionAdapter(tagAdapter);
                     mDrawerCollectionView.updateInventory(tagAdapter.getInventory());
-                    //------------------//*/
+                    //------------------//
                 }
             };
 
@@ -183,7 +180,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return TrendsFragment.newInstance(position);
+                    return HomeFragment.newInstance(position);
                 case 1:
                     return TrendsFragment.newInstance(position);
                 case 2:
@@ -195,6 +192,8 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 case 5:
                     return TrendsFragment.newInstance(position);
                 case 6:
+                    return TrendsFragment.newInstance(position);
+                case 7:
                     return TrendsFragment.newInstance(position);
                 default:
                     return DefaultFragment.newInstance(position);
@@ -210,18 +209,20 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         public CharSequence getPageTitle(int position) {
             switch (position % tabCount) {
                 case 0:
-                    return getResources().getString(R.string.Japan);
+                    return getResources().getString(R.string.Home);
                 case 1:
-                    return getResources().getString(R.string.USA);
+                    return getResources().getString(R.string.Japan);
                 case 2:
-                    return getResources().getString(R.string.Taiwan);
+                    return getResources().getString(R.string.USA);
                 case 3:
-                    return getResources().getString(R.string.Korea);
+                    return getResources().getString(R.string.Taiwan);
                 case 4:
-                    return getResources().getString(R.string.France);
+                    return getResources().getString(R.string.Korea);
                 case 5:
-                    return getResources().getString(R.string.China);
+                    return getResources().getString(R.string.France);
                 case 6:
+                    return getResources().getString(R.string.China);
+                case 7:
                     return getResources().getString(R.string.Germany);
                 default:
                     return "Page " + position;
@@ -242,37 +243,42 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 Drawable newDrawable = null;
 
                 switch (position) {
-                    case 0:
+                    case 0: //TODO
                         imageUrl = "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
                         color = getResources().getColor(R.color.purple);
                         newDrawable = getResources().getDrawable(R.drawable.japan_circle);
                         break;
                     case 1:
+                        imageUrl = "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
+                        color = getResources().getColor(R.color.purple);
+                        newDrawable = getResources().getDrawable(R.drawable.japan_circle);
+                        break;
+                    case 2:
                         imageUrl = "http://ia.media-imdb.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_SX640_SY720_.jpg";
                         color = getResources().getColor(R.color.material_orange_900);
                         newDrawable = getResources().getDrawable(R.drawable.united_states);
                         break;
-                    case 2:
+                    case 3:
                         imageUrl = "http://soocurious.com/fr/wp-content/uploads/2014/03/8-facettes-de-notre-cerveau-qui-ont-evolue-avec-la-technologie8.jpg";
                         color = getResources().getColor(R.color.com_facebook_button_background_color);
                         newDrawable = getResources().getDrawable(R.drawable.taiwan_circle);
                         break;
-                    case 3:
+                    case 4:
                         imageUrl = "http://graduate.carleton.ca/wp-content/uploads/prog-banner-masters-international-affairs-juris-doctor.jpg";
                         color = getResources().getColor(R.color.material_grey_500);
                         newDrawable = getResources().getDrawable(R.drawable.korea_circle);
                         break;
-                    case 4:
+                    case 5:
                         imageUrl = "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
                         color = getResources().getColor(R.color.material_lime_500);
                         newDrawable = getResources().getDrawable(R.drawable.france_circle);
                         break;
-                    case 5:
+                    case 6:
                         imageUrl = "http://graduate.carleton.ca/wp-content/uploads/prog-banner-masters-international-affairs-juris-doctor.jpg";
                         color = getResources().getColor(R.color.material_red_A400);
                         newDrawable = getResources().getDrawable(R.drawable.china_circle);
                         break;
-                    case 6:
+                    case 7:
                         imageUrl = "http://graduate.carleton.ca/wp-content/uploads/prog-banner-masters-international-affairs-juris-doctor.jpg";
                         color = getResources().getColor(R.color.material_brown_700);
                         newDrawable = getResources().getDrawable(R.drawable.germany_circle);
@@ -365,6 +371,13 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 SlideIndex = 0;
 
                 switch (channel) {
+                    case 0:
+                        if (fragment.getInitiatedAdapter().getItemCount() < 1) {
+                            LOGD("1216", String.valueOf(fragment.getInitiatedAdapter().getItemCount()));
+                            fragment.requestDataRefresh(true, null, null);
+                        } else
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        break;
                     default:
                         TrendsCardRecycleViewAdapter trendsAdapter = (TrendsCardRecycleViewAdapter)fragment.setupRecyclerAdapter();
 
@@ -457,8 +470,10 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 onTagMetadataLoaded();
                 break;
             case TAG_METADATA_GENRE:
+                break;
             default:
                 cursor.close();
+                break;
         }
     }
 
@@ -504,10 +519,9 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                     }
                 }
             }
-
         }
 
-        tagAdapter = new TagAdapter();
+        tagAdapter = new TagAdapter(mTagMetadata, mDrawerItemCheckBoxClickListener, mTagFilterHolder);
         mDrawerCollectionView.setCollectionAdapter(tagAdapter);
         mDrawerCollectionView.updateInventory(tagAdapter.getInventory());
     }
@@ -525,111 +539,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         return result;
     }
 
-    private class TagAdapter implements CollectionViewCallbacks {
 
-        public CollectionView.Inventory getInventory() {
-            List<TagMetadata.Tag> themes = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_THEME);
-            CollectionView.Inventory inventory = new CollectionView.Inventory();
-
-            // We need to add the Live streamed section after the Type category
-            CollectionView.InventoryGroup liveStreamGroup1 = new CollectionView.InventoryGroup(GROUP_LIVE_STREAM)
-                    .setDataIndexStart(0)
-                    .setShowHeader(false)
-                    .addItemWithTag("Livestreamed");
-
-            inventory.addGroup(liveStreamGroup1);
-
-            CollectionView.InventoryGroup countryGroup = new CollectionView.InventoryGroup(GROUP_COUNTRY)
-                    .setDataIndexStart(0)
-                    .setShowHeader(false);
-
-            List<TagMetadata.Tag> countries = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
-
-            if (countries != null && countries.size() > 0) {
-                for (TagMetadata.Tag country : countries) {
-                    countryGroup.addItemWithTag(country);
-                }
-                inventory.addGroup(countryGroup);
-            }
-
-            CollectionView.InventoryGroup liveStreamGroup2 = new CollectionView.InventoryGroup(GROUP_LIVE_STREAM_2)
-                    .setDataIndexStart(0)
-                    .setShowHeader(true)
-                    .addItemWithTag("Livestreamed");
-
-            inventory.addGroup(liveStreamGroup2);
-
-            CollectionView.InventoryGroup themeGroup = new CollectionView.InventoryGroup(GROUP_TOPIC_TYPE_OR_THEME)
-                    .setDisplayCols(0)
-                    .setDataIndexStart(0)
-                    .setShowHeader(false);
-
-            if (themes != null && inventory != null) {
-                for (TagMetadata.Tag theme : themes) {
-                    themeGroup.addItemWithTag(theme);
-                }
-                inventory.addGroup(themeGroup);
-            }
-
-            return inventory;
-        }
-
-        @Override
-        public View newCollectionHeaderView(Context context, int groupId, ViewGroup parent) {
-            View view = LayoutInflater.from(context)
-                    .inflate(R.layout.explore_sessions_list_item_alt_header, parent, false);
-            // We do not want the divider/header to be read out by TalkBack, so
-            // inform the view that this is not important for accessibility.
-            UIUtils.setAccessibilityIgnore(view);
-            return view;
-        }
-
-        @Override
-        public void bindCollectionHeaderView(Context context, View view, int groupId, String headerLabel, Object headerTag) {
-        }
-
-        @Override
-        public View newCollectionItemView(Context context, int groupId, ViewGroup parent) {
-            if (groupId == GROUP_LIVE_STREAM)
-                return LayoutInflater.from(context).inflate(R.layout.explore_sessions_list_item_livestream1_alt_drawer, parent, false);
-            else if (groupId == GROUP_TOPIC_TYPE_OR_THEME)
-                return LayoutInflater.from(context).inflate(R.layout.explore_sessions_list_item_alt_drawer, parent, false);
-            else if (groupId == GROUP_LIVE_STREAM_2)
-                return LayoutInflater.from(context).inflate(R.layout.explore_sessions_list_item_livestream2_alt_drawer, parent, false);
-            else
-                return LayoutInflater.from(context).inflate(R.layout.explore_sessions_list_item_alt_drawer, parent, false);
-        }
-
-        @Override
-        public void bindCollectionItemView(Context context, View view, int groupId, int indexInGroup, int dataIndex, Object tag) {
-            final CheckBox checkBox = (CheckBox) view.findViewById(R.id.filter_checkbox);
-            if (groupId == GROUP_LIVE_STREAM || groupId == GROUP_LIVE_STREAM_2) {
-                //Do nothing
-            }  else {
-                TagMetadata.Tag theTag = (TagMetadata.Tag) tag;
-                if (theTag != null && groupId == GROUP_TOPIC_TYPE_OR_THEME) {
-                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
-                    // set the original checked state by looking up our tags.
-                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
-                    checkBox.setTag(theTag);
-                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
-                } else if (theTag != null && groupId == GROUP_COUNTRY) {
-                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
-                    drawCountryFlag(view, theTag.getOrderInCategory());
-                    // set the original checked state by looking up our tags.
-                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
-                    checkBox.setTag(theTag);
-                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
-                }
-            }
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    checkBox.performClick();
-                }
-            });
-        }
-    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -732,12 +642,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 RecyclerViewFragment fragment = showVisibleFragment();
                 int channel = fragment.getArguments().getInt("index", 0);
                 switch (channel) {
-                    case 0:
-                        if (fragment.getInitiatedAdapter().getItemCount() < fragment.trendMovieCount)
-                            fragment.requestDataRefresh(true, null, null);
-                        else
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        break;
                     default:
                         if (fragment.getInitiatedAdapter().getItemCount() < fragment.trendMovieCount)
                             fragment.requestDataRefresh(true, null, null);
@@ -939,7 +843,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         restoreCurrentPagePref();
     }

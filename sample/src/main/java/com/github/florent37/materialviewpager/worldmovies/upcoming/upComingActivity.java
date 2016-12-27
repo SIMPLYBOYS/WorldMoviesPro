@@ -2,7 +2,6 @@ package com.github.florent37.materialviewpager.worldmovies.upcoming;
 
 import android.app.ActivityOptions;
 import android.app.LoaderManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -22,7 +21,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +41,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
+import com.github.florent37.materialviewpager.worldmovies.adapter.TagAdapter;
 import com.github.florent37.materialviewpager.worldmovies.adapter.upComingSwipeRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
@@ -54,15 +53,12 @@ import com.github.florent37.materialviewpager.worldmovies.model.TagMetadata;
 import com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity;
 import com.github.florent37.materialviewpager.worldmovies.ui.SearchActivity;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionView;
-import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionViewCallbacks;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.MultiSwipeRefreshLayout;
-import com.github.florent37.materialviewpager.worldmovies.util.UIUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -71,7 +67,7 @@ import java.util.List;
 
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
-import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.drawCountryFlag;
+import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.getReleaseDate;
 
 /**
  * Created by aaron on 2016/6/16.
@@ -156,14 +152,7 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
                         mTagFilterHolder.remove(theTag.getId(), theTag.getCategory());
                         CredentialsHandler.setCountry(getApplicationContext(), searchChannel);
                     }
-
                     mDrawerLayout.closeDrawer(GravityCompat.END);
-
-                    //------------------//
-                    tagAdapter = new TagAdapter();
-                    mDrawerCollectionView.setCollectionAdapter(tagAdapter);
-                    mDrawerCollectionView.updateInventory(tagAdapter.getInventory());
-                    //------------------//
                 }
             };
 
@@ -186,13 +175,9 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
             // Translucent status bar
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             // Translucent navigation bar
-            window.setFlags(
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
 
         TextView textView = new TextView(this);
@@ -279,7 +264,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         if (mTagFilterHolder == null) {
             // Use the Intent Extras to set up the TagFilterHolder
             mTagFilterHolder = new TagFilterHolder();
-
             String tag = getIntent().getStringExtra(EXTRA_FILTER_TAG); //TODO get tag from preference
             TagMetadata.Tag userTag = mTagMetadata.getTag(tag);
             String userTagCategory = userTag == null ? null : userTag.getCategory();
@@ -288,26 +272,28 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
                 mTagFilterHolder.add(tag, userTagCategory);
             }
 
-            List<TagMetadata.Tag> tags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_TYPE);
-            // Here we only add all 'types' if the user has not explicitly selected
-            // one of the category_type tags.
-            if (tags != null && !TextUtils.equals(userTagCategory, Config.Tags.CATEGORY_TYPE)) {
-                for (TagMetadata.Tag theTag : tags) {
-                    mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
-                }
-            }
-
             List<TagMetadata.Tag> countryTags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
 
             if (countryTags != null && !TextUtils.equals(userTagCategory, Config.Tags.CATEGORY_COUNTRY)) {
                 for (TagMetadata.Tag theTag : countryTags) {
-                    if (theTag.getOrderInCategory() == 14)
+                    if (String.valueOf(theTag.getOrderInCategory()).equals(searchChannel))
                         mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+                }
+            }
+
+            List<TagMetadata.Tag> tags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_THEME);
+            // Here we only add all 'types' if the user has not explicitly selected
+            // one of the category_type tags.
+            if (tags != null && !TextUtils.equals(userTagCategory, Config.Tags.CATEGORY_THEME)) {
+                for (TagMetadata.Tag theTag : tags) {
+                    if (theTag.getId().equals("All")) {
+                        mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+                    }
                 }
             }
         }
 
-        tagAdapter = new TagAdapter();
+        tagAdapter = new TagAdapter(mTagMetadata, mDrawerItemCheckBoxClickListener, mTagFilterHolder);
         mDrawerCollectionView.setCollectionAdapter(tagAdapter);
         mDrawerCollectionView.updateInventory(tagAdapter.getInventory());
     }
@@ -411,15 +397,12 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
                 arrangeModel();
                 bindAdapter();
                 return true;
-            case R.id.action_settings:
-                return true;
             case R.id.action_filter:
                 mDrawerLayout.openDrawer(GravityCompat.END);
                 return true;
             case R.id.action_search:
                 View searchMenuView = toolbar.findViewById(R.id.action_search);
-                Bundle options = ActivityOptions.makeSceneTransitionAnimation(this, searchMenuView,
-                        getString(R.string.transition_search_back)).toBundle();
+                Bundle options = ActivityOptions.makeSceneTransitionAnimation(this, searchMenuView, getString(R.string.transition_search_back)).toBundle();
                 Intent intent = new Intent(upComingActivity.this, SearchActivity.class);
                 intent.putExtra("lastSelectedPosition", lastSelectedPosition);
                 intent.putExtra("lauchBy", "upcoming");
@@ -584,18 +567,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         mQueue.add(jsonRequest);
     }
 
-    private int getReleaseDate(int start, int month, int day) {
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-        /*c.roll(Calendar.MONTH, month);
-        c.set(Calendar.DAY_OF_MONTH, day);*/
-        String str = df.format(c.getTime());
-        String [] parts = TextUtils.split(str, "/");
-        /*if (start+month >=12)
-            parts[0] = "2017";*/
-        return Integer.parseInt(TextUtils.join("", parts));
-    }
-
     @Override
     public void
     onResponse(Object response) {
@@ -711,100 +682,5 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
     @Override
     public void onErrorResponse(VolleyError error) {
         Toast.makeText(this, "Remote Server not working!", Toast.LENGTH_LONG).show();
-    }
-
-    private class TagAdapter implements CollectionViewCallbacks {
-
-        public CollectionView.Inventory getInventory() {
-            List<TagMetadata.Tag> genres = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_GENRE);
-            CollectionView.Inventory inventory = new CollectionView.Inventory();
-            /*CollectionView.InventoryGroup themeGroup = new CollectionView.InventoryGroup(GROUP_TOPIC_TYPE_OR_THEME)
-                    .setDisplayCols(1)
-                    .setDataIndexStart(0)
-                    .setShowHeader(false);
-
-            if (genres != null && genres.size() > 0) {
-                for (TagMetadata.Tag country : genres) {
-                    themeGroup.addItemWithTag(country);
-                }
-                inventory.addGroup(themeGroup);
-            }
-
-            // We need to add the Live streamed section after the Type category
-            CollectionView.InventoryGroup liveStreamGroup = new CollectionView.InventoryGroup(GROUP_LIVE_STREAM)
-                    .setDataIndexStart(0)
-                    .setShowHeader(true)
-                    .addItemWithTag("Livestreamed");
-
-            inventory.addGroup(liveStreamGroup);*/
-
-            CollectionView.InventoryGroup countryGroup = new CollectionView.InventoryGroup(GROUP_COUNTRY)
-                    .setDataIndexStart(0)
-                    .setShowHeader(false);
-
-            List<TagMetadata.Tag> countries = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
-
-            if (countries != null && countries.size() > 0) {
-                for (TagMetadata.Tag country : countries) {
-                    LOGD("1018", String.valueOf(country));
-                    countryGroup.addItemWithTag(country);
-                }
-                inventory.addGroup(countryGroup);
-            }
-
-            return inventory;
-        }
-
-        @Override
-        public View newCollectionHeaderView(Context context, int groupId, ViewGroup parent) {
-            View view = LayoutInflater.from(context)
-                    .inflate(R.layout.explore_sessions_list_item_alt_header, parent, false);
-            // We do not want the divider/header to be read out by TalkBack, so
-            // inform the view that this is not important for accessibility.
-            UIUtils.setAccessibilityIgnore(view);
-            return view;
-        }
-
-        @Override
-        public void bindCollectionHeaderView(Context context, View view, int groupId, String headerLabel, Object headerTag) {
-        }
-
-        @Override
-        public View newCollectionItemView(Context context, int groupId, ViewGroup parent) {
-            return LayoutInflater.from(context).inflate(groupId == GROUP_LIVE_STREAM ?
-                    R.layout.explore_sessions_list_item_livestream1_alt_drawer :
-                    R.layout.explore_sessions_list_item_alt_drawer, parent, false);
-        }
-
-        @Override
-        public void bindCollectionItemView(Context context, View view, int groupId, int indexInGroup, int dataIndex, Object tag) {
-            final CheckBox checkBox = (CheckBox) view.findViewById(R.id.filter_checkbox);
-            if (groupId == GROUP_LIVE_STREAM) {
-                //Do nothing
-            } else {
-                TagMetadata.Tag theTag = (TagMetadata.Tag) tag;
-                if (theTag != null && groupId == GROUP_TOPIC_TYPE_OR_THEME) {
-                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
-                    // set the original checked state by looking up our tags.
-                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
-                    checkBox.setTag(theTag);
-                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
-                    //TODO poster by Genre api
-                } else if (theTag != null && groupId == GROUP_COUNTRY) {
-                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
-                    drawCountryFlag(view, theTag.getOrderInCategory());
-                    // set the original checked state by looking up our tags.
-                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
-                    checkBox.setTag(theTag);
-                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
-                }
-            }
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    checkBox.performClick();
-                }
-            });
-        }
     }
 }

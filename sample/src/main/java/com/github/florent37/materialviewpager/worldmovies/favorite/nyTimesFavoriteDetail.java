@@ -35,7 +35,7 @@ import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectR
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivity;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesDetailActivity;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesFavoritePreference;
@@ -59,7 +59,7 @@ public class nyTimesFavoriteDetail extends AppCompatActivity implements BottomNa
     private nyTimesFavoriteDetailRecycleViewAdapter nyTimesFavoriteAdapter;
     private BottomNavigationBar bottomNavigationBar;
     private BadgeItem numberBadgeItem;
-    private List<Movie> nyTimesList;
+    private List<nyTimesMovie> nyTimesList;
     private nyTimesFavoritePreference favor;
     private int lastSelectedPosition = 0;
     private User user;
@@ -142,7 +142,7 @@ public class nyTimesFavoriteDetail extends AppCompatActivity implements BottomNa
                         String head = movieObj.getString("headline");
                         String link = movieObj.getString("link");
                         String picUrl = movieObj.getString("picUrl");
-                        Movie movie = new Movie(head, null, null, link, picUrl, null, null);
+                        nyTimesMovie movie = new nyTimesMovie(head, null, null, link, picUrl, null, null);
                         nyTimesList.add(nyTimesList.size(), movie);
                     }
 
@@ -153,7 +153,7 @@ public class nyTimesFavoriteDetail extends AppCompatActivity implements BottomNa
                     nyTimesFavoriteAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            final Movie movie = nyTimesList.get(position);
+                            final nyTimesMovie movie = nyTimesList.get(position);
                             CustomJSONObjectRequest jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, HOST_NAME + "nyTimes?url=" + movie.getLink(), new JSONObject(), new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
@@ -176,7 +176,7 @@ public class nyTimesFavoriteDetail extends AppCompatActivity implements BottomNa
                                         }
 
                                         head = movie.getHeadline();
-                                        Movie movie = new Movie(head, description, story, url, imageUrl, editor ,date);
+                                        nyTimesMovie movie = new nyTimesMovie(head, description, story, url, imageUrl, editor ,date);
                                         if (checkBookmark(head))
                                             movie.setBookmark(true);
                                         Intent intent = new Intent(nyTimesFavoriteDetail.this, nyTimesDetailActivity.class);

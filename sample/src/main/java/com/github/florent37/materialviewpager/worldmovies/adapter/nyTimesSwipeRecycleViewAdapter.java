@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +27,9 @@ import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRe
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesFavoritePreference;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesDetailActivity;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesFavoritePreference;
 import com.github.florent37.materialviewpager.worldmovies.util.ParserUtils;
 import com.github.florent37.materialviewpager.worldmovies.util.UsersUtils;
 import com.sackcentury.shinebuttonlib.ShineButton;
@@ -43,12 +42,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+
 /**
  * Created by aaron on 2016/6/11.
  */
 public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Activity activity;
-    private List<Movie> movieList;
+    private List<nyTimesMovie> movieList;
     private String[] bgColors;
     private String HOST_NAME = Config.HOST_NAME;
     private final int VIEW_TYPE_ITEM = 0;
@@ -95,7 +96,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
             void clickOnView(View v, int position);
         }
 
-        public void bind(Movie movie, String color) {
+        public void bind(nyTimesMovie movie, String color) {
             shareView.setColorFilter(shareView.getContext().getResources().getColor(R.color.navdrawer_icon_tint));
             headline.setText(String.valueOf(movie.getHeadline()));
             summary.setText(movie.getSummary_short());
@@ -128,7 +129,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
         }
     }
 
-    public nyTimesSwipeRecycleViewAdapter(final Activity activity, List<Movie> movieList) {
+    public nyTimesSwipeRecycleViewAdapter(final Activity activity, List<nyTimesMovie> movieList) {
         this.activity = activity;
         this.movieList = movieList;
         this.bgColors = activity.getApplicationContext().getResources().getStringArray(R.array.movie_serial_bg);
@@ -136,7 +137,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
         User user = UsersUtils.getCurrentUser(activity.getApplicationContext());
         favor = new nyTimesFavoritePreference();
 
-        if (favor.loadFavorites(activity.getApplicationContext()) == null){
+        if (favor.loadFavorites(activity.getApplicationContext()) == null) {
             CustomJSONArrayRequest jsonRequest = new CustomJSONArrayRequest(Config.HOST_NAME + "my_nyTimes/"+user.id, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
@@ -165,7 +166,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
         return movieList.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
-    private void createShareIntent(Movie movie) {
+    private void createShareIntent(nyTimesMovie movie) {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
@@ -174,7 +175,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
         activity.startActivity(Intent.createChooser(shareIntent, "Share Review"));
     }
 
-    public void setupFacebookShareIntent(Movie movie) {
+    public void setupFacebookShareIntent(nyTimesMovie movie) {
         ShareDialog shareDialog;
         FacebookSdk.sdkInitialize(activity);
         shareDialog = new ShareDialog(activity);
@@ -193,7 +194,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         final Context context = viewGroup.getContext();
         if (viewType == VIEW_TYPE_ITEM) {
-            View convertView = LayoutInflater.from(context).inflate(R.layout.list_item_review, viewGroup, false);
+            View convertView = LayoutInflater.from(context).inflate(R.layout.list_item_ny_review, viewGroup, false);
 
             TextView summary = (TextView) convertView.findViewById(R.id.summary);
             TextView headline = (TextView) convertView.findViewById(R.id.headline);
@@ -215,10 +216,10 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof UserViewHolder) {
-            Log.d("0322", "onBindViewHolder: " + position);
+            LOGD("0322", "onBindViewHolder: " + position);
             UserViewHolder myHolder = (UserViewHolder) viewHolder;
             String headline;
-            final Movie movie = movieList.get(position);
+            final nyTimesMovie movie = movieList.get(position);
             final ShineButton bookmarkView = (ShineButton) ((UserViewHolder) viewHolder).bookmarkView.findViewById(R.id.bookmark);
             String color = bgColors[position % bgColors.length];
             ShineButton shareView = (ShineButton) ((UserViewHolder) viewHolder).shareView.findViewById(R.id.share);
@@ -343,7 +344,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
                                 }
 
                                 head = movie.getHeadline();
-                                Movie movie = new Movie(head, description, story, url, imageUrl, editor ,date);
+                                nyTimesMovie movie = new nyTimesMovie(head, description, story, url, imageUrl, editor ,date);
                                 if (checkBookmark(head))
                                     movie.setBookmark(true);
                                 Intent intent = new Intent(activity, nyTimesDetailActivity.class);

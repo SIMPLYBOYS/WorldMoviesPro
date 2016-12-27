@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_miniCard"
+        android:title="MiniCard"
+        android:visible="true"
+        android:orderInCategory="30"
+        app:actionViewClass="android.widget.CheckBox"
+        android:checkable="true"
+        android:drawable="@drawable/ic_check_box"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/menu_refresh"
+        android:title="@string/action_refresh"
+        android:orderInCategory="1"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/menu_smooth_zero"
+        android:title="@string/action_smooth_zero"
+        android:orderInCategory="2"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/menu_smooth_end"
+        android:title="@string/action_smooth_end"
+        android:orderInCategory="3"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/action_search"
+        android:textColor="@color/io15_white"
+        app:showAsAction="always" />
+
+    <item android:id="@+id/action_filter"
+        android:icon="@drawable/ic_action_filter"
+        app:showAsAction="always"
+        android:orderInCategory="2"
+        android:title="@string/description_filter"/>
+</menu>

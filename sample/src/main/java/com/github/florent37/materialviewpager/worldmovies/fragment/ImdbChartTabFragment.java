@@ -104,7 +104,9 @@ public class ImdbChartTabFragment extends Fragment implements Response.ErrorList
                         ratingChart = (LineChartView) mActivity.findViewById(R.id.ratingChart);
                         positionChart = (LineChartView) mActivity.findViewById(R.id.postitionChart);
                         ratingPreview = (PreviewLineChartView) mActivity.findViewById(R.id.rating_preview);
+                        ratingPreview.setNestedScrollingEnabled(false);
                         positionPreView = (PreviewLineChartView) mActivity.findViewById(R.id.position_preview);
+                        positionPreView.setNestedScrollingEnabled(false);
 
                         if (ratingChart == null || positionChart == null || ratingPreview == null || positionPreView == null )
                             return;

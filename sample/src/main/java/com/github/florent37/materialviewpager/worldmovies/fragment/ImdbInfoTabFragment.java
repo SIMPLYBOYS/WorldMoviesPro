@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,7 @@ import com.google.android.youtube.player.YouTubeThumbnailView;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.json.JSONException;
@@ -65,7 +67,7 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
     private String REQUEST_TAG = "ImdbInfoTabFragment";
     private View buttonLayout;
     private Activity mActivity;
-    private TextView plot, metascrore, genre, runtime, country, picNum, year, studio, trailer_title;
+    private TextView plot, genre, runtime, country, picNum, year, studio, trailer_title, imdb_point;
     private String CLIENT_ID;
     private FlatButton moreButton, allButton;
     private CustomTextView description;
@@ -75,6 +77,7 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
     private ExpandableRelativeLayout expandableLayout;
     private ImdbGalleryRecycleViewAdapter imdbGalleryAdapter;
     private LinearLayoutManager linearLayoutManager;
+    private RelativeLayout message_card_rating_layout;
     private List<ImdbObject.GalleryItem> list = null;
     private String type;
     YouTubeThumbnailView youTubeThumbnailView;
@@ -100,7 +103,12 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         View view = inflater.inflate(R.layout.imdb_info_fragment, container, false);
         CLIENT_ID = Config.CLIENT_ID;
         nested_scrollview = (NestedScrollView) view.findViewById(R.id.nested_scrollview);
+        imdb_point = (TextView) view.findViewById(R.id.imdb_point);
         imdbObject = (ImdbObject) getArguments().getSerializable("imdb");
+        JsonElement ratingJson;
+        JsonObject ratingInfo = new JsonParser().parse(imdbObject.getRating()).getAsJsonObject();
+        ratingJson = ratingInfo.getAsJsonObject();
+        ImdbObject.RatingItem ratingItem = gson.fromJson(ratingJson, ImdbObject.RatingItem.class);
         description = (CustomTextView) view.findViewById(R.id.description);
         trailer_title =  (TextView) view.findViewById(R.id.trailer_title);
         plot = (TextView) view.findViewById(R.id.plot);
@@ -109,8 +117,9 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         country = (TextView) view.findViewById(R.id.country);
         studio = (TextView) view.findViewById(R.id.studio);
         runtime = (TextView) view.findViewById(R.id.runtime);
-        metascrore = (TextView) view.findViewById(R.id.metascrore);
+        /*metascrore = (TextView) view.findViewById(R.id.metascrore);*/
         thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
+        message_card_rating_layout = (RelativeLayout) view.findViewById(R.id.message_card_rating_layout);
         allButton = (FlatButton) view.findViewById(R.id.button_all);
         picNum = (TextView) view.findViewById(R.id.picNum);
         description.setText(imdbObject.getPlot());
@@ -119,8 +128,12 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
         if (imdbObject.getPlot() != "")
             plot.setText(imdbObject.getSummery());
 
-        if (!imdbObject.getMetaScore().equals("null"))
-            metascrore.setText("MetaScore: "+imdbObject.getMetaScore());
+        if (ratingItem.getScore() != null)
+            imdb_point.setText(ratingItem.getScore());
+        else {
+            ViewGroup parent = (ViewGroup) message_card_rating_layout.getParent();
+            parent.removeView(message_card_rating_layout);
+        }
 
         runtime.setText("RunTime: "+imdbObject.getRunTime());
         country.setText("Country: "+imdbObject.getCountry().split(",")[0]);

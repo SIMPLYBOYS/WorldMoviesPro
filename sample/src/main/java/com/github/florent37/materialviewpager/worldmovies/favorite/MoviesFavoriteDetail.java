@@ -37,7 +37,7 @@ import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyReque
 import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.TrendsObject;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivity;
 import com.github.florent37.materialviewpager.worldmovies.trends.TrendsDetail;
 import com.github.florent37.materialviewpager.worldmovies.upcoming.upComingActivity;
@@ -63,7 +63,7 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
     private RecyclerView moviesRecyclerView;
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
     private FavoriteMoviesRecycleViewAdapter FavoritemoviesAdapter;
-    private List<Movie> moviesList;
+    private List<nyTimesMovie> moviesList;
     private BottomNavigationBar bottomNavigationBar;
     private int lastSelectedPosition = 0;
     private BadgeItem numberBadgeItem;
@@ -147,7 +147,7 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
                         String link = movieObj.getString("link");
                         int channel = 14;
                         String picUrl = movieObj.getString("picUrl");
-                        Movie movie = new Movie(title, null, null, link, picUrl, null, null);
+                        nyTimesMovie movie = new nyTimesMovie(title, null, null, link, picUrl, null, null);
                         if (movieObj.has("channel"))
                             channel = movieObj.getInt("channel");
                         if (movieObj.has("country"))
@@ -163,7 +163,7 @@ public class MoviesFavoriteDetail extends AppCompatActivity implements BottomNav
                     FavoritemoviesAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            final Movie movie = moviesList.get(position);
+                            final nyTimesMovie movie = moviesList.get(position);
                             String url = UIUtils.getTrendsUrl(movie);
                             LOGD("1115", url);
                             CustomJSONObjectRequest jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {

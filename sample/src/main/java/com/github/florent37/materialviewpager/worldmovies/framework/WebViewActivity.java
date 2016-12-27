@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.github.florent37.materialviewpager.worldmovies.R;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity;
 
 import im.delight.android.webview.AdvancedWebView;
@@ -24,13 +24,13 @@ import im.delight.android.webview.AdvancedWebView;
 public class WebViewActivity extends BaseActivity implements AdvancedWebView.Listener {
     private ProgressBar progressBar;
     private AdvancedWebView mWebView;
-    private Movie movie;
+    private nyTimesMovie movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
-        movie = (Movie) getIntent().getSerializableExtra("movie");
+        movie = (nyTimesMovie) getIntent().getSerializableExtra("movie");
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setIndeterminate(true);
         mWebView = (AdvancedWebView) findViewById(R.id.webview);

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.framework.ImageTrasformation;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -21,12 +21,12 @@ import java.util.List;
  * Created by aaron on 2016/8/16.
  */
 public class nyTimesFavoriteRecycleViewAdapter extends RecyclerView.Adapter<nyTimesFavoriteRecycleViewAdapter.NyTimesItemHolder>  {
-    private List<Movie> mItems;
+    private List<nyTimesMovie> mItems;
     private AdapterView.OnItemClickListener mOnItemClickListener;
     private int mPlaceholderSize = 0; //default value
     private ProgressBar mProgressBar;
 
-    public nyTimesFavoriteRecycleViewAdapter(List<Movie> movieList) {
+    public nyTimesFavoriteRecycleViewAdapter(List<nyTimesMovie> movieList) {
         mItems = movieList;
     }
 
@@ -45,7 +45,11 @@ public class nyTimesFavoriteRecycleViewAdapter extends RecyclerView.Adapter<nyTi
         notifyDataSetChanged();
     }
 
-    public void addItem(int position, Movie Item) {
+    public List <nyTimesMovie> getItem() {
+        return mItems;
+    }
+
+    public void addItem(int position, nyTimesMovie Item) {
         if (position > mItems.size()) return;
         mItems.add(position, Item);
         notifyItemInserted(position);
@@ -71,7 +75,7 @@ public class nyTimesFavoriteRecycleViewAdapter extends RecyclerView.Adapter<nyTi
 
     @Override
     public void onBindViewHolder(NyTimesItemHolder itemHolder, int position) {
-        Movie item = mItems.get(position - mPlaceholderSize);
+        nyTimesMovie item = mItems.get(position - mPlaceholderSize);
         if (item!= null) {
             final String Url = item.getPicUrl();
             if (!Url.isEmpty()) {
@@ -100,7 +104,7 @@ public class nyTimesFavoriteRecycleViewAdapter extends RecyclerView.Adapter<nyTi
             review = (TextView) itemView.findViewById(R.id.review_title);
         }
 
-        public void bind(NyTimesItemHolder itemHolder, Movie item, final ProgressBar mProgressBar) {
+        public void bind(NyTimesItemHolder itemHolder, nyTimesMovie item, final ProgressBar mProgressBar) {
             Picasso.with(pictureView.getContext()).load(item.getPicUrl()).placeholder(R.drawable.placeholder)
                     .transform(ImageTrasformation.getTransformation(itemHolder.pictureView))
                     .into(pictureView, new Callback() {

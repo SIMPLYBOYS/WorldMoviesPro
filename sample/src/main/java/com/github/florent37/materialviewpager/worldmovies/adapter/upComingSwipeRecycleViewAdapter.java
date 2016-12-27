@@ -26,7 +26,7 @@ import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.framework.CustomLightBoxActivity;
 import com.github.florent37.materialviewpager.worldmovies.imdb.MovieDetailActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -196,7 +196,7 @@ public class upComingSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycl
         activity.startActivity(Intent.createChooser(shareIntent, "Share Review"));
     }
 
-    public void setupFacebookShareIntent(Movie movie) {
+    public void setupFacebookShareIntent(nyTimesMovie movie) {
         ShareDialog shareDialog;
         FacebookSdk.sdkInitialize(activity);
         shareDialog = new ShareDialog(activity);

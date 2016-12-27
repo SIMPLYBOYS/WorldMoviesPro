@@ -42,6 +42,7 @@ public class InfoTabFragment extends Fragment {
             case "New Zealand":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.newzealand).into(thumbnailView);
                 break;
+            case "韓國":
             case "한국":
             case "Korea":
             case "South Korea":
@@ -66,6 +67,7 @@ public class InfoTabFragment extends Fragment {
             case "Espagne":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.es).into(thumbnailView);
                 break;
+            case "Türkei":
             case "Turkey":
                 Picasso.with(thumbnailView.getContext()).load(R.drawable.turkey).into(thumbnailView);
                 break;

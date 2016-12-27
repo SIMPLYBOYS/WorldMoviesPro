@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout
+<android.support.v7.widget.CardView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:overScrollMode="always"
@@ -9,7 +9,7 @@
     app:cardUseCompatPadding="true"
     app:cardBackgroundColor="@color/card"
     app:cardCornerRadius="@dimen/card_corner_radius"
-    app:cardMaxElevation="@dimen/cardMaxElevation"
+    app:cardMaxElevation="@dimen/cardMarginHorizontal"
     app:cardPreventCornerOverlap="true"
     app:cardElevation="@dimen/card_elevation">
     <com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout
@@ -21,7 +21,6 @@
         android:overScrollMode="always"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -69,12 +68,10 @@
                     android:scaleType="centerInside"/>
             </com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView>
         </RelativeLayout>
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/nytimes_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"/>
-
     </com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout>
-</FrameLayout>
+</android.support.v7.widget.CardView>

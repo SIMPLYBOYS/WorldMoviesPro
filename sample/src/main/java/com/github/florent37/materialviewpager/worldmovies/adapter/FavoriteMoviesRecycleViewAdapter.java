@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.framework.ImageTrasformation;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -21,12 +21,12 @@ import java.util.List;
  * Created by aaron on 2016/9/3.
  */
 public class FavoriteMoviesRecycleViewAdapter extends RecyclerView.Adapter<FavoriteMoviesRecycleViewAdapter.TrendsItemHolder> {
-    private List<Movie> mItems;
+    private List<nyTimesMovie> mItems;
     private AdapterView.OnItemClickListener mOnItemClickListener;
     private int mPlaceholderSize = 0; //default value
     private ProgressBar mProgressBar;
 
-    public FavoriteMoviesRecycleViewAdapter(List<Movie> movieList) {
+    public FavoriteMoviesRecycleViewAdapter(List<nyTimesMovie> movieList) {
         mItems = movieList;
     }
 
@@ -45,7 +45,7 @@ public class FavoriteMoviesRecycleViewAdapter extends RecyclerView.Adapter<Favor
         notifyDataSetChanged();
     }
 
-    public void addItem(int position, Movie Item) {
+    public void addItem(int position, nyTimesMovie Item) {
         if (position > mItems.size()) return;
         mItems.add(position, Item);
         notifyItemInserted(position);
@@ -71,7 +71,7 @@ public class FavoriteMoviesRecycleViewAdapter extends RecyclerView.Adapter<Favor
 
     @Override
     public void onBindViewHolder(TrendsItemHolder itemHolder, int position) {
-        Movie item = mItems.get(position - mPlaceholderSize);
+        nyTimesMovie item = mItems.get(position - mPlaceholderSize);
         if (item!= null) {
             final String Url = item.getPicUrl();
             if (!Url.isEmpty()) {
@@ -101,7 +101,7 @@ public class FavoriteMoviesRecycleViewAdapter extends RecyclerView.Adapter<Favor
             titleView = (TextView) itemView.findViewById(R.id.movie_title);
         }
 
-        public void bind(TrendsItemHolder itemHolder, Movie item, final ProgressBar mProgressBar) {
+        public void bind(TrendsItemHolder itemHolder, nyTimesMovie item, final ProgressBar mProgressBar) {
 
             Picasso.with(pictureView.getContext()).load(item.getPicUrl()).placeholder(R.drawable.placeholder)
                     .transform(ImageTrasformation.getTransformation(itemHolder.pictureView))

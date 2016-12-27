@@ -3,13 +3,14 @@ package com.github.florent37.materialviewpager.worldmovies.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.florent37.materialviewpager.worldmovies.R;
+import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
 import com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView;
 import com.squareup.picasso.Picasso;
 
@@ -22,12 +23,15 @@ public class ImageCursorAdapter extends SimpleCursorAdapter {
     private Cursor cusor;
     private Context context;
     private String type;
+    private LinearLayout search_row;
+    private String searchCountry;
 
     public ImageCursorAdapter(Context context, int layout, Cursor cusor, String[] from, int[] to, String type) {
         super(context, layout, cusor, from, to);
         this.cusor = cusor;
         this.context = context;
         this.type = type;
+        this.searchCountry = CredentialsHandler.getCountry(context);
     }
 
     @Override
@@ -37,15 +41,16 @@ public class ImageCursorAdapter extends SimpleCursorAdapter {
         String titleStr = "";
         String posterUrl = "";
         int titleCol, descriptionCol, posterCol;
+        ImageView iv = (ImageView) v.findViewById(R.id.pic);
 
         if (v == null) {
-            Log.d("0906", "view is null");
+            LOGD("0906", "view is null");
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.search_row, null);
         }
 
         if (cursor != null) {
-            Log.d("0906", "view is not null");
+            LOGD("0906", "view is not null");
             titleCol = cursor.getColumnIndex("filmName");
             descriptionCol = cursor.getColumnIndex("filmDescription");
             posterCol = cursor.getColumnIndex("filmPoster");
@@ -54,19 +59,22 @@ public class ImageCursorAdapter extends SimpleCursorAdapter {
             posterUrl = cursor.getString(posterCol);
         }
 
-        ImageView iv = (ImageView) v.findViewById(R.id.pic);
-        Picasso.with(iv.getContext())
-                .load(posterUrl)
-                .placeholder(R.drawable.placeholder)
-                .centerCrop()
-                .fit()
-                .into(iv);
+        if (!searchCountry.equals("16")) {
+            Picasso.with(iv.getContext())
+                    .load(posterUrl)
+                    .placeholder(R.drawable.placeholder)
+                    .centerCrop()
+                    .fit()
+                    .into(iv);
+        } else { //in case of Ptt
+            search_row = (LinearLayout) v.findViewById(R.id.search_row);
+            search_row.removeView(iv);
+        }
+
         CustomTextView title = (CustomTextView) v.findViewById(R.id.title);
         title.setText(titleStr);
         TextView description = (TextView) v.findViewById(R.id.description);
         description.setText(descriptionStr);
-
-        LOGD("1113", type);
 
         if (type == "genre") {
             v.setBackgroundColor(context.getResources().getColor(R.color.material_blue_300));

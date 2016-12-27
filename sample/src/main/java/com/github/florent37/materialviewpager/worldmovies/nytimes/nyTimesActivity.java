@@ -1,7 +1,6 @@
 package com.github.florent37.materialviewpager.worldmovies.nytimes;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -18,7 +17,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -55,16 +53,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
 
 /**
  * Created by aaron on 2016/6/10.
  */
-public class nyTimesActivity extends BaseActivity implements Response.ErrorListener,
-        BottomNavigationBar.OnTabSelectedListener {
+public class nyTimesActivity extends BaseActivity implements Response.ErrorListener, BottomNavigationBar.OnTabSelectedListener {
     private Toolbar toolbar;
     private int mViewPagerScrollState = ViewPager.SCROLL_STATE_IDLE;
-    private List<Movie> movieList;
+    private List<nyTimesMovie> movieList;
     private RecyclerView rvMovies;
     public static final String FILM_NAME = "filmName";
     private RequestQueue mQueue;
@@ -160,16 +158,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
     public void onBackPressed() {
         if (!searchView.isIconified()) {
             searchView.setIconified(true);
@@ -228,7 +216,7 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     protected  void onDestroy() {
         super.onDestroy();
         if (isFinishing()) {
-            Log.d("0612", "onDestroy");
+            LOGD("0612", "onDestroy");
         }
     }
 
@@ -339,7 +327,7 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
 
                         link = movieObj.getJSONObject("link");
                         String linkUrl = link.getString("url");
-                        Movie m = new Movie(head, date, summery, linkUrl, picUrl, null, null);
+                        nyTimesMovie m = new nyTimesMovie(head, date, summery, linkUrl, picUrl, null, null);
                         if (checkBookmark(head))
                             m.setBookmark(true);
                         curSize = rAdapter.getItemCount();
@@ -388,11 +376,6 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
     };
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void requestDataRefresh(String Query) {
         final CustomJSONObjectRequest jsonRequest = null;
 
@@ -433,7 +416,7 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                         }
                         link = movieObj.getJSONObject("link");
                         final String linkUrl = link.getString("url");
-                        final Movie movie = new Movie(head, date, summery, linkUrl, picUrl, null, null);
+                        final nyTimesMovie movie = new nyTimesMovie(head, date, summery, linkUrl, picUrl, null, null);
 
                         /*Intent intent = new Intent(nyTimesActivity.this, ContentWebViewActivity.class);
                         intent.putExtra("movie", movie);
@@ -460,7 +443,7 @@ public class nyTimesActivity extends BaseActivity implements Response.ErrorListe
                                     }
 
                                     head = movie.getHeadline();
-                                    Movie foo = new Movie(head, description, story, linkUrl, imageUrl, editor, date);
+                                    nyTimesMovie foo = new nyTimesMovie(head, description, story, linkUrl, imageUrl, editor, date);
                                     if (checkBookmark(head))
                                         foo.setBookmark(true);
                                     Intent intent = new Intent(getApplicationContext(), nyTimesDetailActivity.class);

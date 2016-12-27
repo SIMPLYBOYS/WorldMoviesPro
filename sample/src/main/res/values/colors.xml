@@ -196,4 +196,6 @@
     <color name="page_indicator_dark_selected">#ff333333</color>
     <color name="selected_comment_background">#ffffffff</color>
     <color name="error">#ffdd2c00</color>
+    <color name="tagLight">#b1c914</color>
+    <color name="tagDark">#206fa1</color>
 </resources>

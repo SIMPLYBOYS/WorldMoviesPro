@@ -262,6 +262,17 @@ package="com.github.florent37.materialviewpager.worldmovies">
     </activity>
 
     <activity
+        android:name="com.github.florent37.materialviewpager.worldmovies.ptt.pttActivity"
+        android:label="Ptt Movie Board"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.ActionBar.Transparent"
+        android:exported="false">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.github.florent37.materialviewpager.worldmovies.MainActivity" />
+    </activity>
+
+    <activity
         android:name="com.github.florent37.materialviewpager.worldmovies.welcome.WelcomeActivity"
         android:theme="@style/Theme.IOSched.Welcome"
         android:exported="false" />

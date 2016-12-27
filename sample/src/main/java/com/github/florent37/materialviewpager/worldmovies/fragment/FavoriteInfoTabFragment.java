@@ -31,7 +31,7 @@ import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectR
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.model.TrendsObject;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesDetailActivity;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesFavoritePreference;
 import com.github.florent37.materialviewpager.worldmovies.trends.TrendsDetail;
@@ -56,27 +56,23 @@ import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.ch
 public class FavoriteInfoTabFragment extends InfoTabFragment {
 
     private RequestQueue mQueue;
-    private List<Movie> nyTimesList, trendsList, facebookList;
+    private List<nyTimesMovie> nyTimesList, trendsList;
     private ImageView nyTimesPicNumView, trendsPicNumView;
-//    private ImageView facebookPicNumView;
     private User user;
     private RecyclerView nytimesRecyclerview, moviesRecyclerview;
-//    private RecyclerView facebookRecyclerview;
     private FlatButton nyTimesAllButton, trendsAllButton;
-//    private FlatButton facebookAllButton;
     private nyTimesFavoriteRecycleViewAdapter nyTimesFavoriteAdapter;
     private FavoriteMoviesRecycleViewAdapter moviesFavoriteAdapter;
-//    private FacebookFavoriteRecycleViewAdapter facebookFavoriteRecycleViewAdapter;
     private LinearLayoutManager nylinearLayoutManager, trlinearLayoutManager;
-//    private LinearLayoutManager fbLayoutManager;
     private nyTimesFavoritePreference nytimesFavor;
     private MoviesFavoritePreference moviesFavor;
-    private TextView nytimes_picNum, trends_picNum, facebook_picNum;
+    private TextView nytimes_picNum, trends_picNum;
 
     public static FavoriteInfoTabFragment newInstance(User user) {
         FavoriteInfoTabFragment fragment = new FavoriteInfoTabFragment();
         Bundle args = new Bundle();
         args.putSerializable("user", user);
+        args.putInt("index", 0);
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,7 +89,6 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         View view = inflater.inflate(R.layout.favorite_info_fragment, container, false);
         nyTimesList = new ArrayList<>();
         trendsList = new ArrayList<>();
-        facebookList = new ArrayList<>();
         mQueue = CustomVolleyRequestQueue.getInstance(getActivity()).getRequestQueue();
         nylinearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         trlinearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -170,7 +165,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         nyTimesFavoriteAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Movie movie = nyTimesList.get(position);
+                final nyTimesMovie movie = nyTimesList.get(position);
                 CustomJSONObjectRequest jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, Config.HOST_NAME + "nyTimes?url=" + movie.getLink(), new JSONObject(), new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -193,7 +188,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                             }
 
                             head = movie.getHeadline();
-                            Movie movie = new Movie(head, description, story, url, imageUrl, editor ,date);
+                            nyTimesMovie movie = new nyTimesMovie(head, description, story, url, imageUrl, editor ,date);
                             if (checkNytimesBookmark(head))
                                 movie.setBookmark(true);
                             Intent intent = new Intent(getActivity(), nyTimesDetailActivity.class);
@@ -217,7 +212,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         moviesFavoriteAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Movie movie = trendsList.get(position);
+                final nyTimesMovie movie = trendsList.get(position);
                 String url = UIUtils.getTrendsUrl(movie);
                 Log.d("1115", url);
 
@@ -251,7 +246,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         /*facebookFavoriteRecycleViewAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Movie movie = facebookList.get(position);
+                final nyTimesMovie movie = facebookList.get(position);
                 Context context = view.getContext();
                 Intent intent = new Intent(context, ContentWebViewActivity.class);
                 intent.putExtra("url", movie.getLink());
@@ -278,11 +273,11 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                         JSONObject movieObj = contents.getJSONObject(i);
                         String head = movieObj.getJSONObject("data").getJSONObject("movie").getString("title");
                         String link = movieObj.getJSONObject("data").getJSONObject("movie").getString("url");
-                        Movie movie = new Movie(head, null, null, link, null, null, null);
-                        facebookList.add(facebookList.size(), movie);
+                        nyTimesMovie movie = new nyTimesMovie(head, null, null, link, null, null, null);
+//                        facebookList.add(facebookList.size(), movie);
                     }
-                    facebook_picNum = (TextView) getView().findViewById(R.id.facebook_picNum);
-                    facebook_picNum.setText(" " + facebookList.size());
+//                    facebook_picNum = (TextView) getView().findViewById(R.id.facebook_picNum);
+//                    facebook_picNum.setText(" " + facebookList.size());
 //                    fbLayoutManager.scrollToPositionWithOffset(1,650);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -324,7 +319,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                         nytimesFavor.addFavorite(getActivity(),head);
                         String link = movieObj.getString("link");
                         String picUrl = movieObj.getString("picUrl");
-                        Movie movie = new Movie(head, null, null, link, picUrl, null, null);
+                        nyTimesMovie movie = new nyTimesMovie(head, null, null, link, picUrl, null, null);
                         nyTimesList.add(nyTimesList.size(), movie);
                     }
 
@@ -360,7 +355,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                         int channel = 14;
                         moviesFavor.addFavorite(getActivity(), title);
                         String picUrl = movieObj.getString("picUrl");
-                        Movie movie = new Movie(title, null, null, link, picUrl, null, null);
+                        nyTimesMovie movie = new nyTimesMovie(title, null, null, link, picUrl, null, null);
                         if (movieObj.has("channel"))
                             channel = movieObj.getInt("channel");
                         if (movieObj.has("country"))

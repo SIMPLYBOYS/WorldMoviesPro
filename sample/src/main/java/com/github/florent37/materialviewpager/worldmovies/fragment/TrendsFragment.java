@@ -9,7 +9,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +21,8 @@ import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.TrendsCardRecycleViewAdapter;
 import com.github.florent37.materialviewpager.worldmovies.model.TrendsObject;
-import com.github.florent37.materialviewpager.worldmovies.trends.TrendsDetail;
 import com.github.florent37.materialviewpager.worldmovies.trends.MoviesFavoritePreference;
+import com.github.florent37.materialviewpager.worldmovies.trends.TrendsDetail;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,9 +54,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     private static final String TAG_CAST = "cast";
     private static final String TAG_REVIEW = "review";
     private static final String TAG_RATING = "rating";
-    private static final String TAG_RUNTIME = "runtime";
-    private static final String TAG_METASCORE = "metascore";
-    private static final String TAG_SLATE = "slate";
     private static final String TAG_COUNTRY = "country";
     private static final String TAG_TRAILER = "trailerUrl";
     private static final String TAG_STAFF = "staff";
@@ -86,7 +82,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     public static TrendsFragment newInstance(int position) {
         TrendsFragment fragment = new TrendsFragment();
         Bundle args = new Bundle();
-        Log.d("0830", String.valueOf(position));
+        LOGD("0830", String.valueOf(position));
         args.putInt("index", position);
         fragment.setArguments(args);
         return fragment;
@@ -158,9 +154,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(),
-                "Clicked: " + position + ", index " + mRecyclerView.indexOfChild(view),
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Clicked: " + position + ", index " + mRecyclerView.indexOfChild(view), Toast.LENGTH_SHORT).show();
         TrendsObject tObject = trendsCardAdapter.getItem().get(position - 1);
         LOGD("0713", String.valueOf(tObject.getTitle()));
         Intent intent = new Intent(getActivity(), TrendsDetail.class);
@@ -173,7 +167,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             JSONObject c = contents.getJSONObject(i);
             String title;
 
-            if (channel != 5)
+            if (channel != 6)
                 title= c.getString(TAG_TITLE);
             else
                 title = c.getString(TAG_ORIGIN_TITLE);
@@ -278,7 +272,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     public void onStart() {
         super.onStart();
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_refresh_layout);
-        if (isVisible() && channel > 1)
+        if (isVisible() && channel > 0)
             requestDataRefresh(false, null, null);
     }
 
@@ -325,7 +319,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
                 int topRowVerticalPosition =
                         (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
                 mSwipeRefreshLayout.setEnabled(topRowVerticalPosition >= 0);
-                Log.d("0409", "count: " + linearLayoutManager.getItemCount() + " last: " + linearLayoutManager.findLastVisibleItemPosition()
+                LOGD("0409", "count: " + linearLayoutManager.getItemCount() + " last: " + linearLayoutManager.findLastVisibleItemPosition()
                         + "loading: " + loading);
 
                 totalItemCount = linearLayoutManager.getItemCount();
@@ -335,9 +329,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
                 if (!loading
                         && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
                     // Screen End has been reached
-                    Log.d("0409", "case1");
                     if (onLoadMoreListener != null) {
-                        Log.d("0409", "case2");
                         onLoadMoreListener.onLoadMore();
                     }
                     loading = true;
@@ -353,7 +345,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     }
 
     public void arrangeModel() {
-        Log.d("0416", "arrangetrendsModel");
+        LOGD("0416", "arrangetrendsModel");
         if (getContext() == null)
             return;
         SharedPreferences settings = getContext().getSharedPreferences("settings", 0);
@@ -366,14 +358,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             Collections.sort(trendsContentItems, AscendingComparator);
 
         return;
-    }
-
-    public void clearModel() {
-        List<TrendsObject> trendsContentItems = trendsCardAdapter.getItem();
-
-        for (int i=trendsContentItems.size(); i >= 0; i--) {
-            trendsCardAdapter.removeItem(i);
-        }
     }
 
     private Comparator AscendingComparator = new Comparator<TrendsObject>() {
@@ -405,7 +389,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     private TrendsCardRecycleViewAdapter.OnLoadMoreListener onLoadMoreListener = new TrendsCardRecycleViewAdapter.OnLoadMoreListener() {
         @Override
         public void onLoadMore() {
-            Log.d("0409", "loading more!");
+            LOGD("0409", "loading more!");
             SharedPreferences settings = getContext().getSharedPreferences("settings", 0);
             boolean ascending = settings.getBoolean("ascending", false);
             if (ascending && trendsCardAdapter.getItemCount() < trendMovieCount && channel == 0) {

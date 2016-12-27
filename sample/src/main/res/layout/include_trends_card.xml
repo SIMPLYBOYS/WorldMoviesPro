@@ -3,10 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
     <include layout="@layout/trailer_thumbnail"/>
     <include layout="@layout/detail_trends_summery"/>
     <include layout="@layout/detail_trends_genre"/>
     <include layout="@layout/detail_gallery"/>
-
 </LinearLayout>

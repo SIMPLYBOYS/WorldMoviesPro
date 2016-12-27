@@ -74,7 +74,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
     private MenuItem searchItem, shareItem, bookmarkItem;
     private SimpleCursorAdapter mAdapter;
     private SearchView searchView = null;
-    private Movie movie;
+    private nyTimesMovie movie;
     private TextView description, headLine, story, editor, publish;
     private ImageView pictureView;
     private String HOST_NAME = Config.HOST_NAME;
@@ -96,7 +96,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         setContentView(R.layout.activity_nytims_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(toolbar);
-        movie = (Movie) getIntent().getSerializableExtra("movie");
+        movie = (nyTimesMovie) getIntent().getSerializableExtra("movie");
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setIndeterminate(true);
         progressBar.setVisibility(View.VISIBLE);
@@ -504,7 +504,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
                                     }
 
                                     head = movie.getHeadline();
-                                    Movie foo = new Movie(head, description, story, "", imageUrl, editor, publish);
+                                    nyTimesMovie foo = new nyTimesMovie(head, description, story, "", imageUrl, editor, publish);
                                     if (checkBookmark(head))
                                         foo.setBookmark(true);
                                     Intent intent = new Intent(getApplicationContext(), nyTimesDetailActivity.class);

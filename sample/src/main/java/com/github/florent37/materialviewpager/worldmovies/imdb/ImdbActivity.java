@@ -2,7 +2,6 @@ package com.github.florent37.materialviewpager.worldmovies.imdb;
 
 import android.app.ActivityOptions;
 import android.app.LoaderManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -24,7 +23,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +43,7 @@ import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.ImdbSwipeRecycleViewAdapter;
+import com.github.florent37.materialviewpager.worldmovies.adapter.TagAdapter;
 import com.github.florent37.materialviewpager.worldmovies.favorite.MoviesFavoritePreference;
 import com.github.florent37.materialviewpager.worldmovies.fragment.MovieRecycleFragment;
 import com.github.florent37.materialviewpager.worldmovies.fragment.RecyclerViewFragment;
@@ -57,9 +56,7 @@ import com.github.florent37.materialviewpager.worldmovies.model.TagMetadata;
 import com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity;
 import com.github.florent37.materialviewpager.worldmovies.ui.SearchActivity;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionView;
-import com.github.florent37.materialviewpager.worldmovies.ui.widget.CollectionViewCallbacks;
 import com.github.florent37.materialviewpager.worldmovies.ui.widget.MultiSwipeRefreshLayout;
-import com.github.florent37.materialviewpager.worldmovies.util.UIUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,7 +72,6 @@ import java.util.Set;
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
 import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.checkMoviesBookmark;
-import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.drawCountryFlag;
 
 /**
  * Created by aaron on 2016/3/21.
@@ -93,11 +89,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     private LinearLayoutManager linearLayoutManager;
     private DrawerLayout mDrawerLayout;
     private CollectionView mDrawerCollectionView;
-    private final int TAG_METADATA_TOKEN = 0x8;
-    private final int PAGE_UNIT = 6; //default 6 cards in one page
-    private final int GROUP_TOPIC_TYPE_OR_THEME = 0;
-    private final int GROUP_LIVE_STREAM = 1;
-    private final int GROUP_COUNTRY = 2;
     private MoviesFavoritePreference moviesFavor;
 //    private SwipeListAdapter adapter;
     private boolean mActionBarShown = true;
@@ -107,6 +98,11 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     // SwipeRefreshLayout allows the user to swipe the screen down to trigger a manual refresh
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private Set<MovieRecycleFragment> mMovieRecycleFragments = new HashSet<MovieRecycleFragment>();
+    private final int TAG_METADATA_TOKEN = 0x8;
+    private final int PAGE_UNIT = 6; //default 6 cards in one page
+    private final int GROUP_TOPIC_TYPE_OR_THEME = 0;
+    private final int GROUP_LIVE_STREAM = 1;
+    private final int GROUP_COUNTRY = 2;
     // JSON Node names
     private final String TAG_TITLE = "title";
     private final String TAG_YEAR = "year";
@@ -131,6 +127,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     private final String TAG_GALLERY_FULL = "gallery_full";
     private final String TAG_DELTA = "delta";
     public final String REQUEST_TAG = "imdb250Request";
+    public static final String FILM_NAME = "filmName";
     private TagMetadata mTagMetadata;
     private TagFilterHolder mTagFilterHolder;
     private int lastSelectedPosition = 2;
@@ -138,7 +135,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     private BadgeItem numberBadgeItem;
     private static final String TAG = makeLogTag(ImdbActivity.class);
     private int curSize = 0;
-    public static final String FILM_NAME = "filmName";
     private String searchChannel = "14";
     private Menu activityMenu;
     private TagAdapter tagAdapter;
@@ -173,12 +169,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                     }
 
                     mDrawerLayout.closeDrawer(GravityCompat.END);
-
-                    //------------------//
-                    tagAdapter = new TagAdapter();
-                    mDrawerCollectionView.setCollectionAdapter(tagAdapter);
-                    mDrawerCollectionView.updateInventory(tagAdapter.getInventory());
-                    //------------------//
                 }
             };
 
@@ -348,23 +338,12 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
         if (mTagFilterHolder == null) {
             // Use the Intent Extras to set up the TagFilterHolder
             mTagFilterHolder = new TagFilterHolder();
-
             String tag = getIntent().getStringExtra(EXTRA_FILTER_TAG); //TODO get tag from preference
             TagMetadata.Tag userTag = mTagMetadata.getTag(tag);
             String userTagCategory = userTag == null ? null : userTag.getCategory();
 
             if (tag != null && userTagCategory != null) {
                 mTagFilterHolder.add(tag, userTagCategory);
-            }
-
-            List<TagMetadata.Tag> tags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_TYPE);
-            // Here we only add all 'types' if the user has not explicitly selected
-            // one of the category_type tags.
-            if (tags != null && !TextUtils.equals(userTagCategory, Config.Tags.CATEGORY_TYPE)) {
-                for (TagMetadata.Tag theTag : tags) {
-                    LOGD("1019", theTag.getName());
-                    mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
-                }
             }
 
             List<TagMetadata.Tag> countryTags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
@@ -375,109 +354,22 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                         mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
                 }
             }
+
+            List<TagMetadata.Tag> tags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_THEME);
+            // Here we only add all 'types' if the user has not explicitly selected
+            // one of the category_type tags.
+            if (tags != null && !TextUtils.equals(userTagCategory, Config.Tags.CATEGORY_THEME)) {
+                for (TagMetadata.Tag theTag : tags) {
+                    if (theTag.getId().equals("All")) {
+                        mTagFilterHolder.add(theTag.getId(), theTag.getCategory());
+                    }
+                }
+            }
         }
 
-        tagAdapter = new TagAdapter();
+        tagAdapter = new TagAdapter(mTagMetadata, mDrawerItemCheckBoxClickListener, mTagFilterHolder);
         mDrawerCollectionView.setCollectionAdapter(tagAdapter);
         mDrawerCollectionView.updateInventory(tagAdapter.getInventory());
-    }
-
-    private class TagAdapter implements CollectionViewCallbacks {
-
-        public CollectionView.Inventory getInventory() {
-            List<TagMetadata.Tag> genres = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_TOPIC);
-            CollectionView.Inventory inventory = new CollectionView.Inventory();
-
-            /*CollectionView.InventoryGroup themeGroup = new CollectionView.InventoryGroup(GROUP_TOPIC_TYPE_OR_THEME)
-                    .setDisplayCols(1)
-                    .setDataIndexStart(0)
-                    .setShowHeader(false);
-
-            if (genres != null && genres.size() > 0) {
-                for (TagMetadata.Tag country : genres) {
-                    themeGroup.addItemWithTag(country);
-                }
-                inventory.addGroup(themeGroup);
-            }
-
-            // We need to add the Live streamed section after the Type category
-            CollectionView.InventoryGroup liveStreamGroup = new CollectionView.InventoryGroup(GROUP_LIVE_STREAM)
-                    .setDataIndexStart(0)
-                    .setShowHeader(true)
-                    .addItemWithTag("Livestreamed");
-
-            inventory.addGroup(liveStreamGroup);*/
-
-            CollectionView.InventoryGroup countryGroup = new CollectionView.InventoryGroup(GROUP_COUNTRY)
-                    .setDataIndexStart(0)
-                    .setShowHeader(false);
-
-            List<TagMetadata.Tag> countries = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
-
-            if (countries != null && countries.size() > 0) {
-                for (TagMetadata.Tag country : countries) {
-                    LOGD("1018", String.valueOf(country));
-                    countryGroup.addItemWithTag(country);
-                }
-                inventory.addGroup(countryGroup);
-            }
-
-            return inventory;
-        }
-
-        @Override
-        public View newCollectionHeaderView(Context context, int groupId, ViewGroup parent) {
-            View view = LayoutInflater.from(context)
-                    .inflate(R.layout.explore_sessions_list_item_alt_header, parent, false);
-            // We do not want the divider/header to be read out by TalkBack, so
-            // inform the view that this is not important for accessibility.
-            UIUtils.setAccessibilityIgnore(view);
-            return view;
-        }
-
-        @Override
-        public void bindCollectionHeaderView(Context context, View view, int groupId,
-                                             String headerLabel, Object headerTag) {
-        }
-
-        @Override
-        public View newCollectionItemView(Context context, int groupId, ViewGroup parent) {
-            return LayoutInflater.from(context).inflate(groupId == GROUP_LIVE_STREAM ?
-                    R.layout.explore_sessions_list_item_livestream1_alt_drawer :
-                    R.layout.explore_sessions_list_item_alt_drawer, parent, false);
-        }
-
-        @Override
-        public void bindCollectionItemView(Context context, View view, int groupId,
-                                           int indexInGroup, int dataIndex, Object tag) {
-            final CheckBox checkBox = (CheckBox) view.findViewById(R.id.filter_checkbox);
-            if (groupId == GROUP_LIVE_STREAM) {
-                //Do nothing
-            } else {
-                TagMetadata.Tag theTag = (TagMetadata.Tag) tag;
-                if (theTag != null && groupId == GROUP_TOPIC_TYPE_OR_THEME) {
-                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
-                    // set the original checked state by looking up our tags.
-                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
-                    checkBox.setTag(theTag);
-                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
-                    //TODO poster by Genre api
-                } else if (theTag != null && groupId == GROUP_COUNTRY) {
-                    ((TextView) view.findViewById(R.id.text_view)).setText(theTag.getName());
-                    drawCountryFlag(view, theTag.getOrderInCategory());
-                    // set the original checked state by looking up our tags.
-                    checkBox.setChecked(mTagFilterHolder.contains(theTag.getId()));
-                    checkBox.setTag(theTag);
-                    checkBox.setOnClickListener(mDrawerItemCheckBoxClickListener);
-                }
-            }
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    checkBox.performClick();
-                }
-            });
-        }
     }
 
     @Override

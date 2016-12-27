@@ -49,9 +49,53 @@
                 android:textAppearance="@style/TextAppearance.SessionTitle"
                 android:text="Movie Info"
                 android:textColor="@color/material_blue_A100"
-                app:font="Roboto-Black.ttf"/>
+                app:font="Roboto-Black.ttf"
+                android:id="@+id/view4" />
 
         </RelativeLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/message_card_rating_layout"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="vertical">
+
+            <com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView
+                android:layout_width="60dp"
+                android:layout_height="0dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="1dp"
+                app:aspectRatio="@dimen/aspect_16_9"
+                android:id="@+id/view5">
+                <ImageView
+                    android:id="@+id/imdb"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/imdb" />
+
+            </com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView>
+
+            <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
+                android:id="@+id/imdb_point"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:textSize="12dp"
+                app:font="Roboto-Light.ttf"
+                android:layout_marginStart="17dp"
+                android:layout_below="@+id/view5"
+                android:layout_alignParentStart="true" />
+
+        </RelativeLayout>
+
+        <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
+            android:id="@+id/director"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:font="Roboto-Light.ttf"/>
 
         <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
             android:id="@+id/genre"
@@ -63,7 +107,15 @@
             android:id="@+id/runtime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="123"
             app:font="Roboto-Light.ttf"/>
+
+        <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
+            android:id="@+id/year"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:font="Roboto-Light.ttf"/>
+
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/message_card_root_layout"
             android:layout_width="match_parent"
@@ -91,20 +143,8 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/usa" />
             </com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView>
+
         </RelativeLayout>
-
-        <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
-            android:id="@+id/year"
-            android:text="1999"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:font="Roboto-Light.ttf"/>
-
-        <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
-            android:id="@+id/metascrore"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:font="Roboto-Light.ttf"/>
 
     </com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout>
 

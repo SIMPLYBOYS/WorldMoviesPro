@@ -431,6 +431,14 @@
             "order_in_category": 15,
             "original_id": "11c191e1-2cbe-e411-b87f-00115d5066d7",
             "tag": "UK"
+        },
+        {
+            "abstract": "",
+            "category": "COUNTRY",
+            "name": "PTT",
+            "order_in_category": 16,
+            "original_id": "11c191e1-2cbe-e411-b87f-00115d5066d7",
+            "tag": "PTT"
         }
 
     ],

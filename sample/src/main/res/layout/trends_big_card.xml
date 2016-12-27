@@ -10,7 +10,7 @@
     app:cardUseCompatPadding="true"
     app:cardBackgroundColor="@color/card"
     app:cardCornerRadius="@dimen/card_corner_radius"
-    app:cardMaxElevation="@dimen/cardMaxElevation"
+    app:cardMaxElevation="@dimen/cardMarginVertical"
     app:cardPreventCornerOverlap="true"
     app:cardElevation="@dimen/card_elevation">
 

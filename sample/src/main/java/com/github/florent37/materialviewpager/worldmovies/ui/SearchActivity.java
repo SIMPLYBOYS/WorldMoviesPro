@@ -59,6 +59,7 @@ import com.android.volley.VolleyError;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.adapter.ImageCursorAdapter;
+import com.github.florent37.materialviewpager.worldmovies.framework.ContentWebViewActivity;
 import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
 import com.github.florent37.materialviewpager.worldmovies.genre.GenreDetailActivity;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRequest;
@@ -114,8 +115,7 @@ public class SearchActivity extends BaseActivity implements
         mSearchResults = (ListView) findViewById(R.id.search_results);
         mProgressBar = (ProgressBar) findViewById(android.R.id.progress);
         cursorAdapter = new ImageCursorAdapter(this, R.layout.search_row, null, from, to, "main");
-        mResultsAdapter = new SimpleCursorAdapter(this,
-                R.layout.list_item_search_result, null,
+        mResultsAdapter = new SimpleCursorAdapter(this, R.layout.list_item_search_result, null,
                 new String[]{ScheduleContract.SearchTopicSessionsColumns.TAG_OR_SESSION_ID},
                 new int[]{R.id.search_result}, 0);
         mSearchResults.setAdapter(mResultsAdapter);
@@ -164,7 +164,7 @@ public class SearchActivity extends BaseActivity implements
         try {
             closeButton.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.VISIBLE);
-            url = Config.HOST_NAME + "search/"+ searchChannel+"/" + URLEncoder.encode(query, "UTF-8"); //TODO muti-channel support
+            url = Config.HOST_NAME + "search/"+ searchChannel+"/" + URLEncoder.encode(query, "UTF-8");
         }  catch (UnsupportedEncodingException e) {
             throw new AssertionError("UTF-8 is unknown");
         }
@@ -174,12 +174,13 @@ public class SearchActivity extends BaseActivity implements
             public void onResponse(JSONArray response) {
                 JSONArray contents = ((JSONArray) response);
                 MOVIES = getJsonObjectArray(contents);
-                String posterUrl;
+                String posterUrl, description;
                 try {
                     for (int i = 0; i < MOVIES.length; i++) {
                         JSONObject obj = MOVIES[i].getJSONObject("_source");
-                        posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
-                        cursor.addRow(new Object[]{i, obj.getString("title"), obj.getString("description"), posterUrl});
+                        posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://img.eiga.k-img.com/images/person/noimg/400.png?1423551130";
+                        description = obj.has("description") ? obj.getString("description") : obj.getString("date");
+                        cursor.addRow(new Object[]{i, obj.getString("title"), description, posterUrl});
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -230,8 +231,8 @@ public class SearchActivity extends BaseActivity implements
         // Set the query hint.
         mSearchView.setQueryHint(getString(R.string.search_hint));
         mSearchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-        mSearchView.setImeOptions(mSearchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH |
-                EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
+        mSearchView.setImeOptions(mSearchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH | EditorInfo.IME_FLAG_NO_EXTRACT_UI |
+                EditorInfo.IME_FLAG_NO_FULLSCREEN);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -454,18 +455,30 @@ public class SearchActivity extends BaseActivity implements
 
         if (cursorAdapter.getCursor() == null) {
             String tagOrSessionId = cursor.getString(SearchTopicsSessionsQuery.TAG_OR_SESSION_ID);
-            String searchYear = CredentialsHandler.getCountry(this);
-            LOGD("1103", "onItemClik " + tagOrSessionId);
+            String searchYear = CredentialsHandler.getSearchYear(this);
+            LOGD("1207", "onItemClik " + searchYear);
             Intent intent = new Intent(SearchActivity.this, GenreDetailActivity.class);
             intent.putExtra("genreType", tagOrSessionId);
             intent.putExtra("lastSelectedPosition", lastSelectedPosition);
             intent.putExtra("searchYear", searchYear);
             ActivityCompat.startActivity(SearchActivity.this, intent, null);
         } else {
-            Cursor imageCusor = cursorAdapter.getCursor();
-            int titleCol = imageCusor.getColumnIndex("filmName");
-            LOGD("1103", "title "+ imageCusor.getString(titleCol)+"\n"+lauchBy);
-            requestDataRefresh(imageCusor.getString(titleCol));
+            if (!searchChannel.equals("16")) {
+                Cursor imageCusor = cursorAdapter.getCursor();
+                int titleCol = imageCusor.getColumnIndex("filmName");
+                LOGD("1103", "title " + imageCusor.getString(titleCol) + "\n" + lauchBy);
+                requestDataRefresh(imageCusor.getString(titleCol));
+            } else {
+                Intent intent = new Intent(this, ContentWebViewActivity.class);
+                try {
+                    JSONObject obj = MOVIES[position].getJSONObject("_source");
+                    LOGD("1211", obj.getString("link"));
+                    intent.putExtra("url", obj.getString("link"));
+                    startActivity(intent);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
     }

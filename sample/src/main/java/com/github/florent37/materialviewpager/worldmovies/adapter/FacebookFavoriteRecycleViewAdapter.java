@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.framework.ImageTrasformation;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -21,12 +21,12 @@ import java.util.List;
  * Created by aaron on 2016/9/19.
  */
 public class FacebookFavoriteRecycleViewAdapter extends RecyclerView.Adapter<FacebookFavoriteRecycleViewAdapter.FacebookMovieHolder> {
-    private List<Movie> mItems;
+    private List<nyTimesMovie> mItems;
     private AdapterView.OnItemClickListener mOnItemClickListener;
     private int mPlaceholderSize = 0; //default value
     private ProgressBar mProgressBar;
 
-    public FacebookFavoriteRecycleViewAdapter(List<Movie> movieList) {
+    public FacebookFavoriteRecycleViewAdapter(List<nyTimesMovie> movieList) {
         mItems = movieList;
     }
 
@@ -45,7 +45,7 @@ public class FacebookFavoriteRecycleViewAdapter extends RecyclerView.Adapter<Fac
         notifyDataSetChanged();
     }
 
-    public void addItem(int position, Movie Item) {
+    public void addItem(int position, nyTimesMovie Item) {
         if (position > mItems.size()) return;
         mItems.add(position, Item);
         notifyItemInserted(position);
@@ -71,7 +71,7 @@ public class FacebookFavoriteRecycleViewAdapter extends RecyclerView.Adapter<Fac
 
     @Override
     public void onBindViewHolder(FacebookMovieHolder itemHolder, int position) {
-        Movie item = mItems.get(position - mPlaceholderSize);
+        nyTimesMovie item = mItems.get(position - mPlaceholderSize);
         if (item!= null) {
             final String Url = item.getPicUrl();
             /*if (!Url.isEmpty()) {
@@ -103,7 +103,7 @@ public class FacebookFavoriteRecycleViewAdapter extends RecyclerView.Adapter<Fac
             titleView = (TextView) itemView.findViewById(R.id.movie_title);
         }
 
-        public void bind(FacebookMovieHolder itemHolder, Movie item, final ProgressBar mProgressBar) {
+        public void bind(FacebookMovieHolder itemHolder, nyTimesMovie item, final ProgressBar mProgressBar) {
 
             Picasso.with(pictureView.getContext()).load("http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg").placeholder(R.drawable.placeholder)
                     .transform(ImageTrasformation.getTransformation(itemHolder.pictureView))

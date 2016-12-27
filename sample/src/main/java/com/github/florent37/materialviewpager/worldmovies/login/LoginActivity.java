@@ -151,7 +151,6 @@ public class LoginActivity extends AppCompatActivity implements LoginAndAuthHelp
                 });
 
         //----------- facebook login -----------//
-
         AppEventsLogger.activateApp(this);
         callbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(callbackManager, mCallBack);

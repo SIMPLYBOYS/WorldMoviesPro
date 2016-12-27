@@ -158,9 +158,11 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
             reviewItems.add(null);
             rAdapter.notifyItemInserted(reviewItems.size() - 1);
         }
+
         String title = trendsObject.getTitle();
         int channel = trendsObject.getChannel();
-        if (channel != 1) {
+
+        if (channel != 2) {
             try {
                 title = URLEncoder.encode(title, "UTF-8");
             } catch (UnsupportedEncodingException e) {
@@ -239,14 +241,16 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
             case 0:
                 return "jpTrendsReview";
             case 1:
-                return "usTrendsReview";
+                return "jpTrendsReview";
             case 2:
-                return "twTrendsReview";
+                return "usTrendsReview";
             case 3:
-                return "krTrendsReview";
+                return "twTrendsReview";
             case 4:
-                return "frTrendsReview";
+                return "krTrendsReview";
             case 5:
+                return "frTrendsReview";
+            case 6:
                 return "cnTrendsReview";
             default:
                 return "twTrendsReview";

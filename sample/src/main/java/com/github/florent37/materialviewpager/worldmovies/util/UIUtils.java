@@ -58,7 +58,7 @@ import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.favorite.MoviesFavoritePreference;
 import com.github.florent37.materialviewpager.worldmovies.model.ScheduleItem;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.Movie;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract.Rooms;
 import com.github.florent37.materialviewpager.worldmovies.settings.SettingsUtils;
@@ -673,7 +673,7 @@ public class UIUtils {
         return false;
     };
 
-    public static String getTrendsUrl(Movie movie) {
+    public static String getTrendsUrl(nyTimesMovie movie) {
         String url = "";
         String Query = movie.getHeadline();
 
@@ -758,9 +758,13 @@ public class UIUtils {
             case 15:
                 Picasso.with(view.getContext()).load(R.drawable.uk).into((ImageView) view.findViewById(R.id.pic));
                 break;
+            case 16:
+                Picasso.with(view.getContext()).load(R.drawable.ic_bubble_chart).into((ImageView) view.findViewById(R.id.pic));
+                break;
             default:
                 Picasso.with(view.getContext()).load(R.drawable.usa).into((ImageView) view.findViewById(R.id.pic));
                 break;
+            //TODO for PTT
         }
     }
 
@@ -880,5 +884,17 @@ public class UIUtils {
                 break;
         }
         return code;
+    }
+
+    public static int getReleaseDate(int start, int month, int day) {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+        /*c.roll(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, day);*/
+        String str = df.format(c.getTime());
+        String [] parts = TextUtils.split(str, "/");
+        /*if (start+month >=12)
+            parts[0] = "2017";*/
+        return Integer.parseInt(TextUtils.join("", parts));
     }
 }

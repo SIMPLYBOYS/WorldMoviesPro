@@ -27,6 +27,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+
 /**
  * Created by aaron on 2016/6/17.
  */
@@ -72,7 +74,7 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
     * animations in addition to updating the view.
     */
     public void addItem(int position, TrendsObject object) {
-        Log.d("0414", "mContentItems size: " + mContentItems.size() + " position: " +position);
+        LOGD("0414", "mContentItems size: " + mContentItems.size() + " position: " +position);
         if (position > mContentItems.size()) return;
         mContentItems.add(position, object);
 //        notifyItemInserted(mContentItems.size());
@@ -144,6 +146,7 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                     TrendsObject.CastItem castItem = null;
                     TrendsObject.RatingItem ratingItem = null;
                     JsonElement jsonElement = null;
+
                     if (trendsObject.getReleaseDate().indexOf("公開日")!= -1)
                         yearView.setText(trendsObject.getReleaseDate().split("公開日")[1].trim());
                     else
@@ -197,9 +200,8 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                     }
 
                     desciptionView.setText(desciption);
-
                     String path = trendsObject.getPosterUrl();
-                    Log.d("0921", path);
+                    LOGD("0921", path);
 
                     Picasso.with(posterView.getContext()).load(path != null ? path : "").placeholder(R.drawable.placeholder).centerCrop().fit()
                             .into(posterView, new Callback() {
@@ -241,20 +243,15 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
 
     @Override
     public int getItemCount() {
-
-        Log.d("0324", "getItemCount: " + mContentItems.size() + mPlaceholderSize);
-
-        if (mContentItems != null) {
+        LOGD("0324", "getItemCount: " + mContentItems.size() + mPlaceholderSize);
+        if (mContentItems != null)
             return mContentItems.size() + mPlaceholderSize;
-        }
         return 0;
     }
 
     private void onItemHolderClick(ContentViewHolder itemHolder) {
-        if (mOnItemClickListener != null) {
-            mOnItemClickListener.onItemClick(null, itemHolder.itemView,
-                    itemHolder.getAdapterPosition(), itemHolder.getItemId());
-        }
+        if (mOnItemClickListener != null)
+            mOnItemClickListener.onItemClick(null, itemHolder.itemView, itemHolder.getAdapterPosition(), itemHolder.getItemId());
     }
 
     @Override
@@ -267,6 +264,7 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
 
         switch (viewType) {
             case TYPE_PLACEHOLDER: {
+                Log.d("1215", "type_placeholder");
                 if (cardType)
                     root = inflater.inflate(R.layout.material_view_pager_mini_placeholder, container, false);
                 else
@@ -277,6 +275,7 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                 return new ContentViewHolder(root, this);
             }
             case TYPE_HEADER: {
+                Log.d("1215", "type_header");
                 if (cardType)
                     root = inflater.inflate(R.layout.trends_small_card, container, false);
                 else
@@ -286,6 +285,7 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
                 return new ContentViewHolder(root, this);
             }
             case TYPE_CELL: {
+                Log.d("1215", "type_cell");
                 if (cardType)
                     root = inflater.inflate(R.layout.trends_small_card, container, false);
                 else
@@ -300,17 +300,17 @@ public class TrendsCardRecycleViewAdapter extends RecyclerView.Adapter<TrendsCar
 
     @Override
     public void onBindViewHolder(ContentViewHolder holder, final int position) {
-        Log.d("0327","position: " + position + " getItemViewType(position): " + getItemViewType(position));
+        LOGD("0327","position: " + position + " getItemViewType(position): " + getItemViewType(position));
 
         switch (getItemViewType(position)) {
             case TYPE_PLACEHOLDER:
-                Log.d("0327", "MaterialViewPager->onBindViewHolder@ placeHolder");
+                LOGD("0327", "MaterialViewPager->onBindViewHolder@placeHolder");
                 break;
             default:
                 TrendsObject trendsObject = mContentItems.get(position - mPlaceholderSize);
                 if (trendsObject!= null) {
                     final String title = trendsObject.getTitle();
-                    Log.d("0327", String.valueOf(position) + " title:" + title);
+                    LOGD("0327", String.valueOf(position) + " title:" + title);
                     mProgressBar.setVisibility(View.VISIBLE);
                     holder.bind(trendsObject, mProgressBar, context);
                 }
