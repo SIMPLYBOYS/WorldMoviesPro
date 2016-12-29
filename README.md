@@ -22,3 +22,17 @@ If you want to watch movie, you must have to check the movie film trailer and so
 	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-144220.png"/>
 </td>
 
+#### Integrate with Spotify Player SDK to Play Origin Movie SoundTracks  
+
+<a href="https://github.com/SIMPLYBOYS/WorldMoviesPro"><img  width="540" height="960" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-152256.png"/></a>	
+
+####Search and Filter Movie:
+
+<td>
+	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-153235.png"/>
+	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-152553.png"/>
+	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-153305.png"/>
+</td>
+
+
+
