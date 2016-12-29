@@ -4,7 +4,7 @@ This is an Android Social App about movie trends around the world.
 
 ## Motivation
 
-If you want to watch movie, you must have to check the movie film trailer and someone else's opinion about the movie you may like and here it is "WorldMoviePro". 
+If you want to watch movie, you probabily like to watch the film trailer and looking for someone else's opinion about the movie you may like and here it is "WorldMoviesPro". 
 
 ## Screen Shot
 ####Login Support FaceBook and GooglePlus
