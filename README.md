@@ -12,6 +12,9 @@ If you want to watch movie, you must have to check the movie film trailer and so
 	<ul>
 		<li>
 			<img height="700" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-141625.png">
+			<textarea>
+				<p>Login Support FaceBook and GooglePlus</p>
+			</textarea>
 		</li>
 		<li>
 			<img height="700" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-144107.png">
