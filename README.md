@@ -42,5 +42,9 @@ If you want to watch movie, you probabily like to watch the film trailer and loo
 	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-152413.png"/>
 </td>
 
+#### GCM message for IMDB daily position  
+
+<a href="https://github.com/SIMPLYBOYS/WorldMoviesPro"><img  width="540" height="960" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20170102-152354.png"/></a>	
+
 
 
