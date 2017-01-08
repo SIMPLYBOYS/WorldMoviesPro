@@ -9,7 +9,8 @@
     android:layout_margin="2dp"
     app:cardCornerRadius="2dp"
     app:cardUseCompatPadding="false">
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"

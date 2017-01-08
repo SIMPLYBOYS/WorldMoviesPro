@@ -55,13 +55,11 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
     private RequestQueue mQueue;
-//    private final CustomJSONArrayRequest jsonRequest;
     public int visibleThreshold = 2;
     public int lastVisibleItem, totalItemCount;
     public boolean loading;
     private nyTimesFavoritePreference favor;
-
-    CustomJSONObjectRequest jsonRequest_q = null;
+    private CustomJSONObjectRequest jsonRequest_q = null;
 
     public static class UserViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public MyViewHolderClick mListener;
@@ -224,7 +222,6 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
             String color = bgColors[position % bgColors.length];
             ShineButton shareView = (ShineButton) ((UserViewHolder) viewHolder).shareView.findViewById(R.id.share);
             ShineButton moreView = (ShineButton) ((UserViewHolder) viewHolder).moreButton.findViewById(R.id.button_more);
-            ImageView photoView = (ImageView) ((UserViewHolder) viewHolder).photoView.findViewById(R.id.media);
             moreView.init(activity);
             bookmarkView.init(activity);
             shareView.init(activity);
@@ -367,7 +364,7 @@ public class nyTimesSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycle
 
             myHolder.bind(movie, color);
             moreView.setOnClickListener(listener);
-            photoView.setOnClickListener(listener);
+            ((UserViewHolder) viewHolder).photoView.setOnClickListener(listener);
         } else {
             ProgressViewHolder progressViewHolder = (ProgressViewHolder) viewHolder;
             progressViewHolder.progressBar.setIndeterminate(true);

@@ -121,7 +121,7 @@
 
             <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                 android:id="@+id/date"
-                android:layout_width="75dp"
+                android:layout_width="65dp"
                 android:layout_height="16dp"
                 android:layout_gravity="bottom"
                 android:textSize="12dp"

@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="125dp"
     android:layout_marginLeft="3dp"
     android:layout_marginRight="3dp"
     android:layout_marginTop="3dp"
@@ -58,7 +58,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/explore_io_clickable_regin"
         android:layout_width="245dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="left|center"
         android:clickable="false"
         android:focusable="true"
@@ -66,8 +66,8 @@
         android:foreground="?android:selectableItemBackground">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_height="70px"
-            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
             android:orientation="horizontal">
 
             <TextView
@@ -122,7 +122,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="@dimen/explore_io_keynote_card_desc_padding"
-            android:maxLines="2"
+            android:maxLines="1"
             android:textColor="@color/body_text_1"
             android:textSize="@dimen/text_size_medium"
             android:textStyle="bold"

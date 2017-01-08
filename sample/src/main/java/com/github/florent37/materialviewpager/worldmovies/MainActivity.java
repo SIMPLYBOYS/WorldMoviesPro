@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
@@ -117,7 +116,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     private static final int GROUP_LIVE_STREAM = 1;
     private static final int GROUP_COUNTRY = 2;
     private static final int GROUP_LIVE_STREAM_2 = 3;
-    private String searchChannel = "12";
+    private String searchChannel = "16"; //Ptt movie board
     private String searchYear = "All";
     private MaterialDialog.Builder builder;
     private MaterialDialog dialog;
@@ -234,7 +233,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         @Override
         public void setPrimaryItem(ViewGroup container, final int position, Object object) {
             super.setPrimaryItem(container, position, object);
-            LOGD("0303", "setPrimaryItem");
 
             if (oldItemPosition != position) {
                 oldItemPosition = position;
@@ -243,10 +241,10 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                 Drawable newDrawable = null;
 
                 switch (position) {
-                    case 0: //TODO
+                    case 0:
                         imageUrl = "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
                         color = getResources().getColor(R.color.purple);
-                        newDrawable = getResources().getDrawable(R.drawable.japan_circle);
+                        newDrawable = getResources().getDrawable(R.drawable.ic_global);
                         break;
                     case 1:
                         imageUrl = "http://i2.imgtong.com/1511/2df99d7cc478744f94ee7f0711e6afc4_ZXnCs61DyfBxnUmjxud.jpg";
@@ -344,6 +342,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow_flipped, GravityCompat.END);
         mDrawerCollectionView = (CollectionView) findViewById(R.id.drawer_collection_view);
+        CredentialsHandler.setCountry(getApplicationContext(), searchChannel);
 
         if (headerLogo != null)
             headerLogo.setOnClickListener(new View.OnClickListener() {
@@ -375,8 +374,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
                         if (fragment.getInitiatedAdapter().getItemCount() < 1) {
                             LOGD("1216", String.valueOf(fragment.getInitiatedAdapter().getItemCount()));
                             fragment.requestDataRefresh(true, null, null);
-                        } else
-                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
                         break;
                     default:
                         TrendsCardRecycleViewAdapter trendsAdapter = (TrendsCardRecycleViewAdapter)fragment.setupRecyclerAdapter();
@@ -480,7 +478,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     private interface SearchTopicsSessionsQuery {
         int TOKEN = 0x4;
         String[] PROJECTION = ScheduleContract.SearchTopicsSessions.DEFAULT_PROJECTION;
-
         int _ID = 0;
         int TAG_OR_SESSION_ID = 1;
         int SEARCH_SNIPPET = 2;
@@ -496,9 +493,8 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
             TagMetadata.Tag userTag = mTagMetadata.getTag(tag);
             String userTagCategory = userTag == null ? null : userTag.getCategory();
 
-            if (tag != null && userTagCategory != null) {
+            if (tag != null && userTagCategory != null)
                 mTagFilterHolder.add(tag, userTagCategory);
-            }
 
             List<TagMetadata.Tag> countryTags = mTagMetadata.getTagsInCategory(Config.Tags.CATEGORY_COUNTRY);
 
@@ -538,8 +534,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         }
         return result;
     }
-
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -627,8 +621,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
         int progressBarEndMargin = getResources().getDimensionPixelSize(
                 R.dimen.swipe_refresh_progress_bar_end_margin);
         int top = mActionBarShown ? mProgressBarTopWhenActionBarShown : 0;
-        mSwipeRefreshLayout.setProgressViewOffset(false,
-                top + progressBarStartMargin, top + progressBarEndMargin);
+        mSwipeRefreshLayout.setProgressViewOffset(false, top + progressBarStartMargin, top + progressBarEndMargin);
     }
 
     @Override
@@ -653,8 +646,7 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
             }
         });
 
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.blue, R.color.green_teal,
-                R.color.material_orange_800, R.color.red);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.blue, R.color.green_teal, R.color.material_orange_800, R.color.red);
 
         if (mSwipeRefreshLayout instanceof MultiSwipeRefreshLayout) {
             MultiSwipeRefreshLayout mswrl = (MultiSwipeRefreshLayout) mSwipeRefreshLayout;
@@ -787,9 +779,6 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
             case R.id.action_settings:
                 return true;
             case R.id.action_search:
-                View searchMenuView = toolbar.findViewById(R.id.action_search);
-                Bundle options = ActivityOptions.makeSceneTransitionAnimation(this, searchMenuView,
-                        getString(R.string.transition_search_back)).toBundle();
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
                 intent.putExtra("lastSelectedPosition", lastSelectedPosition);
                 intent.putExtra("lauchBy", "main");

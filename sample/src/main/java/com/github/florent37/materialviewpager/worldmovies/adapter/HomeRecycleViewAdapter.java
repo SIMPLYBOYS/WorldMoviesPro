@@ -23,6 +23,7 @@ import com.github.florent37.materialviewpager.worldmovies.framework.FlatButton;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
+import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivity;
@@ -68,7 +69,8 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
     private nyTimesFavoriteRecycleViewAdapter nyTimesAdapter;
     private FavoriteMoviesRecycleViewAdapter imdbAdapter, upcomingAdapter;
     private ProgressBar progressBar;
-    private List<nyTimesMovie> nyTimesList, imdbList, upcomingList;
+    private List<nyTimesMovie> nyTimesList;
+    private List<ImdbObject> imdbList, upcomingList;
     private List<String> tagList;
     private ProgressBar mProgressBar;
     private User user;
@@ -102,7 +104,7 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
                 nytimesRecyclerview = (RecyclerView) root.findViewById(R.id.nytimes_recyclerview);
                 nylinearLayoutManager = new LinearLayoutManager(root.getContext(), LinearLayoutManager.HORIZONTAL, false);
                 nytimesRecyclerview.setLayoutManager(nylinearLayoutManager);
-                nyTimesAdapter = new nyTimesFavoriteRecycleViewAdapter(nyTimesList);
+                nyTimesAdapter = new nyTimesFavoriteRecycleViewAdapter(activity, nyTimesList);
                 nytimesRecyclerview.setAdapter(nyTimesAdapter);
                 nytimesRecyclerview.setNestedScrollingEnabled(false);
                 return new HomeRecycleViewAdapter.HomeItemHolder(root, this);
@@ -114,7 +116,7 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
                 imdbList = new ArrayList<>();
                 imdbRecyclerview = (RecyclerView) root.findViewById(R.id.imdb_recyclerview);
                 trlinearLayoutManager = new LinearLayoutManager(root.getContext(), LinearLayoutManager.HORIZONTAL, false);
-                imdbAdapter = new FavoriteMoviesRecycleViewAdapter(imdbList);
+                imdbAdapter = new FavoriteMoviesRecycleViewAdapter(activity, imdbList);
                 imdbRecyclerview.setLayoutManager(trlinearLayoutManager);
                 imdbRecyclerview.setAdapter(imdbAdapter);
                 imdbRecyclerview.setNestedScrollingEnabled(false);
@@ -127,7 +129,7 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
                 upcomingList = new ArrayList<>();
                 upcomingRecycleview = (RecyclerView) root.findViewById(R.id.upcoming_recyclerview);
                 uclinearLayoutManager = new LinearLayoutManager(root.getContext(), LinearLayoutManager.HORIZONTAL, false);
-                upcomingAdapter =  new FavoriteMoviesRecycleViewAdapter(upcomingList);
+                upcomingAdapter =  new FavoriteMoviesRecycleViewAdapter(activity, upcomingList);
                 upcomingRecycleview.setLayoutManager(uclinearLayoutManager);
                 upcomingRecycleview.setAdapter(upcomingAdapter);
                 upcomingRecycleview.setNestedScrollingEnabled(false);
@@ -139,7 +141,7 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
                 tagCloudView = (TagCloudView) root.findViewById(R.id.tag_cloud);
                 tagCloudView.setBackgroundColor(activity.getResources().getColor(R.color.material_grey_200));
                 tagList = new ArrayList<>();
-                textTagsAdapter = new TextTagsAdapter(tagList);
+                textTagsAdapter = new TextTagsAdapter(tagList, this.activity);
                 tagCloudView.setAdapter(textTagsAdapter);
                 tagCloudView.setNestedScrollingEnabled(false);
                 return new HomeRecycleViewAdapter.HomeItemHolder(root, this);
@@ -322,8 +324,9 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
                     for (int i = 0; i < contents.length(); i++) {
                         JSONObject movieObj = contents.getJSONObject(i);
                         String head = movieObj.getString("headline");
-                        String picUrl = movieObj.getString("picUrl");;
-                        nyTimesMovie movie = new nyTimesMovie(head, null, null, null, picUrl, null, null);
+                        String picUrl = movieObj.getString("picUrl");
+                        String link = movieObj.getString("link");
+                        nyTimesMovie movie = new nyTimesMovie(head, null, null, link, picUrl, null, null);
                         nyTimesList.add(nyTimesList.size(), movie);
                     }
 
@@ -358,7 +361,11 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
                         String title = movieObj.getString("title");
                         String link = movieObj.getString("detailUrl");
                         String picUrl = movieObj.getString("posterUrl");
-                        nyTimesMovie movie = new nyTimesMovie(title, null, null, link, picUrl, null, null);
+
+                        ImdbObject movie = new ImdbObject(title, null, null, null,
+                                null, picUrl, null, null, null,
+                                null, null, null, null, null, null,
+                                null, null, null, link);
                         imdbList.add(imdbList.size(), movie);
                     }
 
@@ -380,10 +387,9 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
         mQueue.add(jsonRequest);
     }
 
-    Calendar c = Calendar.getInstance();
-
     private void fetch_upcoming() {
         int skipSize = 0;
+        Calendar c = Calendar.getInstance();
         String url = HOST_NAME + "upcoming?release_from=" + getReleaseDate(c.get(Calendar.MONTH), 0, 1)+"&skip="+skipSize;
         CustomJSONObjectRequest jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
@@ -394,7 +400,10 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
                         JSONObject movieObj = contents.getJSONObject(i);
                         String title = movieObj.getString("title");
                         String picUrl = movieObj.getString("posterUrl");
-                        nyTimesMovie movie = new nyTimesMovie(title, null, null, null, picUrl, null, null);
+                        ImdbObject movie = new ImdbObject(title, null, null, null,
+                                null, picUrl, null, null, null,
+                                null, null, null, null, null, null,
+                                null, null, null, null);
                         upcomingList.add(upcomingList.size(), movie);
                     }
 

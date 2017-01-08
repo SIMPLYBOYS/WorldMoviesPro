@@ -32,9 +32,15 @@ public class FriendsFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
-        String friends = UsersUtils.getCurrentFriends(getActivity());
+        String friends = UsersUtils.getCurrentFriends(getActivity()); //TODO get from social api
         Gson gson = new Gson();
         List<User> friendslist = gson.fromJson(friends, new TypeToken<List<User>>(){}.getType());
+
+        for (final User user : friendslist) {
+            user.description = "";
+            user.total = 0;
+        }
+
         mAdapter = new FriendsListAdapter(friendslist, getActivity());
         recyclerView.setAdapter(mAdapter);
 

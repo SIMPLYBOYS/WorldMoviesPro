@@ -62,7 +62,7 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/message_card_root_layout"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="120dp"
             android:orientation="vertical"
             android:paddingTop="@dimen/padding_normal"
             android:paddingStart="@dimen/padding_normal"
@@ -80,19 +80,6 @@
                 android:layout_alignParentTop="true"
                 app:font="Roboto-Regular.ttf"
                 android:layout_above="@+id/votes" />
-
-            <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
-                android:id="@+id/votes"
-                android:layout_width="35dp"
-                android:layout_height="16dp"
-                android:text=" 10"
-                android:textSize="8dp"
-                android:textColor="@color/body_text_3"
-                android:paddingTop="5dp"
-                android:layout_marginRight="4dp"
-                android:layout_above="@+id/year"
-                android:layout_toRightOf="@+id/year"
-                app:font="Roboto-Light.ttf"/>
 
             <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                 android:id="@+id/year"
@@ -181,19 +168,15 @@
 
             <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                 android:id="@+id/title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:layout_toRightOf="@+id/top"
-                android:layout_toEndOf="@+id/top"
                 android:textColor="@color/body_text_1"
                 android:textSize="@dimen/text_size_xlarge"
-                android:text="1234"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="1dp"
-                app:font="Roboto-Black.ttf"
-                android:layout_above="@+id/descriptioin" />
+                android:text="12345"
+                android:layout_marginLeft="40dp"
+                app:font="Roboto-Black.ttf"/>
 
             <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                 android:id="@+id/description"
@@ -208,9 +191,22 @@
                 android:layout_alignLeft="@+id/title"
                 android:layout_alignStart="@+id/title"
                 android:textSize="@dimen/text_size_body"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="30dp"
                 app:font="Roboto-Light.ttf"
                 android:layout_below="@+id/title"/>
+
+            <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
+                android:id="@+id/votes"
+                android:layout_width="35dp"
+                android:layout_height="16dp"
+                android:text=" 10"
+                android:textSize="8dp"
+                android:textColor="@color/body_text_3"
+                android:paddingTop="1dp"
+                android:layout_marginRight="4dp"
+                app:font="Roboto-Light.ttf"
+                android:layout_above="@+id/year"
+                android:layout_toEndOf="@+id/year" />
 
         </RelativeLayout>
 

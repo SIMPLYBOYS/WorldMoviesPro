@@ -26,11 +26,9 @@
             android:id="@+id/picture"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/placeholder"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:adjustViewBounds="false"
-            android:background="@drawable/popup_item_background"
             android:visibility="visible" />
         <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
             android:id="@+id/review_title"
@@ -40,7 +38,6 @@
             android:ellipsize="end"
             android:textSize="14dp"
             app:font="Roboto-Bold.ttf"
-            android:text="111111111111111111112222222222222222222222223333333333333333333333333444444444444444555555555"
             android:textColor="@color/app_white"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_alignBottom="@android:id/progress"

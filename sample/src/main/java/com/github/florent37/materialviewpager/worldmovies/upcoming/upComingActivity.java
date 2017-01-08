@@ -1,6 +1,5 @@
 package com.github.florent37.materialviewpager.worldmovies.upcoming;
 
-import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
@@ -401,8 +400,6 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
                 mDrawerLayout.openDrawer(GravityCompat.END);
                 return true;
             case R.id.action_search:
-                View searchMenuView = toolbar.findViewById(R.id.action_search);
-                Bundle options = ActivityOptions.makeSceneTransitionAnimation(this, searchMenuView, getString(R.string.transition_search_back)).toBundle();
                 Intent intent = new Intent(upComingActivity.this, SearchActivity.class);
                 intent.putExtra("lastSelectedPosition", lastSelectedPosition);
                 intent.putExtra("lauchBy", "upcoming");
@@ -658,8 +655,10 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
             ImdbObject item = new ImdbObject(title, String.valueOf(top), releaseDate, description, rating, posterUrl,
                     slate, summery, plot, genre, votes, runTime, metaScore, delta, country, trailerUrl, cast.toString(),
                     galleryFullUrl.toString(), detailUrl);
+
             SharedPreferences settings = getSharedPreferences("settings", 0);
             boolean ascending = settings.getBoolean("ascending", false);
+
             if (ascending)
                 movieList.add(movieList.size(), item);
             else

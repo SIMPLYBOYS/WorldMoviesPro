@@ -3,11 +3,6 @@ package com.github.florent37.materialviewpager.worldmovies.favorite;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -50,6 +45,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.setMenuItemScale;
+import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.setViewScale;
 
 /**
  * Created by aaron on 2016/6/21.
@@ -120,20 +118,15 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
         //-----------------//
         socialView = (ShineButton) socialAction.findViewById(R.id.socialView);
         socialView.init(this);
-        socialView.getLayoutParams().height=96;
-        socialView.getLayoutParams().width=96;
+        setViewScale(this, socialView);
         socialView.setBackgroundResource(R.drawable.ic_person_add);
         socialView.setColorFilter(getResources().getColor(R.color.app_white));
-        //-----------------//
-
-        //-----------------//
-        menu.findItem(R.id.action_settings).setIcon(resizeImage(R.drawable.ic_settings,350,350));
+        setMenuItemScale(this, menu);
         //-----------------//
 
         shareItem = menu.findItem(R.id.action_share);
         socialItem = menu.findItem(R.id.socialItem);
         settingItem = menu.findItem(R.id.action_settings);
-
         settingItem.setOnMenuItemClickListener(new OnMenuItemClickListener()
         {
             @Override
@@ -143,7 +136,6 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
                 return false;
             }
         });
-
 
         socialView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,24 +175,6 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
         shareActionProvider.setShareIntent(createShareIntent());
 
         return true;
-    }
-
-    private Drawable resizeImage(int resId, int w, int h)
-    {
-        // load the origial Bitmap
-        Bitmap BitmapOrg = BitmapFactory.decodeResource(getResources(), resId);
-        int width = BitmapOrg.getWidth();
-        int height = BitmapOrg.getHeight();
-        int newWidth = w;
-        int newHeight = h;
-        // calculate the scale
-        float scaleWidth = ((float) newWidth) / width;
-        float scaleHeight = ((float) newHeight) / height;
-        // create a matrix for the manipulation
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-        Bitmap resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0,width, height, matrix, true);
-        return new BitmapDrawable(resizedBitmap);
     }
 
     private Intent createShareIntent() {

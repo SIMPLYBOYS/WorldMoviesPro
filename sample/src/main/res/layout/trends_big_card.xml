@@ -123,7 +123,7 @@
                 android:textColor="@color/body_text_1"
                 android:textSize="@dimen/text_size_large"
                 android:paddingLeft="38dp"
-                android:paddingTop="10dp"
+                android:paddingTop="2dp"
                 android:text="2456"
                 app:font="Roboto-Bold.ttf"
                 android:layout_alignBottom="@+id/top" />

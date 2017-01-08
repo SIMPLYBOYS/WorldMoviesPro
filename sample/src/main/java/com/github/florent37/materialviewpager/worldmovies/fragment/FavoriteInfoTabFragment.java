@@ -29,6 +29,7 @@ import com.github.florent37.materialviewpager.worldmovies.framework.FlatButton;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
+import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
 import com.github.florent37.materialviewpager.worldmovies.model.TrendsObject;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
@@ -56,7 +57,8 @@ import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.ch
 public class FavoriteInfoTabFragment extends InfoTabFragment {
 
     private RequestQueue mQueue;
-    private List<nyTimesMovie> nyTimesList, trendsList;
+    private List<nyTimesMovie> nyTimesList;
+    private List<ImdbObject> trendsList;
     private ImageView nyTimesPicNumView, trendsPicNumView;
     private User user;
     private RecyclerView nytimesRecyclerview, moviesRecyclerview;
@@ -155,8 +157,8 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         facebookRecyclerview.setLayoutManager(fbLayoutManager);
         facebookFavoriteRecycleViewAdapter = new FacebookFavoriteRecycleViewAdapter(facebookList);
         facebookRecyclerview.setAdapter(facebookFavoriteRecycleViewAdapter);*/
-        nyTimesFavoriteAdapter = new nyTimesFavoriteRecycleViewAdapter(nyTimesList);
-        moviesFavoriteAdapter = new FavoriteMoviesRecycleViewAdapter(trendsList);
+        nyTimesFavoriteAdapter = new nyTimesFavoriteRecycleViewAdapter(getActivity(), nyTimesList);
+        moviesFavoriteAdapter = new FavoriteMoviesRecycleViewAdapter(getActivity(), trendsList);
         nytimesRecyclerview.setAdapter(nyTimesFavoriteAdapter);
         nytimesRecyclerview.setNestedScrollingEnabled(false);
         moviesRecyclerview.setAdapter(moviesFavoriteAdapter);
@@ -212,7 +214,7 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
         moviesFavoriteAdapter.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final nyTimesMovie movie = trendsList.get(position);
+                final ImdbObject movie = trendsList.get(position);
                 String url = UIUtils.getTrendsUrl(movie);
                 Log.d("1115", url);
 
@@ -355,7 +357,10 @@ public class FavoriteInfoTabFragment extends InfoTabFragment {
                         int channel = 14;
                         moviesFavor.addFavorite(getActivity(), title);
                         String picUrl = movieObj.getString("picUrl");
-                        nyTimesMovie movie = new nyTimesMovie(title, null, null, link, picUrl, null, null);
+                        ImdbObject movie = new ImdbObject(title, null, null, null,
+                                null, picUrl, null, null, null,
+                                null, null, null, null, null, null,
+                                null, null, null, link);
                         if (movieObj.has("channel"))
                             channel = movieObj.getInt("channel");
                         if (movieObj.has("country"))

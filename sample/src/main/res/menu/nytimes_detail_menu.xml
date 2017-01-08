@@ -14,9 +14,9 @@
         android:title="@string/action_search"
         android:textColor="@color/io15_white"
         myapp:actionViewClass="android.support.v7.widget.SearchView"
-        myapp:showAsAction="ifRoom" />
+        myapp:showAsAction="always" />
 
     <item android:id="@+id/action_bookmark"
         android:title="@string/action_boookmark"
-        myapp:showAsAction="ifRoom" />
+        myapp:showAsAction="always" />
 </menu>

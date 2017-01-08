@@ -46,7 +46,6 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
     protected abstract RecyclerView getInitiatedRecyclerView();
     public abstract RecyclerView.Adapter getInitiatedAdapter();
 
-
     public interface Listener {
         public void onFragmentViewCreated(RecyclerViewFragment fragment);
         public void onFragmentAttached(RecyclerViewFragment fragment);
@@ -120,8 +119,8 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
         RecyclerView.Adapter adapter;
 
         switch (channel) {
-            case 0: //TODO fetching for homepage meta data
-                url = HOST_NAME + "jpTrends";
+            case 0:
+                url = HOST_NAME + "home";
                 adapter =  (HomeRecycleViewAdapter) getInitiatedAdapter();
 
                 if (adapter != null && adapter.getItemCount() > 1)
@@ -233,6 +232,7 @@ public abstract class RecyclerViewFragment extends Fragment implements Response.
 
         RetryPolicy policy = new DefaultRetryPolicy(8000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         jsonRequest.setRetryPolicy(policy);
+
         mQueue.add(jsonRequest); //trigger volley request
     }
 

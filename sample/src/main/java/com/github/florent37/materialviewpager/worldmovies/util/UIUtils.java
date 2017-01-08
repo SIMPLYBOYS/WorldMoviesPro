@@ -25,12 +25,17 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.LinearGradient;
+import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.Shader;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -47,7 +52,9 @@ import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -57,8 +64,8 @@ import com.github.florent37.materialviewpager.worldmovies.BuildConfig;
 import com.github.florent37.materialviewpager.worldmovies.Config;
 import com.github.florent37.materialviewpager.worldmovies.R;
 import com.github.florent37.materialviewpager.worldmovies.favorite.MoviesFavoritePreference;
+import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
 import com.github.florent37.materialviewpager.worldmovies.model.ScheduleItem;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract.Rooms;
 import com.github.florent37.materialviewpager.worldmovies.settings.SettingsUtils;
@@ -75,6 +82,7 @@ import java.util.Formatter;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
+import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGE;
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
 
@@ -673,9 +681,9 @@ public class UIUtils {
         return false;
     };
 
-    public static String getTrendsUrl(nyTimesMovie movie) {
+    public static String getTrendsUrl(ImdbObject movie) {
         String url = "";
-        String Query = movie.getHeadline();
+        String Query = movie.getTitle();
 
         try {
             Query = URLEncoder.encode(Query, "UTF-8");
@@ -896,5 +904,47 @@ public class UIUtils {
         /*if (start+month >=12)
             parts[0] = "2017";*/
         return Integer.parseInt(TextUtils.join("", parts));
+    }
+
+    public static void setViewScale(Activity activity, View view) {
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        LOGD("0108", "width: " + String.valueOf(size.x)+" height: " + String.valueOf(size.y));
+        if (size.x > 720) {
+            view.getLayoutParams().height=96;
+            view.getLayoutParams().width=96;
+        } else {
+            view.getLayoutParams().height=48;
+            view.getLayoutParams().width=48;
+        }
+    }
+
+    public static void setMenuItemScale(Activity activity, Menu menu) {
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        if (size.x > 720)
+            menu.findItem(R.id.action_settings).setIcon(resizeImage(activity, R.drawable.ic_settings, 350, 350));
+        else
+            menu.findItem(R.id.action_settings).setIcon(resizeImage(activity, R.drawable.ic_settings, 100, 100));
+    }
+
+    public static Drawable resizeImage(Activity activity, int resId, int w, int h)
+    {
+        // load the origial Bitmap
+        Bitmap BitmapOrg = BitmapFactory.decodeResource(activity.getResources(), resId);
+        int width = BitmapOrg.getWidth();
+        int height = BitmapOrg.getHeight();
+        int newWidth = w;
+        int newHeight = h;
+        // calculate the scale
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // create a matrix for the manipulation
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(BitmapOrg, 0, 0, width, height, matrix, true);
+        return new BitmapDrawable(resizedBitmap);
     }
 }

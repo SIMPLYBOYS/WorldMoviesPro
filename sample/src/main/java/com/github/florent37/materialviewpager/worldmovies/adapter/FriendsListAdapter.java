@@ -75,7 +75,7 @@ public class FriendsListAdapter extends RecyclerView.Adapter<FriendsListAdapter.
 
     protected class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView title;
+        private TextView title, total, description;
         private ImageView pictureView;
         private LinearLayout linearLayout;
         private User user;
@@ -85,6 +85,8 @@ public class FriendsListAdapter extends RecyclerView.Adapter<FriendsListAdapter.
             pictureView = (ImageView) itemView.findViewById(R.id.avatar);
             title = (TextView) itemView.findViewById(R.id.listitem_name);
             linearLayout = (LinearLayout) itemView.findViewById(R.id.linearLayout);
+            total = (TextView) itemView.findViewById(R.id.listitem_total);
+            description = (TextView) itemView.findViewById(R.id.listitem_description);
         }
 
         public void bind(FriendsListAdapter.MyViewHolder itemHolder, final User user) {
@@ -99,6 +101,11 @@ public class FriendsListAdapter extends RecyclerView.Adapter<FriendsListAdapter.
                         public void onError() {}
                     });
             title.setText(user.name);
+            if (user.total != 0)
+                total.setText("共"+String.valueOf(user.total)+"則電影訊息");
+            else
+                total.setText("");
+            description.setText(user.description);
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

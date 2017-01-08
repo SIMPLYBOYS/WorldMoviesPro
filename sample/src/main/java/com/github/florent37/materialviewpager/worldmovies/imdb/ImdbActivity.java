@@ -1,6 +1,5 @@
 package com.github.florent37.materialviewpager.worldmovies.imdb;
 
-import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
@@ -126,8 +125,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     private final String TAG_TRAILER = "trailerUrl";
     private final String TAG_GALLERY_FULL = "gallery_full";
     private final String TAG_DELTA = "delta";
-    public final String REQUEST_TAG = "imdb250Request";
-    public static final String FILM_NAME = "filmName";
     private TagMetadata mTagMetadata;
     private TagFilterHolder mTagFilterHolder;
     private int lastSelectedPosition = 2;
@@ -138,6 +135,8 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
     private String searchChannel = "14";
     private Menu activityMenu;
     private TagAdapter tagAdapter;
+    public final String REQUEST_TAG = "imdb250Request";
+    public static final String FILM_NAME = "filmName";
     // The OnClickListener for the Switch widgets on the navigation filter.
     private final View.OnClickListener mDrawerItemCheckBoxClickListener =
             new View.OnClickListener() {
@@ -447,9 +446,6 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                 mDrawerLayout.openDrawer(GravityCompat.END);
                 return true;
             case R.id.action_search:
-                View searchMenuView = toolbar.findViewById(R.id.action_search);
-                Bundle options = ActivityOptions.makeSceneTransitionAnimation(this, searchMenuView,
-                        getString(R.string.transition_search_back)).toBundle();
                 Intent intent = new Intent(ImdbActivity.this, SearchActivity.class);
                 intent.putExtra("lastSelectedPosition", lastSelectedPosition);
                 intent.putExtra("lauchBy", "imdb");
@@ -510,10 +506,12 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
             @Override
             public void onResponse(JSONObject response) {
                 try {
+
                     if (!swipe) {
                         movieList.remove(movieList.size() - 1);
                         adapter.notifyItemRemoved(movieList.size());
                     }
+
                     JSONArray contents = response.getJSONArray("contents");
                     boolean byTitle = ((JSONObject) response).getBoolean("byTitle");
 
@@ -522,7 +520,7 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                         JSONArray data = new JSONArray();
                         JSONObject c = contents.getJSONObject(i);
                         String title = c.getString(TAG_TITLE);
-                        JSONObject d = c.getJSONObject("detailContent");
+                        JSONObject detail = c.has("detailContent") ? c.getJSONObject("detailContent"): null;
                         int top = 0;
                         String detailPosterUrl = "";
                         String detailUrl = "";
@@ -531,6 +529,8 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                         String plot = "";
                         String posterUrl = "http://www.imdb.com/title/tt1355631/mediaviewer/rm3798736128?ref_=tt_ov_i";
                         String delta = "0";
+                        String trailerUrl;
+                        String slate = "N/A";
                         //----- start dummy GalleryUrl ----
                         JSONObject jo = new JSONObject();
                         jo.put("type", "full");
@@ -573,9 +573,9 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
 
                         String genre = c.has(TAG_GENRE) ? c.getString(TAG_GENRE) : "";
                         String runTime = c.has(TAG_RUNTIME) ? c.getString(TAG_RUNTIME) : "";
-                        String metaScore = c.getString(TAG_METASCORE);
-                        String summery = d.getString(TAG_SUMMERY);
-                        String country = d.getString(TAG_COUNTRY);
+                        String metaScore = c.has(TAG_METASCORE) ? c.getString(TAG_METASCORE) : "";
+                        String summery = c.has(TAG_SUMMERY) ? c.getString(TAG_SUMMERY) : "";
+                        String country = c.has(TAG_SUMMERY) ? c.getString(TAG_COUNTRY) : "";
 
                         if (runTime.compareTo("") == 0 && data.length()>0) {
                             jsonObj = (JSONObject) data.get(4);
@@ -588,10 +588,11 @@ public class ImdbActivity extends BaseActivity implements Response.ErrorListener
                         if (c.has(TAG_GALLERY_FULL))
                             galleryFullUrl = c.getJSONArray(TAG_GALLERY_FULL);
 
-                        String trailerUrl;
-                        String slate;
                         trailerUrl = c.has(TAG_TRAILER) ? c.getString(TAG_TRAILER) : "N/A";
-                        slate = d.has(TAG_SLATE) ? d.getString(TAG_SLATE) : "N/A";
+
+                        if (detail != null)
+                            slate = detail.has(TAG_SLATE) ? detail.getString(TAG_SLATE) : "N/A";
+
                         ImdbObject item = new ImdbObject(title, String.valueOf(top), year, description,
                                 rating, posterUrl, slate, summery, plot,
                                 genre, votes, runTime, metaScore, delta, country,

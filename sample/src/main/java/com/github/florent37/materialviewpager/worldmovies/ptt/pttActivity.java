@@ -315,7 +315,7 @@ public class pttActivity extends BaseActivity implements BottomNavigationBar.OnT
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         SharedPreferences settings = getSharedPreferences("settings", 0);
-        getMenuInflater().inflate(R.menu.imdb_menu, menu);
+        getMenuInflater().inflate(R.menu.ptt_menu, menu);
         Drawable drawable = toolbar.getOverflowIcon();
 
         if (drawable != null) {

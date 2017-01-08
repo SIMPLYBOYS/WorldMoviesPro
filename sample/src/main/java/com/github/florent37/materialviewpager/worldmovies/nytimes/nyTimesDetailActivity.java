@@ -60,6 +60,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
+import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.setViewScale;
 
 /**
  * Created by aaron on 2016/6/12.
@@ -211,8 +212,7 @@ public class nyTimesDetailActivity extends AppCompatActivity implements Response
         LOGD("0816", String.valueOf(movie.getBookmark()));
         bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
         bookmarkView.init(this);
-        bookmarkView.getLayoutParams().height=96;
-        bookmarkView.getLayoutParams().width=96;
+        setViewScale(this, bookmarkView);
 //        bookmarkView.setImageResource(R.drawable.ic_turned_in);
         bookmarkView.setColorFilter(getResources().getColor(R.color.app_white));
         bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);

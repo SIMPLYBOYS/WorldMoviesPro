@@ -67,7 +67,6 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
     private boolean loading;
     private int lastVisibleItem, totalItemCount, channel;
     private View headerLogo;
-
     // initially offset will be 0, later will be updated while parsing the json
     private int offSet = 0;
 
@@ -326,8 +325,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
                 lastVisibleItem = linearLayoutManager
                         .findLastVisibleItemPosition();
 
-                if (!loading
-                        && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+                if (!loading && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
                     // Screen End has been reached
                     if (onLoadMoreListener != null) {
                         onLoadMoreListener.onLoadMore();
@@ -392,7 +390,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
             LOGD("0409", "loading more!");
             SharedPreferences settings = getContext().getSharedPreferences("settings", 0);
             boolean ascending = settings.getBoolean("ascending", false);
-            if (ascending && trendsCardAdapter.getItemCount() < trendMovieCount && channel == 0) {
+            /*if (ascending && trendsCardAdapter.getItemCount() < trendMovieCount && channel == 0) {
                 mSwipeRefreshLayout.post(new Runnable() {
                     @Override
                     public void run() {
@@ -406,7 +404,7 @@ public class TrendsFragment extends RecyclerViewFragment implements AdapterView.
                         requestDataRefresh(true, null, null);
                     }
                 });
-            }
+            }*/
         }
     };
 }

@@ -88,6 +88,7 @@ public class FansTabFragment extends Fragment {
                         User person = new User();
                         LOGD("1120", "get fans complete " + i + ": " + contents.optJSONObject(i));
                         JSONObject dataobj= contents.optJSONObject(i);
+                        LOGD("0106", String.valueOf(dataobj.optInt("total")));
                         person.name = dataobj.optString("name");
                         if (!person.name.equals(user.name)) {
                             person.id = dataobj.optString("fbId");

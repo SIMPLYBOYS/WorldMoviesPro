@@ -30,6 +30,7 @@ public class ImdbObject implements Serializable {
     private String trailerUrl;
     private String galleryUrl;
     private boolean bookmark;
+    public int channel;
 
     public class GalleryItem {
         private String type;
@@ -104,6 +105,7 @@ public class ImdbObject implements Serializable {
         this.trailerUrl = trailerUrl;
         this.galleryUrl = galleryUrl;
         this.bookmark = false;
+        this.channel = -1;
     }
 
     public String getCast() { return cast;}
@@ -172,6 +174,10 @@ public class ImdbObject implements Serializable {
 
     public String getMetaScore() {return metaScore;}
 
+    public int getChannel() {
+        return channel;
+    }
+
     public int getDelta() {
         if (delta.equals("0"))
             return 0;
@@ -200,4 +206,10 @@ public class ImdbObject implements Serializable {
     }
 
     public void setType (String type) { this.type = type; }
+
+    public void setCountry (String country) { this.country = country;}
+
+    public void setChannel(int channel) {
+        this.channel = channel;
+    }
 }

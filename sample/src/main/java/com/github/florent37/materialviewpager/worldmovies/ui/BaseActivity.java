@@ -249,7 +249,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private final String TAG_TRAILER = "trailerUrl";
     private final String TAG_GALLERY_FULL = "gallery_full";
     private final String TAG_DELTA = "delta";
-    public final int MESSAGE_TEXT_CHANGE = 200;
+    public final int MESSAGE_TEXT_CHANGE = 1200;
     public final int AUTOCOMPLETE_DELAY = 750;
     public int mAutoCompleteDelay = AUTOCOMPLETE_DELAY;
     // titles for navdrawer items (indices must correspond to the above)

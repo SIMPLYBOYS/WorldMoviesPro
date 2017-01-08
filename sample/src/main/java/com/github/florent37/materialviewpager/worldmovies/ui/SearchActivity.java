@@ -46,6 +46,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -62,7 +63,6 @@ import com.github.florent37.materialviewpager.worldmovies.adapter.ImageCursorAda
 import com.github.florent37.materialviewpager.worldmovies.framework.ContentWebViewActivity;
 import com.github.florent37.materialviewpager.worldmovies.framework.CredentialsHandler;
 import com.github.florent37.materialviewpager.worldmovies.genre.GenreDetailActivity;
-import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONArrayRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomJSONObjectRequest;
 import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyRequestQueue;
 import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
@@ -93,17 +93,22 @@ public class SearchActivity extends BaseActivity implements
     private String mQuery = "";
     private ListView mSearchResults;
     private boolean Initail = false;
+    private boolean isSearching = false;
+    private boolean reachBootom = false;
+    private boolean isGenreCursor = true;
     private SimpleCursorAdapter mResultsAdapter;
     private Handler completeHandler;
     private ImageCursorAdapter cursorAdapter;
     private JSONObject[] MOVIES = {};
     private String searchChannel = "12";
-    private CustomJSONArrayRequest jsonRequest;
+    private String scrollId = "";
+    private CustomJSONObjectRequest jsonRequest;
     private RequestQueue mQueue;
     private String[] from = new String [] {FILM_NAME};
     private int[] to = new int[] {-1000303};
     private int lastSelectedPosition = 0;
     private ProgressBar mProgressBar;
+    private ProgressBar mSearchfooter;
     private String lauchBy;
 
     @Override
@@ -120,64 +125,177 @@ public class SearchActivity extends BaseActivity implements
                 new int[]{R.id.search_result}, 0);
         mSearchResults.setAdapter(mResultsAdapter);
         mSearchResults.setOnItemClickListener(this);
+        mSearchfooter = new ProgressBar(this);
+        mSearchResults.setOnScrollListener(scrollListener);
         Toolbar toolbar = getActionBarToolbar();
         Drawable up = DrawableCompat.wrap(ContextCompat.getDrawable(this, R.drawable.ic_up));
         DrawableCompat.setTint(up, getResources().getColor(R.color.app_body_text_2));
         closeButton = (ImageView) mSearchView.findViewById(R.id.search_close_btn);
+
+        completeHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                mQuery = (String) msg.obj;
+                giveSuggestions(mQuery);
+            }
+        };
+
         toolbar.setNavigationIcon(up);
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 navigateUpOrBack(SearchActivity.this, null);
             }
         });
-        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
+
         String query = getIntent().getStringExtra(SearchManager.QUERY);
         lastSelectedPosition = getIntent().getIntExtra("lastSelectedPosition",3);
         lauchBy = getIntent().getStringExtra("lauchBy");
-        query = query == null ? "" : query;
-        mQuery = query;
+        mQuery = query == null ? "" : query;
 
-        if (mSearchView != null) {
+        switch (lauchBy) {
+            case "main":
+                cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "main");
+                mSearchfooter.setBackgroundColor(getResources().getColor(R.color.primary_dark_material_dark));
+                break;
+            case "imdb":
+                cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "imdb");
+                mSearchfooter.setBackgroundColor(getResources().getColor(R.color.imdb_yellow));
+                break;
+            case "genre":
+                cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "genre");
+                mSearchfooter.setBackgroundColor(getResources().getColor(R.color.material_blue_300));
+                break;
+            case "upcoming":
+                cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "upcoming");
+                mSearchfooter.setBackgroundColor(getResources().getColor(R.color.tab_background));
+                break;
+            default:
+                cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "detail");
+                mSearchfooter.setBackgroundColor(getResources().getColor(R.color.primary_dark_material_dark));
+                break;
+        }
+
+        if (mSearchView != null)
             mSearchView.setQuery(query, false);
-        }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (!mQuery.equals(""))
+            searchFor(query);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             doEnterAnim();
-        }
-
-        completeHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                giveSuggestions((String) msg.obj);
-            }
-        };
 
         overridePendingTransition(0, 0);
     }
 
+    private AbsListView.OnScrollListener scrollListener = new AbsListView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            int lastInScreen = firstVisibleItem + visibleItemCount;
+            if(lastInScreen == totalItemCount && !isSearching && Initail && !reachBootom && !isGenreCursor && searchChannel.equals("16")) {
+                mSearchResults.addFooterView(mSearchfooter);
+                loadMoreItems();
+                isSearching = true;
+            }
+        }
+    };
+
+    private void loadMoreItems() {
+        LOGD("1231", "loadMoreItems");
+        String url;
+        final MatrixCursor cursor;
+        mQueue = CustomVolleyRequestQueue.getInstance(SearchActivity.this).getRequestQueue();
+        try {
+            cursor = (MatrixCursor) cursorAdapter.getCursor();
+            url = Config.HOST_NAME + "search/" + searchChannel + "/" + URLEncoder.encode(mQuery, "UTF-8") + "/" + scrollId;
+        } catch (UnsupportedEncodingException e) {
+            throw new AssertionError("UTF-8 is unknown");
+        }
+        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url , new JSONObject(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject[] movies = {};
+                    String posterUrl, description;
+                    int length = MOVIES.length;
+                    LOGD("0107", String.valueOf(length));
+                    JSONArray contents = response.getJSONArray("search");
+                    scrollId = response.getString("scrollId");
+                    movies = getJsonObjectArray(contents);
+                    JSONObject[] mMOVIES = new JSONObject[movies.length +MOVIES.length];
+
+                    for (int i=0; i<MOVIES.length; i++) {
+                        mMOVIES[i] = MOVIES[i];
+                    }
+
+                    if (movies.length == 0) {
+                        reachBootom = true;
+                        isSearching = false;
+                        mSearchResults.removeFooterView(mSearchfooter);
+                        return;
+                    }
+
+                    for (int i = 0; i < movies.length; i++) {
+                        mMOVIES[length+i] = movies[i];
+                        JSONObject obj = movies[i].getJSONObject("_source");
+                        posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://img.eiga.k-img.com/images/person/noimg/400.png?1423551130";
+                        description = obj.has("description") ? obj.getString("description") : obj.getString("date");
+                        cursor.addRow(new Object[]{i, obj.getString("title"), description, posterUrl});
+                    }
+
+                    MOVIES = new JSONObject[mMOVIES.length];
+                    MOVIES = mMOVIES;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                isSearching = false;
+                mSearchResults.removeFooterView(mSearchfooter);
+                cursorAdapter.notifyDataSetChanged();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+//                Toast.makeText(MainActivity.this, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mQueue.add(jsonRequest);
+    }
+
     private void giveSuggestions(String query) {
+        LOGD("1231", "giveSuggestions");
         final MatrixCursor cursor = new MatrixCursor(new String[]{BaseColumns._ID, FILM_NAME, FILM_DESCRIPTION, FILM_POSTER});
+        mQueue = CustomVolleyRequestQueue.getInstance(this).getRequestQueue();
         cursorAdapter.changeCursor(cursor);
         String url;
         searchChannel = CredentialsHandler.getCountry(this);
         try {
             closeButton.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.VISIBLE);
-            url = Config.HOST_NAME + "search/"+ searchChannel+"/" + URLEncoder.encode(query, "UTF-8");
+            url = Config.HOST_NAME + "search/"+ searchChannel+"/" + URLEncoder.encode(query, "UTF-8") + "/" + scrollId;
+            LOGD("1231", url);
         }  catch (UnsupportedEncodingException e) {
             throw new AssertionError("UTF-8 is unknown");
         }
-
-        jsonRequest = new CustomJSONArrayRequest(url, new Response.Listener<JSONArray>() {
+        jsonRequest = new CustomJSONObjectRequest(Request.Method.GET, url , new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response) {
-                JSONArray contents = ((JSONArray) response);
-                MOVIES = getJsonObjectArray(contents);
-                String posterUrl, description;
+            public void onResponse(JSONObject response) {
                 try {
-                    for (int i = 0; i < MOVIES.length; i++) {
-                        JSONObject obj = MOVIES[i].getJSONObject("_source");
+                    JSONObject[] movies = {};
+                    JSONArray contents = response.getJSONArray("search");
+                    scrollId = response.getString("scrollId");
+                    movies = getJsonObjectArray(contents);
+                    String posterUrl, description;
+                    MOVIES = new JSONObject[movies.length];
+                    for (int i = 0; i < movies.length; i++) {
+                        MOVIES[i] = movies[i];
+                        JSONObject obj = movies[i].getJSONObject("_source");
                         posterUrl = obj.has("posterUrl") ? obj.getString("posterUrl") : "http://img.eiga.k-img.com/images/person/noimg/400.png?1423551130";
                         description = obj.has("description") ? obj.getString("description") : obj.getString("date");
                         cursor.addRow(new Object[]{i, obj.getString("title"), description, posterUrl});
@@ -186,6 +304,7 @@ public class SearchActivity extends BaseActivity implements
                     e.printStackTrace();
                 }
                 mSearchResults.setAdapter(cursorAdapter);
+                mSearchResults.setVisibility(cursor.getCount() > 0 ? View.VISIBLE : View.GONE);
                 mProgressBar.setVisibility(View.GONE);
                 closeButton.setVisibility(View.VISIBLE);
             }
@@ -212,7 +331,7 @@ public class SearchActivity extends BaseActivity implements
         if (intent.hasExtra(SearchManager.QUERY)) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (!TextUtils.isEmpty(query)) {
-//                searchFor(query);
+                searchFor(query);
                 completeHandler.removeMessages(MESSAGE_TEXT_CHANGE);
                 completeHandler.sendMessageDelayed(completeHandler.obtainMessage(MESSAGE_TEXT_CHANGE, query), mAutoCompleteDelay);
                 mSearchView.setQuery(query, false);
@@ -231,8 +350,8 @@ public class SearchActivity extends BaseActivity implements
         // Set the query hint.
         mSearchView.setQueryHint(getString(R.string.search_hint));
         mSearchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
-        mSearchView.setImeOptions(mSearchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH | EditorInfo.IME_FLAG_NO_EXTRACT_UI |
-                EditorInfo.IME_FLAG_NO_FULLSCREEN);
+        mSearchView.setImeOptions(mSearchView.getImeOptions() | EditorInfo.IME_ACTION_SEARCH |
+                EditorInfo.IME_FLAG_NO_EXTRACT_UI | EditorInfo.IME_FLAG_NO_FULLSCREEN);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -244,32 +363,20 @@ public class SearchActivity extends BaseActivity implements
 
             @Override
             public boolean onQueryTextChange(String query) {
+                scrollId = "";
+                reachBootom = false;
                 if (TextUtils.isEmpty(query)) {
                     searchFor(query);
-                    switch (lauchBy) {
-                        case "main":
-                            cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "main");
-                            break;
-                        case "imdb":
-                            cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "imdb");
-                            break;
-                        case "genre":
-                            cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "genre");
-                            break;
-                        case "upcoming":
-                            cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "upcoming");
-                            break;
-                        default:
-                            cursorAdapter = new ImageCursorAdapter(getApplicationContext(), R.layout.search_row, null, from, to, "detail");
-                            break;
-                    }
+                    isGenreCursor = true;
                 } else {
+                    isGenreCursor = false;
                     completeHandler.removeMessages(MESSAGE_TEXT_CHANGE);
                     completeHandler.sendMessageDelayed(completeHandler.obtainMessage(MESSAGE_TEXT_CHANGE, query), mAutoCompleteDelay);
                 }
                 return true;
             }
         });
+
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
@@ -277,6 +384,7 @@ public class SearchActivity extends BaseActivity implements
                 return false;
             }
         });
+
         mSearchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionSelect(int position) {
@@ -296,9 +404,9 @@ public class SearchActivity extends BaseActivity implements
                 return true;
             }
         });
-        if (!TextUtils.isEmpty(mQuery)) {
+
+        if (!TextUtils.isEmpty(mQuery))
             mSearchView.setQuery(mQuery, false);
-        }
     }
 
     @Override
@@ -471,9 +579,10 @@ public class SearchActivity extends BaseActivity implements
             } else {
                 Intent intent = new Intent(this, ContentWebViewActivity.class);
                 try {
-                    JSONObject obj = MOVIES[position].getJSONObject("_source");
-                    LOGD("1211", obj.getString("link"));
-                    intent.putExtra("url", obj.getString("link"));
+//                    JSONObject obj = MOVIES.get(position).getJSONObject("_source");
+                    JSONObject obj = (JSONObject) MOVIES[position];
+                    LOGD("1211", obj.getJSONObject("_source").getString("link"));
+                    intent.putExtra("url", obj.getJSONObject("_source").getString("link"));
                     startActivity(intent);
                 } catch (JSONException e) {
                     e.printStackTrace();

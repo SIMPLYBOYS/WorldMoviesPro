@@ -234,7 +234,7 @@ public class ImdbSwipeRecycleViewAdapter extends RecyclerView.Adapter<RecyclerVi
                     movie.setType("imdb");
                     intent.putExtra(MovieDetailActivity.IMDB_OBJECT, movie);
                     ActivityCompat.startActivity(activity, intent, null);
-//                    Snackbar.make(v, movie.getHeadline(), Snackbar.LENGTH_LONG).show();
+//                    Snackbar.make(v, movie.getTitle(), Snackbar.LENGTH_LONG).show();
                     /*View shareView = v.findViewById(R.id.share);
                     final View bookmarkView = v.findViewById(R.id.bookmark);
                     shareView.setOnClickListener(new View.OnClickListener() {
