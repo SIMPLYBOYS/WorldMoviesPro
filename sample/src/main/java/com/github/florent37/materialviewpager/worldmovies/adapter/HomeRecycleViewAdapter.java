@@ -2,6 +2,7 @@ package com.github.florent37.materialviewpager.worldmovies.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,8 +26,8 @@ import com.github.florent37.materialviewpager.worldmovies.http.CustomVolleyReque
 import com.github.florent37.materialviewpager.worldmovies.imdb.ImdbActivity;
 import com.github.florent37.materialviewpager.worldmovies.model.ImdbObject;
 import com.github.florent37.materialviewpager.worldmovies.model.User;
-import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesActivity;
+import com.github.florent37.materialviewpager.worldmovies.nytimes.nyTimesMovie;
 import com.github.florent37.materialviewpager.worldmovies.ptt.pttActivity;
 import com.github.florent37.materialviewpager.worldmovies.upcoming.upComingActivity;
 import com.github.florent37.materialviewpager.worldmovies.util.UsersUtils;
@@ -52,7 +53,6 @@ import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.ge
  */
 
 public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleViewAdapter.HomeItemHolder> {
-
     private List<nyTimesMovie> mItems;
     private AdapterView.OnItemClickListener mOnItemClickListener;
     private ImageView PicView;
@@ -143,7 +143,8 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
                 tagList = new ArrayList<>();
                 textTagsAdapter = new TextTagsAdapter(tagList, this.activity);
                 tagCloudView.setAdapter(textTagsAdapter);
-                tagCloudView.setNestedScrollingEnabled(false);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                    tagCloudView.setNestedScrollingEnabled(false);
                 return new HomeRecycleViewAdapter.HomeItemHolder(root, this);
             }
         }
@@ -250,60 +251,68 @@ public class HomeRecycleViewAdapter extends RecyclerView.Adapter<HomeRecycleView
         public void bind(HomeRecycleViewAdapter.HomeItemHolder itemHolder, nyTimesMovie item, final ProgressBar mProgressBar) {
             switch (tag) {
                 case TYPE_NYTIMES:
-                    fetch_nytimes();
-                    PicView = (ImageView) root.findViewById(R.id.nytimes_media);
-                    Picasso.with(root.getContext()).load(R.drawable.nytimes).into(PicView);
-                    AllButton = (FlatButton) root.findViewById(R.id.nytimes_all);
-                    AllButton.setButtonColor(root.getResources().getColor(R.color.material_grey_500));
-                    AllButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(v.getContext(), nyTimesActivity.class);
-                            ActivityCompat.startActivity(v.getContext(), intent, null);
-                        }
-                    });
+                    if (nyTimesList.size() == 0) {
+                        fetch_nytimes();
+                        PicView = (ImageView) root.findViewById(R.id.nytimes_media);
+                        Picasso.with(root.getContext()).load(R.drawable.nytimes).into(PicView);
+                        AllButton = (FlatButton) root.findViewById(R.id.nytimes_all);
+                        AllButton.setButtonColor(root.getResources().getColor(R.color.material_grey_500));
+                        AllButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(v.getContext(), nyTimesActivity.class);
+                                ActivityCompat.startActivity(v.getContext(), intent, null);
+                            }
+                        });
+                    }
                     break;
                 case TYPE_IMDB:
-                    fetch_imdb();
-                    PicView = (ImageView) root.findViewById(R.id.imdb_media);
-                    Picasso.with(root.getContext()).load(R.drawable.imdb).into(PicView);
-                    AllButton = (FlatButton) root.findViewById(R.id.imdb_all);
-                    AllButton.setButtonColor(root.getResources().getColor(R.color.material_deep_orange_A100));
-                    AllButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(v.getContext(), ImdbActivity.class);
-                            ActivityCompat.startActivity(v.getContext(), intent, null);
-                        }
-                    });
+                    if (imdbList.size() == 0) {
+                        fetch_imdb();
+                        PicView = (ImageView) root.findViewById(R.id.imdb_media);
+                        Picasso.with(root.getContext()).load(R.drawable.imdb).into(PicView);
+                        AllButton = (FlatButton) root.findViewById(R.id.imdb_all);
+                        AllButton.setButtonColor(root.getResources().getColor(R.color.material_deep_orange_A100));
+                        AllButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(v.getContext(), ImdbActivity.class);
+                                ActivityCompat.startActivity(v.getContext(), intent, null);
+                            }
+                        });
+                    }
                     break;
                 case TYPE_UPCOMING:
-                    fetch_upcoming();
-                    PicView = (ImageView) root.findViewById(R.id.upcoming_media);
-                    Picasso.with(root.getContext()).load(R.drawable.ic_movie).into(PicView);
-                    AllButton = (FlatButton) root.findViewById(R.id.upcoming_all);
-                    AllButton.setButtonColor(root.getResources().getColor(R.color.material_brown_200));
-                    AllButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(v.getContext(), upComingActivity.class);
-                            ActivityCompat.startActivity(v.getContext(), intent, null);
-                        }
-                    });
+                    if (upcomingList.size() == 0) {
+                        fetch_upcoming();
+                        PicView = (ImageView) root.findViewById(R.id.upcoming_media);
+                        Picasso.with(root.getContext()).load(R.drawable.ic_movie).into(PicView);
+                        AllButton = (FlatButton) root.findViewById(R.id.upcoming_all);
+                        AllButton.setButtonColor(root.getResources().getColor(R.color.material_brown_200));
+                        AllButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(v.getContext(), upComingActivity.class);
+                                ActivityCompat.startActivity(v.getContext(), intent, null);
+                            }
+                        });
+                    }
                     break;
                 case TYPE_PTT:
-                    fetch_ptt();
-                    PicView = (ImageView) root.findViewById(R.id.ptt_media);
-                    Picasso.with(root.getContext()).load(R.drawable.ic_bubble_chart).into(PicView);
-                    AllButton = (FlatButton) root.findViewById(R.id.ptt_all);
-                    AllButton.setButtonColor(root.getResources().getColor(R.color.facebook));
-                    AllButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(v.getContext(), pttActivity.class);
-                            ActivityCompat.startActivity(v.getContext(), intent, null);
-                        }
-                    });
+                    if (tagList.size() == 0) {
+                        fetch_ptt();
+                        PicView = (ImageView) root.findViewById(R.id.ptt_media);
+                        Picasso.with(root.getContext()).load(R.drawable.ic_bubble_chart).into(PicView);
+                        AllButton = (FlatButton) root.findViewById(R.id.ptt_all);
+                        AllButton.setButtonColor(root.getResources().getColor(R.color.facebook));
+                        AllButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(v.getContext(), pttActivity.class);
+                                ActivityCompat.startActivity(v.getContext(), intent, null);
+                            }
+                        });
+                    }
                     break;
             }
         }

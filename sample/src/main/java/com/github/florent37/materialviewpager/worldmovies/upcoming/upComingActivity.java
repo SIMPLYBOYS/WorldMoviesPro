@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -342,12 +341,13 @@ public class upComingActivity extends BaseActivity implements Response.Listener,
         // Inflate the menu; this adds items to the action bar if it is present.
         SharedPreferences settings = getSharedPreferences("settings", 0);
         getMenuInflater().inflate(R.menu.imdb_menu, menu);
-        Drawable drawable = toolbar.getOverflowIcon();
 
-        if (drawable != null) {
-            drawable = DrawableCompat.wrap(drawable);
-            DrawableCompat.setTint(drawable.mutate(), Color.parseColor("#FFFFFF"));
-            toolbar.setOverflowIcon(drawable);
+        for(int i = 0; i < menu.size(); i++) {
+            Drawable drawable = menu.getItem(i).getIcon();
+            if(drawable != null) {
+                drawable.mutate();
+                drawable.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+            }
         }
 
         MenuItem miniCard = menu.findItem(R.id.menu_miniCard);

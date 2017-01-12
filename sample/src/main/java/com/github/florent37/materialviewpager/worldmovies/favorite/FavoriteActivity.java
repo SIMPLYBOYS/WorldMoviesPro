@@ -16,7 +16,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -152,7 +151,6 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, ContentWebViewActivity.class);
-                Log.d("1120", user.link);
                 intent.putExtra("url", user.link);
                 context.startActivity(intent);
             }
@@ -173,7 +171,6 @@ public class FavoriteActivity extends AppCompatActivity implements BottomNavigat
         shareActionProvider = new ShareActionProvider(this);
         MenuItemCompat.setActionProvider(shareItem, shareActionProvider);
         shareActionProvider.setShareIntent(createShareIntent());
-
         return true;
     }
 

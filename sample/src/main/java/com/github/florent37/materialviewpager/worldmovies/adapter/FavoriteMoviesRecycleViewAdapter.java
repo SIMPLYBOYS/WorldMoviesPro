@@ -2,6 +2,7 @@ package com.github.florent37.materialviewpager.worldmovies.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -135,6 +136,8 @@ public class FavoriteMoviesRecycleViewAdapter extends RecyclerView.Adapter<Favor
             pictureView = (ImageView) itemView.findViewById(R.id.picture);
             pictureView.setScaleType(ImageView.ScaleType.CENTER);
             titleView = (TextView) itemView.findViewById(R.id.movie_title);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                titleView.setBackgroundResource(R.drawable.item_click_background);
         }
 
         public void bind(TrendsItemHolder itemHolder, ImdbObject item, final ProgressBar mProgressBar) {

@@ -11,7 +11,6 @@
     card_view:cardElevation="@dimen/cardview_default_elevation">
 
     <LinearLayout
-        android:background="@drawable/popup_item_background"
         android:layout_width="match_parent"
         android:layout_height="?attr/listPreferredItemHeight"
         android:gravity="center_vertical"
@@ -53,6 +52,7 @@
                 card_view:font="Roboto-Light.ttf"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
@@ -65,6 +65,7 @@
                 card_view:font="Roboto-Light.ttf"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
         </RelativeLayout>
     </LinearLayout>

@@ -115,8 +115,11 @@ public class LearderBoardListAdapter extends RecyclerView.Adapter<LearderBoardLi
             totalView = (TextView) itemView.findViewById(R.id.listitem_total);
             title = (TextView) itemView.findViewById(R.id.listitem_name);
             description = (TextView) itemView.findViewById(R.id.listitem_description);
-            linearLayout = (LinearLayout) itemView.findViewById(R.id.linearLayout);
             mQueue = CustomVolleyRequestQueue.getInstance(activity).getRequestQueue();
+            linearLayout = (LinearLayout) itemView.findViewById(R.id.linearLayout);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+               linearLayout.setBackgroundResource(R.drawable.item_click_background);
         }
 
         public void bind(MyViewHolder itemHolder, final User user) {
@@ -202,6 +205,9 @@ public class LearderBoardListAdapter extends RecyclerView.Adapter<LearderBoardLi
 
                     }
                 });
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                    followView.setBackgroundResource(R.drawable.item_click_background);
             }
         }
     }

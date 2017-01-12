@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -223,6 +222,6 @@ public class ImdbReviewTabFragment extends Fragment implements Response.ErrorLis
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(getContext(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
     }
 }

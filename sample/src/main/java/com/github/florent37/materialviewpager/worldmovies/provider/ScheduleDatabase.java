@@ -22,7 +22,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract.Blocks;
 import com.github.florent37.materialviewpager.worldmovies.provider.ScheduleContract.FeedbackColumns;
@@ -270,12 +269,12 @@ public class ScheduleDatabase extends SQLiteOpenHelper {
     public ScheduleDatabase(Context context) {
         super(context, DATABASE_NAME, null, CUR_DATABASE_VERSION);
         mContext = context;
-        Log.d("0223", "ScheduleDatabase");
+        LOGD("0223", "ScheduleDatabase");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d("0221", "createDB");
+        LOGD("0221", "createDB");
         /*db.execSQL("CREATE TABLE " + Tables.BLOCKS + " ("
                 + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + BlocksColumns.BLOCK_ID + " TEXT NOT NULL,"

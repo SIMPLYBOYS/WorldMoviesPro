@@ -45,16 +45,14 @@ public class TrendsCastTabFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         trendsObject = (TrendsObject) getArguments().getSerializable("trends");
-        RecyclerView rv = (RecyclerView) inflater.inflate(
-                R.layout.fragment_recyclerview, container, false);
+        RecyclerView rv = (RecyclerView) inflater.inflate(R.layout.fragment_recyclerview, container, false);
         setupRecyclerView(rv);
         return rv;
     }
 
     private void setupRecyclerView(RecyclerView recyclerView) {
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(),
-                getCastlist()));
+        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(), getCastlist()));
 //        recyclerView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(recyclerView.getContext()).build());
     }
 
@@ -112,8 +110,7 @@ public class TrendsCastTabFragment extends Fragment {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.cast_list_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cast_list_item, parent, false);
             view.setBackgroundResource(mBackground);
             return new ViewHolder(view);
         }

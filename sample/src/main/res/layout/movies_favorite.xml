@@ -39,6 +39,7 @@
                 fbutton:shadowHeight="6dp"
                 android:textColor="@android:color/white"
                 android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
             <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                 android:id="@+id/trends_picNum"
@@ -49,9 +50,10 @@
                 android:textColor="@color/app_body_text_2"
                 android:paddingTop="0dp"
                 app:font="Roboto-Bold.ttf"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="40dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginStart="50dp"
                 android:layout_alignParentTop="true"
+                android:layout_alignLeft="@+id/trends_picNumView"
                 android:layout_alignStart="@+id/trends_picNumView" />
             <com.github.florent37.materialviewpager.worldmovies.ui.widget.AspectRatioView
                 android:layout_width="55dp"

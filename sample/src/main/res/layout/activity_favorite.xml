@@ -29,20 +29,10 @@
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax" />
 
-            <!--<android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:gravity="top"
-                android:minHeight="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>-->
-
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="140dp"
                 android:layout_gravity="center"
-                android:background="@drawable/item_click_background"
                 android:id="@+id/user_profile">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/avatar"
@@ -110,6 +100,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="0dp" />
 

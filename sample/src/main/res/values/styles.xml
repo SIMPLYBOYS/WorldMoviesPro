@@ -8,6 +8,7 @@
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
+        <item name="actionMenuTextColor">@android:color/holo_green_light</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="windowActionBar">true</item>
         <item name="android:popupMenuStyle">@style/myPopupMenuStyle</item>

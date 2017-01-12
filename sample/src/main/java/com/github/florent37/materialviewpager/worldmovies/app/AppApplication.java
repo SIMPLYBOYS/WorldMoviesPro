@@ -18,6 +18,7 @@ package com.github.florent37.materialviewpager.worldmovies.app;
 
 import android.app.Application;
 import android.content.Intent;
+import android.support.multidex.MultiDexApplication;
 
 import com.github.florent37.materialviewpager.worldmovies.settings.SettingsUtils;
 import com.github.florent37.materialviewpager.worldmovies.util.AnalyticsHelper;
@@ -33,7 +34,7 @@ import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.m
  * or Service is used by the user or system. Analytics, dependency injection, and multi-dex
  * frameworks are in this very small set of use cases.
  */
-public class AppApplication extends Application {
+public class AppApplication extends MultiDexApplication {
 
     private static final String TAG = makeLogTag(AppApplication.class);
 

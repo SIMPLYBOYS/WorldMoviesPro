@@ -711,6 +711,13 @@ public class MainActivity extends BaseActivity implements RecyclerViewFragment.L
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.entrance_menu, menu);
+        for(int i = 0; i < menu.size(); i++) {
+            Drawable drawable = menu.getItem(i).getIcon();
+            if(drawable != null) {
+                drawable.mutate();
+                drawable.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+            }
+        }
         return true;
     }
 

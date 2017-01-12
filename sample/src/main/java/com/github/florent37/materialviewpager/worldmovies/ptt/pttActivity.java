@@ -1,6 +1,5 @@
 package com.github.florent37.materialviewpager.worldmovies.ptt;
 
-import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
@@ -12,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -316,17 +314,14 @@ public class pttActivity extends BaseActivity implements BottomNavigationBar.OnT
         // Inflate the menu; this adds items to the action bar if it is present.
         SharedPreferences settings = getSharedPreferences("settings", 0);
         getMenuInflater().inflate(R.menu.ptt_menu, menu);
-        Drawable drawable = toolbar.getOverflowIcon();
 
-        if (drawable != null) {
-            drawable = DrawableCompat.wrap(drawable);
-            DrawableCompat.setTint(drawable.mutate(), Color.parseColor("#FFFFFF"));
-            toolbar.setOverflowIcon(drawable);
+        for(int i = 0; i < menu.size(); i++) {
+            Drawable drawable = menu.getItem(i).getIcon();
+            if(drawable != null) {
+                drawable.mutate();
+                drawable.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+            }
         }
-
-        MenuItem filter = menu.findItem(R.id.action_filter);
-        Drawable image = filter.getIcon();
-        image.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
 
         return true;
     }
@@ -348,8 +343,6 @@ public class pttActivity extends BaseActivity implements BottomNavigationBar.OnT
                 return true;
             case R.id.action_search:
                 View searchMenuView = toolbar.findViewById(R.id.action_search);
-                Bundle options = ActivityOptions.makeSceneTransitionAnimation(this, searchMenuView,
-                        getString(R.string.transition_search_back)).toBundle();
                 Intent intent = new Intent(pttActivity.this, SearchActivity.class);
                 intent.putExtra("lastSelectedPosition", lastSelectedPosition);
                 intent.putExtra("lauchBy", "upcoming");

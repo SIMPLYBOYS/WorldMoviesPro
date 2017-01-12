@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="130dp"
+    android:layout_height="wrap_content"
     android:layout_marginLeft="3dp"
     android:layout_marginRight="3dp"
     android:layout_marginTop="3dp"
@@ -24,15 +24,13 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/poster"
         android:layout_width="110dp"
-        android:layout_height="match_parent"
-        android:src="@drawable/placeholder"
+        android:layout_height="140dp"
         android:layout_gravity="right|center"
         android:orientation="vertical"
         android:focusable="true"
         android:scaleType="centerCrop"
         android:adjustViewBounds="false"
         android:foreground="?android:selectableItemBackground"/>
-
     <ImageView
         android:id="@+id/play"
         android:layout_width="100dp"
@@ -50,18 +48,16 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/explore_io_clickable_regin"
         android:layout_width="245dp"
-        android:layout_height="match_parent"
+        android:layout_height="140dp"
         android:layout_gravity="left"
         android:clickable="false"
         android:focusable="true"
         android:orientation="vertical"
         android:foreground="?android:selectableItemBackground">
-
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_height="70px"
             android:layout_width="fill_parent"
             android:orientation="horizontal">
-
             <TextView
                 android:id="@+id/top"
                 android:layout_width="35dp"
@@ -71,7 +67,6 @@
                 android:textStyle="bold"
                 android:layout_marginLeft="@dimen/explore_io_keynote_card_padding_start"
                 android:layout_marginStart="@dimen/explore_io_keynote_card_padding_start" />
-
             <ImageView
                 android:id="@+id/arrow"
                 android:layout_width="16dp"
@@ -86,7 +81,6 @@
                 android:layout_marginEnd="6dp"
                 android:visibility="gone"
                 />
-
             <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
                 android:id="@+id/delta"
                 android:layout_width="wrap_content"
@@ -102,9 +96,7 @@
                 android:layout_toEndOf="@+id/top"
                 android:layout_marginLeft="3dp"
                 android:layout_marginStart="3dp" />
-
         </RelativeLayout>
-
         <TextView
             android:id="@+id/title"
             android:layout_width="235dp"
@@ -119,7 +111,6 @@
             android:textSize="@dimen/text_size_medium"
             android:textStyle="bold"
             tools:text="@string/placeholder_session_title" />
-
         <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
             android:id="@+id/description"
             android:ellipsize="end"
@@ -134,7 +125,6 @@
             android:textAppearance="@style/TextAppearance.SessionTitle"
             tools:text="@string/placeholder_session_subtitle"
             app:font="Roboto-Light.ttf"/>
-
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -146,8 +136,10 @@
                 android:textSize="10dp"
                 android:textColor="@color/red"
                 android:text="4.3"
+                android:layout_marginLeft="9dp"
                 android:layout_marginStart="9dp"
                 android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
@@ -159,6 +151,8 @@
                 android:text="12345"
                 app:font="Roboto-Light.ttf"
                 android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@+id/rating"
                 android:layout_toEndOf="@+id/rating" />
 
             <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
@@ -170,18 +164,15 @@
                 android:text="2016年12月31日"
                 android:layout_marginLeft="40dp"
                 android:layout_alignTop="@+id/votes"
+                android:layout_toRightOf="@+id/votes"
                 android:layout_toEndOf="@+id/votes" />
-
         </RelativeLayout>
-
-
     </com.github.florent37.materialviewpager.worldmovies.ui.widget.ForegroundLinearLayout>
-
     <ProgressBar
         android:id="@android:id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="45dp"
         android:layout_marginRight="28dp"
         android:layout_gravity="right" />
 </android.support.v7.widget.CardView>

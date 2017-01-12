@@ -115,6 +115,8 @@ public class FriendsListAdapter extends RecyclerView.Adapter<FriendsListAdapter.
 //                    startActivityForVersion(intent, view);
                 }
             });
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                linearLayout.setBackgroundResource(R.drawable.item_click_background);
         }
     }
 

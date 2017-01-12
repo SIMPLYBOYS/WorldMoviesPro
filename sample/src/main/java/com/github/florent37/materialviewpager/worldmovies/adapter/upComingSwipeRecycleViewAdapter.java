@@ -101,7 +101,7 @@ public class upComingSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycl
 
             if (titleView == null) return;
 
-            if (imdbObject.getTop() != "0")
+            if (!imdbObject.getTop().equals("0"))
                 topView.setText(imdbObject.getTop());
 
             if (imdbObject.getRating().compareTo("")!=0) {
@@ -118,7 +118,7 @@ public class upComingSwipeRecycleViewAdapter extends RecyclerView.Adapter<Recycl
                     starView.setVisibility(View.VISIBLE);
                 }
 
-                if (imdbObject.getVotes() != "null")
+                if (!imdbObject.getVotes().equals("null"))
                     votesView.setText(imdbObject.getVotes());
                 else
                     votesView.setText(ratingItem.getVotes());

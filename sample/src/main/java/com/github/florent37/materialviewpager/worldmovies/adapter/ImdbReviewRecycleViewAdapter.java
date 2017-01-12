@@ -78,8 +78,7 @@ public class ImdbReviewRecycleViewAdapter extends RecyclerView.Adapter<RecyclerV
     public RecyclerView.ViewHolder  onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         final Context context = viewGroup.getContext();
         if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.review_list_item, viewGroup, false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.review_list_item, viewGroup, false);
             view.setBackgroundResource(mBackground);
             return new ContentViewHolder(view);
         } else if (viewType == VIEW_TYPE_LOADING) {

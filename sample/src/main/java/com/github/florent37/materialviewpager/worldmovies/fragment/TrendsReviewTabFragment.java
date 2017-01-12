@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -79,8 +78,7 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
         trendsObject = (TrendsObject) getArguments().getSerializable("trends");
         reviewItems = new ArrayList<>();
         rAdapter = new TrendsReviewRecycleViewAdapter(getActivity(), reviewItems);
-        movieReview = (RecyclerView) inflater.inflate(
-                R.layout.fragment_recyclerview, container, false);
+        movieReview = (RecyclerView) inflater.inflate(R.layout.fragment_recyclerview, container, false);
         linearLayoutManager = new LinearLayoutManager(movieReview.getContext());
         movieReview.setLayoutManager(linearLayoutManager);
         movieReview.setAdapter(rAdapter);
@@ -228,7 +226,7 @@ public class TrendsReviewTabFragment extends Fragment implements Response.ErrorL
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(getContext(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Remote Server connect fail!", Toast.LENGTH_SHORT).show();
     }
 
     @Override

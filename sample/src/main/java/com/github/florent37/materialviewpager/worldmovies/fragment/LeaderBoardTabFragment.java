@@ -59,6 +59,7 @@ public class LeaderBoardTabFragment extends Fragment {
         mQueue = CustomVolleyRequestQueue.getInstance(activity).getRequestQueue();
         CustomJSONObjectRequest jsonRequest_q = null;
         final User user = UsersUtils.getCurrentUser(getApplicationContext());
+        LOGD("0112", user.id);
         String url= Config.HOST_NAME + "explorePeople/"+user.id;
         final List<User> friendsList = new ArrayList<>();
         jsonRequest_q = new CustomJSONObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
@@ -99,7 +100,7 @@ public class LeaderBoardTabFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(activity, "Remote Server connect fail from GenreActivity!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Remote Server connect fail from ExplorePeopleActivity!", Toast.LENGTH_SHORT).show();
             }
         });
 

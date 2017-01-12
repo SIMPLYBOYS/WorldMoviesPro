@@ -63,6 +63,7 @@
                 android:layout_gravity="right|center"
                 android:src="@drawable/ic_photo_album"
                 android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"/>
 
         </RelativeLayout>
@@ -141,6 +142,7 @@
                 app:enable_flashing="false"
                 app:small_shine_offset_angle="20"
                 app:shine_distance_multiple="1.5"
+                android:layout_toLeftOf="@+id/share"
                 android:layout_toStartOf="@+id/share"/>
 
             <com.sackcentury.shinebuttonlib.ShineButton
@@ -149,8 +151,10 @@
                 android:layout_height="25dp"
                 android:layout_marginLeft="@dimen/explore_io_keynote_card_padding_start"
                 android:layout_gravity="right"
+                android:layout_marginRight="15dp"
                 android:layout_marginEnd="15dp"
                 android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 app:enable_flashing="false"
                 app:siShape="@drawable/ic_share"

@@ -20,7 +20,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="20dp"
     android:onClick="dismiss"
     tools:context=".ui.SearchActivity">
 
@@ -85,7 +84,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/app_white"
-                android:background="@drawable/item_click_background"
                 android:requiresFadingEdge="vertical"
                 android:overScrollMode="always"
                 android:scrollbarThumbVertical="@color/app_secondary_text"

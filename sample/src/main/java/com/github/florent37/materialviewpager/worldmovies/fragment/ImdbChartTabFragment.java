@@ -2,6 +2,7 @@ package com.github.florent37.materialviewpager.worldmovies.fragment;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -104,9 +105,12 @@ public class ImdbChartTabFragment extends Fragment implements Response.ErrorList
                         ratingChart = (LineChartView) mActivity.findViewById(R.id.ratingChart);
                         positionChart = (LineChartView) mActivity.findViewById(R.id.postitionChart);
                         ratingPreview = (PreviewLineChartView) mActivity.findViewById(R.id.rating_preview);
-                        ratingPreview.setNestedScrollingEnabled(false);
                         positionPreView = (PreviewLineChartView) mActivity.findViewById(R.id.position_preview);
-                        positionPreView.setNestedScrollingEnabled(false);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            ratingPreview.setNestedScrollingEnabled(false);
+                            positionPreView.setNestedScrollingEnabled(false);
+                        }
 
                         if (ratingChart == null || positionChart == null || ratingPreview == null || positionPreView == null )
                             return;

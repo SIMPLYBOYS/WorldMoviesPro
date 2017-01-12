@@ -2,6 +2,7 @@ package com.github.florent37.materialviewpager.worldmovies.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,27 +72,32 @@ public class ImageCursorAdapter extends SimpleCursorAdapter {
             search_row.removeView(iv);
         }
 
-        CustomTextView title = (CustomTextView) v.findViewById(R.id.title);
-        title.setText(titleStr);
+        CustomTextView titleView = (CustomTextView) v.findViewById(R.id.title);
         TextView description = (TextView) v.findViewById(R.id.description);
+        titleView.setText(titleStr);
         description.setText(descriptionStr);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            titleView.setBackgroundResource(R.drawable.item_click_background);
+            description.setBackgroundResource(R.drawable.item_click_background);
+        }
 
         if (type == "genre") {
             v.setBackgroundColor(context.getResources().getColor(R.color.material_blue_300));
-            title.setTextColor(context.getResources().getColor(R.color.io15_white));
+            titleView.setTextColor(context.getResources().getColor(R.color.io15_white));
         } else if (type == "imdb") {
             v.setBackgroundColor(context.getResources().getColor(R.color.imdb_yellow));
-            title.setTextColor(context.getResources().getColor(R.color.black_opacity_66));
+            titleView.setTextColor(context.getResources().getColor(R.color.black_opacity_66));
             description.setTextColor(context.getResources().getColor(R.color.material_grey_600));
         } else if (type == "upcoming") {
             v.setBackgroundColor(context.getResources().getColor(R.color.tab_background));
         } else if (type == "detail") {
             v.setBackgroundColor(context.getResources().getColor(R.color.transparent_black));
-            title.setTextColor(context.getResources().getColor(R.color.app_white));
+            titleView.setTextColor(context.getResources().getColor(R.color.app_white));
             description.setTextColor(context.getResources().getColor(R.color.material_indigo_100));
         } else if (type == "main") {
             v.setBackgroundColor(context.getResources().getColor(R.color.primary_dark_material_dark));
-            title.setTextColor(context.getResources().getColor(R.color.app_white));
+            titleView.setTextColor(context.getResources().getColor(R.color.app_white));
             description.setTextColor(context.getResources().getColor(R.color.material_indigo_100));
         }
     }

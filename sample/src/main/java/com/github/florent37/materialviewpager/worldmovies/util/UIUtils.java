@@ -911,12 +911,12 @@ public class UIUtils {
         Point size = new Point();
         display.getSize(size);
         LOGD("0108", "width: " + String.valueOf(size.x)+" height: " + String.valueOf(size.y));
-        if (size.x > 720) {
-            view.getLayoutParams().height=96;
-            view.getLayoutParams().width=96;
-        } else {
+        if (size.x == 800 && size.y == 1280 || size.x == 720 && size.y == 1280) {
             view.getLayoutParams().height=48;
             view.getLayoutParams().width=48;
+        } else if (size.x == 1440 && size.y == 2560) {
+            view.getLayoutParams().height=96;
+            view.getLayoutParams().width=96;
         }
     }
 
@@ -924,14 +924,13 @@ public class UIUtils {
         Display display = activity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        if (size.x > 720)
+        if (size.x == 1440 && size.y == 2560)
             menu.findItem(R.id.action_settings).setIcon(resizeImage(activity, R.drawable.ic_settings, 350, 350));
         else
-            menu.findItem(R.id.action_settings).setIcon(resizeImage(activity, R.drawable.ic_settings, 100, 100));
+            menu.findItem(R.id.action_settings).setIcon(resizeImage(activity, R.drawable.ic_settings, 80, 80));
     }
 
-    public static Drawable resizeImage(Activity activity, int resId, int w, int h)
-    {
+    public static Drawable resizeImage(Activity activity, int resId, int w, int h) {
         // load the origial Bitmap
         Bitmap BitmapOrg = BitmapFactory.decodeResource(activity.getResources(), resId);
         int width = BitmapOrg.getWidth();

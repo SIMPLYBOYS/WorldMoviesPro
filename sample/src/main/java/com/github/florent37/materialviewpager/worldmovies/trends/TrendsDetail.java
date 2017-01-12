@@ -120,6 +120,7 @@ import static com.github.florent37.materialviewpager.worldmovies.ui.BaseActivity
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.LOGD;
 import static com.github.florent37.materialviewpager.worldmovies.util.LogUtils.makeLogTag;
 import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.drawCountryFlag;
+import static com.github.florent37.materialviewpager.worldmovies.util.UIUtils.setViewScale;
 
 /**
  * Created by aaron on 2016/6/18.
@@ -465,12 +466,8 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             final ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
+            if (actionBar != null)
                 actionBar.setDisplayHomeAsUpEnabled(true);
-                final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
-                upArrow.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
-                actionBar.setHomeAsUpIndicator(upArrow);
-            }
         }
     }
 
@@ -686,14 +683,14 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
         bookmarkActionView = (LinearLayout) getLayoutInflater().inflate(R.layout.bookmark_image, null);
         bookmarkView = (ShineButton) bookmarkActionView.findViewById(R.id.bookmarkView);
         bookmarkView.init(this);
-        bookmarkView.getLayoutParams().height=96;
-        bookmarkView.getLayoutParams().width=96;
+        setViewScale(this, bookmarkView);
 //        bookmarkView.setImageResource(R.drawable.ic_turned_in);
         bookmarkView.setColorFilter(getResources().getColor(R.color.app_white));
         bookmarkView.setScaleType(ImageView.ScaleType.FIT_XY);
         bookmarkItem = menu.findItem(R.id.action_bookmark);
         bookmarkItem.setActionView(bookmarkView);
         searchItem = menu.findItem(R.id.action_search);
+
         /*searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setIconifiedByDefault(true);
         searchView.setSubmitButtonEnabled(true);*/
@@ -875,9 +872,6 @@ public class TrendsDetail extends AppCompatActivity implements KenBurnsView.Tran
                 mDrawerLayout.openDrawer(GravityCompat.END);
                 return true;
             case R.id.action_search:
-                View searchMenuView = toolbar.findViewById(R.id.action_search);
-                Bundle options = ActivityOptions.makeSceneTransitionAnimation(this, searchMenuView,
-                        getString(R.string.transition_search_back)).toBundle();
                 Intent intent = new Intent(TrendsDetail.this, SearchActivity.class);
                 intent.putExtra("lastSelectedPosition", lastSelectedPosition);
                 intent.putExtra("lauchBy", "detail");

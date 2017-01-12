@@ -55,6 +55,7 @@
             fbutton:shadowHeight="6dp"
             android:textColor="@android:color/white"
             android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
         <com.github.florent37.materialviewpager.worldmovies.framework.CustomTextView
             android:layout_width="100dp"

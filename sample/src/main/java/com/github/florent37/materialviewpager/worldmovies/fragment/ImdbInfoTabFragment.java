@@ -281,7 +281,7 @@ public class ImdbInfoTabFragment extends InfoTabFragment implements AdapterView.
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(), "Clicked: " + position, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "Clicked: " + position, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(view.getContext(), SlideActivity.class);
         intent.putExtra(MovieDetailActivity.IMDB_OBJECT, imdbObject);
         intent.putExtra(SlideActivity.PIC_POSITION, position);
