@@ -8,43 +8,47 @@ If you want to watch movie, you probabily like to watch the film trailer and loo
 
 ## Screen Shot
 #### Login Support FaceBook and GooglePlus
+<figure class="half">
+	<a href="https://github.com/SIMPLYBOYS/WorldMoviesPro"><img  width="540" height="960" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-141625.png"/></a>	
+</figure>
 
-<a href="https://github.com/SIMPLYBOYS/WorldMoviesPro"><img  width="540" height="960" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-141625.png"/></a>	
 
 #### NewYorkTimes Review
-<a href="https://github.com/SIMPLYBOYS/WorldMoviesPro"><img  width="540" height="960" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-144155.png"/></a>	
+<figure class="half">
+	<a href="https://github.com/SIMPLYBOYS/WorldMoviesPro"><img  width="540" height="960" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-144155.png"/></a>	
+</figure>
 
 #### World Movie Trends:
-
-<td>
+<figure class="half">
 	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-144107.png"/>
 	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-144212.png"/>
 	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-144220.png"/>
-</td>
+</figure>
 
 #### Integrate with Spotify Player SDK to Play Origin Movie SoundTracks  
-
-<a href="https://github.com/SIMPLYBOYS/WorldMoviesPro"><img  width="540" height="960" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-152256.png"/></a>	
+<figure class="half">
+	<a href="https://github.com/SIMPLYBOYS/WorldMoviesPro"><img  width="540" height="960" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-152256.png"/></a>
+</figure>
 
 #### Search and Filter Movie by country or genre:
-
-<td>
+<figure class="half">
 	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-153235.png"/>
 	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-152553.png"/>
 	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-153305.png"/>
-</td>
+</figure>
 
 #### Daily IMDB top 250
-
-<td>
+<figure class="half">
 	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-152211.png"/>
 	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-152240.png"/>
 	<img width="290" height="515" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20161229-152413.png"/>
-</td>
+</figure>
 
 #### GCM message for IMDB daily position  
+<figure class="half">
+	<a href="https://github.com/SIMPLYBOYS/WorldMoviesPro"><img  width="540" height="960" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20170102-152354.png"/></a>	
+</figure>
 
-<a href="https://github.com/SIMPLYBOYS/WorldMoviesPro"><img  width="540" height="960" src="https://github.com/SIMPLYBOYS/WorldMoviesPro/blob/master/blog/Screenshot_20170102-152354.png"/></a>	
 
 
 
